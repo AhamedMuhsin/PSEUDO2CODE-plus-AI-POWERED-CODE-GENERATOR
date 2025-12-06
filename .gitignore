@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 # Python
+firebase-service-account.json
 __pycache__/
 *.pyc
 env/
