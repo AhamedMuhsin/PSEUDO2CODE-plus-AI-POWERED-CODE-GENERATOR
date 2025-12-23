@@ -1,23 +1,55 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { createRouter, createWebHistory } from "vue-router";
+import Login from "@/views/Login.vue";
+import Dashboard from "@/views/Dashboard.vue";
+import { getCurrentUser } from "@/services/authState";
+import Signup from "@/views/Signup.vue";
+import Splash from "@/views/Splash.vue";
+
+const routes = [
+    {
+    path: "/",
+    name: "Splash",
+    component: Splash,
+  },
+  {
+    path: "/login",
+    name: "Login",
+    component: Login,
+    meta: { guestOnly: true },
+  },
+  {
+  path: "/signup",
+  name: "Signup",
+  component: Signup,
+  meta: { guestOnly: true },
+},
+  {
+    path: "/dashboard",
+    name: "Dashboard",
+    component: Dashboard,
+    meta: { requiresAuth: true },
+  },
+];
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView,
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
-    },
-  ],
-})
+  history: createWebHistory(),
+  routes,
+});
 
-export default router
+router.beforeEach(async (to, from, next) => {
+  const user = await getCurrentUser();
+
+  // 🚫 Not logged in & trying to access protected page
+  if (to.meta.requiresAuth && !user) {
+    return next("/login");
+  }
+
+  // 🚫 Logged in & trying to access login page
+  if (to.meta.guestOnly && user) {
+    return next("/dashboard");
+  }
+
+  next();
+});
+
+export default router;
