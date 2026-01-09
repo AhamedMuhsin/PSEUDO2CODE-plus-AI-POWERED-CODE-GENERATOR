@@ -1,27 +1,20 @@
-import { auth } from "@/firebase";
 import axios from "axios";
-
-const API_URL = "http://127.0.0.1:8000";
+import { getAuth } from "firebase/auth";
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:8000", // FastAPI backend
-  headers: {
-    "Content-Type": "application/json",
-  },
+  baseURL: "http://127.0.0.1:8000",
+});
+
+api.interceptors.request.use(async (config) => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  if (user) {
+    const token = await user.getIdToken();
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
 });
 
 export default api;
-
-export async function fetchUserProfile() {
-  const token = await auth.currentUser.getIdToken();
-
-  const res = await fetch(`${API_URL}/me`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!res.ok) throw new Error("Failed to fetch user");
-
-  return res.json();
-}

@@ -63,7 +63,6 @@ import logo from "@/assets/logo_f.png";
 import arrowLeft from "@/assets/arrow-left.svg";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { fetchUserProfile } from "@/services/api";
 import { getFirebaseErrorMessage } from "@/utils/firebaseErrors";
 import { forgotPassword } from "@/services/authService";
 import { isValidEmail, isValidPassword } from "@/utils/validators";

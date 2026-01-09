@@ -19,6 +19,7 @@
     "@primevue/themes": "^4.5.1",
     "axios": "^1.13.2",
     "firebase": "^12.6.0",
+    "lucide-vue-next": "^0.562.0",
     "pinia": "^3.0.4",
     "primeicons": "^7.0.0",
     "primevue": "^4.5.1",
