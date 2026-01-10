@@ -48,7 +48,8 @@ async def create_user(uid: str, email: str, provider: str, name: str = None):
             "streak": 0,
         },
         "badges": [],
-        "recent_activity": [],  # ✅ IMPORTANT
+        "recent_activity": [], 
+        "generated_codes": [], 
     }
 
     await users_collection.insert_one(user)
@@ -142,3 +143,30 @@ async def award_badge(uid: str, badge_id: str, title: str, icon: str):
     )
 
     return True
+
+async def save_generated_code(
+    uid: str,
+    pseudocode: str,
+    language: str,
+    level: str,
+    code: str,
+    explanation: str = None
+):
+    record = {
+        "pseudocode": pseudocode,
+        "language": language,
+        "level": level,
+        "code": code,
+        "explanation": explanation,
+        "created_at": datetime.utcnow(),
+    }
+
+    await users_collection.update_one(
+        {"uid": uid},
+        {
+            "$push": {"generated_codes": record},
+            "$inc": {"stats.codes_generated": 1}
+        }
+    )
+
+    return record

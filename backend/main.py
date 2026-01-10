@@ -17,7 +17,8 @@ from services.user_service import (
     create_user,
     update_last_login,
     serialize_user,
-    add_activity,   # ✅ ADD THIS
+    save_generated_code,
+    add_activity,
 )
 
 app = FastAPI()
@@ -152,19 +153,60 @@ async def test_generate_code():
             "traceback": traceback.format_exc()
         }
 
-
-# ============ GEMINI CODE GENERATION ============
-
 @app.post("/generate-code")
-async def generate_code_endpoint(payload: dict, current_user=Depends(get_current_user)):
-    pseudocode = payload.get("pseudocode", "")
-    language = payload.get("language", "python")
+async def generate_code_endpoint(
+    payload: dict,
+    current_user=Depends(get_current_user)
+):
+    uid = current_user["uid"]
+
+    pseudocode = payload.get("pseudocode")
+    languages = payload.get("languages", ["python"])
+    level = payload.get("level", "intermediate")
 
     if not pseudocode:
-        return {"success": False, "error": "Pseudocode is required"}
+        raise HTTPException(status_code=400, detail="Pseudocode required")
 
-    result = generate_code(pseudocode, language)
-    return result
+    # 1️⃣ Generate code using Gemini
+    result = generate_multi_language(
+        pseudocode=pseudocode,
+        languages=languages,
+        level=level
+    )
+
+    if not result.get("success"):
+        raise HTTPException(status_code=500, detail="Code generation failed")
+
+    generated_code = result.get("generated_code", {})
+
+    # 2️⃣ Save generated code to MongoDB (PER LANGUAGE)
+    for lang, code in generated_code.items():
+        await save_generated_code(
+            uid=uid,
+            pseudocode=pseudocode,
+            language=lang,
+            level=level,
+            code=code,
+            explanation=None
+        )
+
+    # 3️⃣ Add XP
+    await add_xp(uid, 10 * len(languages))
+
+    # 4️⃣ Log activity
+    await add_activity(
+        uid,
+        "code",
+        f"Generated {', '.join(languages)} code ({level})"
+    )
+
+    # 5️⃣ Return response
+    return {
+        "success": True,
+        "generated_code": generated_code,
+        "languages": languages,
+        "level": level
+    }
 
 @app.get("/test-gemini")
 def test_gemini():

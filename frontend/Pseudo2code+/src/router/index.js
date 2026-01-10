@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Login from "@/views/Login.vue";
 import Dashboard from "@/views/Dashboard.vue";
+import GenerateCodeView from "@/views/GenerateCodeView.vue";
 import { getCurrentUser } from "@/services/authState";
 import Signup from "@/views/Signup.vue";
 import Splash from "@/views/Splash.vue";
@@ -27,6 +28,12 @@ const routes = [
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/generate-code",
+    name: "GenerateCode",
+    component: GenerateCodeView,
     meta: { requiresAuth: true },
   },
 ];
