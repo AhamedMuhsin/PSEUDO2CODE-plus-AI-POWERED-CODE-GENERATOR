@@ -19,9 +19,9 @@
           placeholder="FUNCTION bubbleSort(array):&#10;FOR i FROM 0 TO n-1:&#10;  FOR j FROM 0 TO n-i-2:&#10;    IF array[j] > array[j+1]:&#10;      SWAP array[j] AND array[j+1]"
           class="code-textarea"></textarea>
 
-          <div class="prompt-indicator" :class="promptQuality.level">
-  {{ promptQuality.message }}
-</div>
+        <div class="prompt-indicator" :class="promptQuality.level">
+          {{ promptQuality.message }}
+        </div>
 
 
         <!-- 🔥 Controls Row -->
@@ -35,7 +35,6 @@
               <option value="java">Java</option>
               <option value="cpp">C++</option>
               <option value="c">C</option>
-              <option value="csharp">C#</option>
             </select>
 
           </div>
@@ -52,21 +51,17 @@
           </div>
         </div>
 
-        <button
-  class="generate-btn"
-  :disabled="isLoading || !pseudocode.trim()"
-  @click="generateCodeHandler"
->
-  <span v-if="isLoading" class="btn-content">
-    <Loader2 class="icon icon-loading spin" />
-    Generating...
-  </span>
+        <button class="generate-btn" :disabled="isLoading || !pseudocode.trim()" @click="generateCodeHandler">
+          <span v-if="isLoading" class="btn-content">
+            <Loader2 class="icon icon-loading spin" />
+            Generating...
+          </span>
 
-  <span v-else class="btn-content">
-    <Sparkles class="icon icon-generate" />
-    {{ generatedCode ? "Re-Generate Code" : "Generate Code" }}
-  </span>
-</button>
+          <span v-else class="btn-content">
+            <Sparkles class="icon icon-generate" />
+            {{ generatedCode ? "Re-Generate Code" : "Generate Code" }}
+          </span>
+        </button>
 
 
         <div v-if="error" class="error-message">
@@ -85,19 +80,19 @@
             {{ selectedLanguage }}
           </span>
 
-        <div class="code-actions">
-  <button class="copy-btn" @click="copyToClipboard">
-  <Check v-if="copied" class="icon-sm icon-success" />
-  <Copy v-else class="icon-sm icon-copy" />
-  {{ copied ? "Copied" : "Copy" }}
-</button>
+          <div class="code-actions">
+            <button class="copy-btn" @click="copyToClipboard">
+              <Check v-if="copied" class="icon-sm icon-success" />
+              <Copy v-else class="icon-sm icon-copy" />
+              {{ copied ? "Copied" : "Copy" }}
+            </button>
 
 
-  <button class="download-btn" @click="downloadCode">
-    <Download class="icon-sm icon-download" />
-    Download
-  </button>
-</div>
+            <button class="download-btn" @click="downloadCode">
+              <Download class="icon-sm icon-download" />
+              Download
+            </button>
+          </div>
 
 
 
@@ -128,10 +123,12 @@
         </div>
 
         <!-- 🔥 FIXED BOTTOM BUTTON -->
-        <button class="visualize-btn" :disabled="!generatedCode" @click="$router.push('/visualize')">
+        <button class="visualize-btn" :disabled="!generatedCode || !canVisualize" @click="visualizeCode">
+
           <Play class="icon icon-visualize" />
           Visualize Code
         </button>
+
 
       </section>
 
@@ -141,6 +138,7 @@
 
 <script setup>
 import { ref } from "vue";
+import api from "@/services/api";
 import { useRouter } from "vue-router";
 import AuthNavbar from "@/components/Navbar/AuthNavbar.vue";
 import { generateCode } from "@/services/codeGenerationService";
@@ -167,7 +165,6 @@ const generatedCode = ref("");
 const explanation = ref("");
 const isLoading = ref(false);
 const error = ref("");
-const selectedLanguages = ref(["python"]);
 const codeBlock = ref(null);
 const copied = ref(false);
 
@@ -177,7 +174,6 @@ const languageMap = {
   java: "java",
   cpp: "cpp",
   c: "c",
-  csharp: "csharp",
 };
 
 const hljsLanguage = computed(() => {
@@ -185,6 +181,13 @@ const hljsLanguage = computed(() => {
 });
 
 const selectedLevel = ref("intermediate");
+const visualizableLanguages = ["python", "java", "javascript", "c", "cpp"];
+
+const canVisualize = computed(() => {
+  return ["python", "javascript", "java", "c", "cpp"].includes(
+    selectedLanguage.value
+  );
+});
 
 // Methods
 const generateCodeHandler = async () => {
@@ -199,11 +202,14 @@ const generateCodeHandler = async () => {
     );
 
     if (result.success) {
-      generatedCode.value =
+      generatedCode.value = stripMarkdownCodeFence(
         result.generated_code?.[selectedLanguage.value] ||
-        "No code generated for selected language";
+        "No code generated for selected language"
+      );
+
       explanation.value = result.explanation || "";
-    } else {
+    }
+    else {
       error.value = result.error || "Failed to generate code";
     }
   } catch (err) {
@@ -232,6 +238,14 @@ const promptQuality = computed(() => {
 
   return { level: "good", message: "Good prompt — ready to generate" };
 });
+function stripMarkdownCodeFence(code) {
+  if (!code) return code;
+
+  return code
+    .replace(/^```[\w]*\n?/i, "") // removes ```python
+    .replace(/```$/i, "")         // removes ending ```
+    .trim();
+}
 
 const downloadCode = () => {
   if (!generatedCode.value) return;
@@ -242,7 +256,6 @@ const downloadCode = () => {
     java: "java",
     cpp: "cpp",
     c: "c",
-    csharp: "cs",
   };
 
   const ext = extensionMap[selectedLanguage.value] || "txt";
@@ -270,6 +283,19 @@ const copyToClipboard = async () => {
     console.error("Copy failed", err);
   }
 };
+const visualizeCode = async () => {
+  if (!generatedCode.value || !selectedLanguage.value) return;
+
+  // 🔥 STRIP ```python ``` BEFORE VISUALIZATION
+  const cleanCode = stripMarkdownCodeFence(generatedCode.value);
+
+  // Store ONLY clean code for visualization
+  sessionStorage.setItem("visualize_code", cleanCode);
+  sessionStorage.setItem("visualize_language", selectedLanguage.value);
+
+  // 🚀 Navigate (NO API CALL HERE)
+  router.push("/visualize");
+};
 </script>
 
 <style scoped>
@@ -286,6 +312,7 @@ const copyToClipboard = async () => {
   gap: 32px;
   align-items: stretch;
 }
+
 .prompt-indicator {
   margin-top: 8px;
   font-size: 0.85rem;
@@ -302,6 +329,7 @@ const copyToClipboard = async () => {
 .prompt-indicator.good {
   color: #4ade80;
 }
+
 .icon {
   width: 18px;
   height: 18px;
@@ -311,8 +339,10 @@ const copyToClipboard = async () => {
   width: 14px;
   height: 14px;
 }
+
 .icon-success {
-  color: #4ade80; /* green */
+  color: #4ade80;
+  /* green */
 }
 
 .copy-btn {
@@ -337,6 +367,7 @@ const copyToClipboard = async () => {
   opacity: 0.6;
   margin-bottom: 8px;
 }
+
 /* ================= ICON BASE ================= */
 .icon,
 .icon-sm,
@@ -355,6 +386,7 @@ const copyToClipboard = async () => {
   width: 14px;
   height: 14px;
 }
+
 .download-btn {
   display: inline-flex;
   align-items: center;
@@ -377,32 +409,38 @@ const copyToClipboard = async () => {
 
 /* Generate */
 .icon-generate {
-  color: #a78bfa; /* violet-400 */
+  color: #a78bfa;
+  /* violet-400 */
 }
 
 /* Loading */
 .icon-loading {
-  color: #818cf8; /* indigo-400 */
+  color: #818cf8;
+  /* indigo-400 */
 }
 
 /* Copy */
 .icon-copy {
-  color: #60a5fa; /* blue-400 */
+  color: #60a5fa;
+  /* blue-400 */
 }
 
 /* Language badge */
 .icon-language {
-  color: #c084fc; /* purple-400 */
+  color: #c084fc;
+  /* purple-400 */
 }
 
 /* Empty state */
 .icon-empty {
-  color: #64748b; /* slate-500 */
+  color: #64748b;
+  /* slate-500 */
 }
 
 /* Visualize */
 .icon-visualize {
-  color: #4ade80; /* green-400 */
+  color: #4ade80;
+  /* green-400 */
 }
 
 /* ================= BUTTON ALIGNMENT ================= */
@@ -461,9 +499,10 @@ const copyToClipboard = async () => {
     transform: rotate(360deg);
   }
 }
+
 .prompt-indicator {
   margin-top: 10px;
-  margin-bottom: 20px; 
+  margin-bottom: 20px;
   padding: 8px 14px;
   border-radius: 999px;
   font-size: 0.8rem;
@@ -508,14 +547,17 @@ const copyToClipboard = async () => {
   padding: 18px;
   border: 1px solid rgba(99, 102, 241, 0.2);
 }
+
 .code-scroll {
   flex: 1;
   overflow-y: auto;
-  scrollbar-width: none;       /* Firefox */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .code-scroll::-webkit-scrollbar {
-  display: none;               /* Chrome / Edge */
+  display: none;
+  /* Chrome / Edge */
 }
 
 
@@ -579,10 +621,12 @@ code {
   max-width: 1400px;
   margin: 0 auto 32px;
 }
+
 .copy-btn:hover {
   background: rgba(96, 165, 250, 0.2);
   border-color: rgba(96, 165, 250, 0.4);
 }
+
 .visualize-btn:hover .icon-visualize {
   transform: translateX(2px);
   transition: transform 0.2s ease;

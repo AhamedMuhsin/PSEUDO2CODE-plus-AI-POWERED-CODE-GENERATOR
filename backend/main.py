@@ -4,12 +4,17 @@ import os
 
 # Load environment variables from .env file
 load_dotenv()
+import os
+print("GROQ_API_KEY exists:", bool(os.getenv("GROQ_API_KEY")))
 
+from services.ai.provider_manager import AIProviderManager
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from db import users_collection
 from services.user_service import add_xp, award_badge
 from services.gemini_service import generate_code, generate_multi_language
+from services.visualization.visualizer_router import get_visualization
+from urllib.parse import quote_plus
 
 from firebase_auth import get_current_user
 from services.user_service import (
@@ -34,6 +39,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+ai_manager = AIProviderManager()
 
 # ---------------- HEALTH CHECK (OPTIONAL BUT RECOMMENDED) ----------------
 @app.get("/")
@@ -90,45 +96,44 @@ async def get_dashboard(current_user=Depends(get_current_user)):
         raise HTTPException(status_code=404, detail="User not found")
 
     return {
+        "user": {
+            "name": user.get("name"),
+            "email": user.get("email"),
+        },
         "stats": user.get("stats", {}),
         "recent_activity": user.get("recent_activity", [])
     }
 
 @app.post("/visualize")
 async def visualize(payload: dict, current_user=Depends(get_current_user)):
-    uid = current_user["uid"]
-    algorithm = payload.get("algorithm", "algorithm")
+    language = payload.get("language")
+    code = payload.get("code")
+    algorithm = payload.get("algorithm") or payload.get("pseudocode")
 
-    result = await add_xp(uid, 15)
-    user = await get_user_by_uid(uid)
-    if user["stats"]["visualizations"] == 1:
-        await award_badge(
-            uid,
-            "first_visual",
-            "First Visualization",
-            "👁"
-    )
-    if result and result.get("leveled_up"):
-        await add_activity(
-            uid,
-            "level",
-            f"Leveled up to Level {result['level']}!"
-        )
-        await award_badge(
-            uid,
-            f"level_{result['level']}",
-            f"Reached Level {result['level']}",
-            "🚀"
+    if not language or not code:
+        raise HTTPException(
+            status_code=400,
+            detail="Language and code required"
         )
 
-    # ✅ LOG ACTIVITY
-    await add_activity(
-        uid,
-        "visual",
-        f"Visualized {algorithm} algorithm"
-    )
+    # Python → Python Tutor
+    if language.lower() == "python":
+        return {
+            "success": True,
+            "visualization": {
+                "type": "iframe",
+                "url": "https://pythontutor.com/iframe-embed.html"
+            }
+        }
 
-    return {"status": "ok"}
+    # Placeholder for next steps
+    return {
+        "success": True,
+        "visualization": {
+            "type": "message",
+            "message": f"Visualization for {language} coming soon"
+        }
+    }
 
 @app.get("/test-generate-code")
 async def test_generate_code():
@@ -137,14 +142,15 @@ async def test_generate_code():
         from services.gemini_service import generate_code
         
         pseudocode = "Input a number, multiply by 2, print result"
-        result = generate_code(pseudocode, language="python", explanation=False)
+        result = generate_code(pseudocode, language="python" , level="beginner")
         
         return {
-            "success": True,
-            "result": result,
-            "code_length": len(result.get("code", "")) if result.get("code") else 0,
-            "code_preview": result.get("code", "")[:100] if result.get("code") else "NO CODE"
-        }
+    "success": True,
+    "code": result,
+    "code_length": len(result),
+    "code_preview": result[:100]
+}
+
     except Exception as e:
         import traceback
         return {
@@ -167,20 +173,18 @@ async def generate_code_endpoint(
     if not pseudocode:
         raise HTTPException(status_code=400, detail="Pseudocode required")
 
-    # 1️⃣ Generate code using Gemini
-    result = generate_multi_language(
-        pseudocode=pseudocode,
-        languages=languages,
-        level=level
-    )
+    generated_code = {}
 
-    if not result.get("success"):
-        raise HTTPException(status_code=500, detail="Code generation failed")
+    # 🔥 STEP 6: Provider Manager usage
+    for lang in languages:
+        code = ai_manager.generate_code(
+            pseudocode=pseudocode,
+            language=lang,
+            level=level
+        )
+        generated_code[lang] = code
 
-    generated_code = result.get("generated_code", {})
-
-    # 2️⃣ Save generated code to MongoDB (PER LANGUAGE)
-    for lang, code in generated_code.items():
+        # Save per-language
         await save_generated_code(
             uid=uid,
             pseudocode=pseudocode,
@@ -190,28 +194,20 @@ async def generate_code_endpoint(
             explanation=None
         )
 
-    # 3️⃣ Add XP
+    # XP + Activity
     await add_xp(uid, 10 * len(languages))
-
-    # 4️⃣ Log activity
     await add_activity(
         uid,
         "code",
         f"Generated {', '.join(languages)} code ({level})"
     )
 
-    # 5️⃣ Return response
     return {
         "success": True,
         "generated_code": generated_code,
         "languages": languages,
         "level": level
     }
-
-@app.get("/test-gemini")
-def test_gemini():
-    from services.gemini_service import generate_code
-    return generate_code("Print Hello World", "python")
 
 @app.post("/generate-code-multi")
 async def generate_code_multi_endpoint(payload: dict, current_user=Depends(get_current_user)):

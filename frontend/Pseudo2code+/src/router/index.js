@@ -5,6 +5,7 @@ import GenerateCodeView from "@/views/GenerateCodeView.vue";
 import { getCurrentUser } from "@/services/authState";
 import Signup from "@/views/Signup.vue";
 import Splash from "@/views/Splash.vue";
+import Visualize from "@/views/Visualize.vue";
 
 const routes = [
     {
@@ -34,6 +35,12 @@ const routes = [
     path: "/generate-code",
     name: "GenerateCode",
     component: GenerateCodeView,
+    meta: { requiresAuth: true },
+  },
+    {
+    path: "/visualize",
+    name: "Visualize",
+    component: Visualize,
     meta: { requiresAuth: true },
   },
 ];

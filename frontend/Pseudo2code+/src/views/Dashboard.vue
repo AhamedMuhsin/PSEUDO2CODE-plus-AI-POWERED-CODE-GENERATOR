@@ -81,30 +81,31 @@ const activityMap = {
 
 onMounted(async () => {
   try {
-    const res = await api.get("/me");
-    const me = res.data;
+    const res = await api.get("/dashboard");
+    const data = res.data;
 
     // USER
     user.value = {
-      name: me.name,
-      email: me.email,
-      level: me.stats.level,
-      xp: me.stats.xp,
-      nextXp: me.stats.xp_next_level,
-      totalXp: me.stats.xp,
-      streak: me.stats.streak,
+      name: data.user.name,
+      email: data.user.email,
+      level: data.stats.level,
+      xp: data.stats.xp,
+      nextXp: data.stats.xp_next_level,
+      totalXp: data.stats.xp,
+      streak: data.stats.streak,
     };
 
     // STATS
-    stats.value = me.stats;
-      stats.value = res.data.stats;
-  suggestedTasks.value = buildSuggestedTasks(stats.value);
+    stats.value = data.stats;
 
-    // RECENT ACTIVITY (mapped)
-    activities.value = (me.recent_activity || []).map((a) => ({
+    // SUGGESTED TASKS
+    suggestedTasks.value = buildSuggestedTasks(data.stats);
+
+    // RECENT ACTIVITY
+    activities.value = (data.recent_activity || []).map((a) => ({
       title: a.title,
       time: new Date(a.created_at).toLocaleString(),
-      icon: activityMap[a.type]?.icon || "•",
+      icon: activityMap[a.type]?.icon,
       color: activityMap[a.type]?.color || "blue",
     }));
 
