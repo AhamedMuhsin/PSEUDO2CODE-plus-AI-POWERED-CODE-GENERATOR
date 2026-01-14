@@ -31,10 +31,17 @@
           </div>
         </div>
 
-        <div v-else-if="visualizerType === 'mermaid'" class="empty-state">
-          Control-flow visualization for this language
-          will be added in a future update.
-        </div>
+        <div v-else-if="visualizerType === 'mermaid'" ref="mermaidRef" class="mermaid-container"></div>
+        <div
+  v-else-if="visualizerType === 'mermaid'"
+  ref="mermaidRef"
+  class="mermaid-container">
+</div>
+
+<!-- ✅ ADD THIS BLOCK -->
+<div v-if="visualizerType === 'mermaid'" class="export-row">
+  <button class="export-btn" @click="exportSVG">Export SVG</button>
+</div>
 
         <div v-else-if="error" class="empty-state">
           {{ error }}
@@ -58,17 +65,60 @@
 </template>
 <script setup>
 import { ref, computed } from "vue";
+import { onMounted, nextTick, watch } from "vue";
+import api from "@/services/api";
 import { useRouter } from "vue-router";
 import AuthNavbar from "@/components/Navbar/AuthNavbar.vue";
+import mermaid from "mermaid";
+import { Canvg } from "canvg";
 
 const router = useRouter();
 const copied = ref(false);
+const mermaidRef = ref(null);
+const visualization = ref(null);
+const error = ref("");
+
+mermaid.initialize({
+  startOnLoad: false,
+  theme: "dark",
+  securityLevel: "loose",
+});
 const code = sessionStorage.getItem("visualize_code");
 const language = sessionStorage.getItem("visualize_language");
 
 if (!code || !language) {
   router.replace("/generate-code");
 }
+onMounted(async () => {
+  if (visualizerType.value !== "mermaid") return;
+
+  try {
+    const res = await api.post("/visualize", {
+      language,
+      code,
+    });
+
+    visualization.value = res.data.visualization;
+  } catch (err) {
+    error.value = "Failed to load visualization";
+    console.error(err);
+  }
+});
+watch(visualization, async (val) => {
+  if (!val || val.type !== "mermaid") return;
+  if (!mermaidRef.value) return;
+
+  await nextTick();
+
+  try {
+    mermaidRef.value.innerHTML = val.diagram;
+    mermaid.run({ nodes: [mermaidRef.value] });
+  } catch (err) {
+    console.error("Mermaid render failed", err);
+  }
+});
+
+
 const visualizerType = computed(() => {
   switch (language) {
     case "python":
@@ -115,6 +165,25 @@ const visualizationUrl = computed(() => {
   return `https://pythontutor.com/iframe-embed.html#code=${encoded}&py=3&curInstr=0`;
 });
 
+const exportSVG = () => {
+  const svg = mermaidRef.value?.querySelector("svg");
+  if (!svg) return;
+
+  const serializer = new XMLSerializer();
+  const source = serializer.serializeToString(svg);
+
+  const blob = new Blob([source], {
+    type: "image/svg+xml;charset=utf-8",
+  });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "cfg-diagram.svg";
+  link.click();
+
+  URL.revokeObjectURL(url);
+};
 </script>
 <style scoped>
 .visualize-container {
@@ -148,6 +217,16 @@ const visualizationUrl = computed(() => {
   gap: 14px;
   margin-top: 12px;
 }
+.mermaid-container {
+  background: #020617;
+  border-radius: 12px;
+  padding: 16px;
+  overflow-x: auto;
+}
+
+.mermaid svg {
+  max-width: 100%;
+}
 
 .copy-btn {
   background: transparent;
@@ -161,6 +240,55 @@ const visualizationUrl = computed(() => {
 
 .copy-btn:hover {
   background: rgba(255, 255, 255, 0.08);
+}
+.export-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.export-btn {
+  align-self: flex-start;
+  margin-top: 16px;
+
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #022c22;
+
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: none;
+
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  box-shadow:
+    0 10px 20px rgba(34, 197, 94, 0.25),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
+}
+
+.export-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+  box-shadow:
+    0 14px 30px rgba(34, 197, 94, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.export-btn:active {
+  transform: translateY(0);
+  box-shadow:
+    0 6px 14px rgba(34, 197, 94, 0.25),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
 .open-btn {

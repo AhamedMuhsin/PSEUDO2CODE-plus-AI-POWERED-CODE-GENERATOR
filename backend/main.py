@@ -11,10 +11,12 @@ from services.ai.provider_manager import AIProviderManager
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from db import users_collection
+import re
 from services.user_service import add_xp, award_badge
 from services.gemini_service import generate_code, generate_multi_language
 from services.visualization.visualizer_router import get_visualization
 from urllib.parse import quote_plus
+from services.visualization.cfg_generator import generate_mermaid_cfg
 
 from firebase_auth import get_current_user
 from services.user_service import (
@@ -116,8 +118,10 @@ async def visualize(payload: dict, current_user=Depends(get_current_user)):
             detail="Language and code required"
         )
 
-    # Python → Python Tutor
-    if language.lower() == "python":
+    lang = language.lower()
+
+    # ✅ Python → Python Tutor (UNCHANGED)
+    if lang == "python":
         return {
             "success": True,
             "visualization": {
@@ -126,7 +130,20 @@ async def visualize(payload: dict, current_user=Depends(get_current_user)):
             }
         }
 
-    # Placeholder for next steps
+    # ✅ C / C++ → Mermaid CFG (NEW)
+    if lang in ("c", "cpp"):
+        diagram = generate_mermaid_cfg(code)
+
+    return {
+        "success": True,
+        "visualization": {
+            "type": "mermaid",
+            "diagram": diagram
+        }
+    }
+
+
+    # ⏳ Other languages (UNCHANGED PLACEHOLDER)
     return {
         "success": True,
         "visualization": {
@@ -134,6 +151,7 @@ async def visualize(payload: dict, current_user=Depends(get_current_user)):
             "message": f"Visualization for {language} coming soon"
         }
     }
+
 
 @app.get("/test-generate-code")
 async def test_generate_code():
