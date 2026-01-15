@@ -46,9 +46,9 @@
         <div v-else-if="error" class="empty-state">
           {{ error }}
         </div>
-        <div v-else class="empty-state">
+        <!-- <div v-else class="empty-state">
           No code to visualize
-        </div>
+        </div> -->
       </section>
 
       <!-- RIGHT: Info -->
@@ -59,6 +59,15 @@
           <li>📦 Track variable changes</li>
           <li>🔁 Observe loops & functions</li>
         </ul>
+          <div class="cfg-legend">
+    <h3>CFG Legend</h3>
+    <ul>
+      <li><span class="dot start"></span> Start / End</li>
+      <li><span class="box"></span> Process</li>
+      <li><span class="diamond"></span> Condition</li>
+      <li><span class="arrow"></span> Loop Back</li>
+    </ul>
+  </div>
       </section>
     </div>
   </main>
@@ -200,6 +209,56 @@ const exportSVG = () => {
 .copy-btn.copied {
   border-color: #22c55e;
   color: #22c55e;
+}
+.cfg-legend {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.cfg-legend h3 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: #e5e7eb;
+}
+
+.cfg-legend ul {
+  list-style: none;
+  padding: 0;
+  color: #cbd5e1;
+}
+
+.cfg-legend li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.dot.start {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+
+.box {
+  width: 14px;
+  height: 10px;
+  background: #64748b;
+}
+
+.diamond {
+  width: 12px;
+  height: 12px;
+  background: #facc15;
+  transform: rotate(45deg);
+}
+
+.arrow {
+  width: 16px;
+  height: 2px;
+  background: #38bdf8;
 }
 
 .external-visualizer {

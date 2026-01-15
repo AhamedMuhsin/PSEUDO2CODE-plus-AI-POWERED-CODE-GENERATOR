@@ -25,6 +25,7 @@ from services.user_service import (
     update_last_login,
     serialize_user,
     save_generated_code,
+    save_visualization, 
     add_activity,
 )
 
@@ -122,6 +123,12 @@ async def visualize(payload: dict, current_user=Depends(get_current_user)):
 
     # ✅ Python → Python Tutor (UNCHANGED)
     if lang == "python":
+        await save_visualization(
+            uid=current_user["uid"],
+            language=lang,
+            code=code,
+            viz_type="python-tutor"
+        )
         return {
             "success": True,
             "visualization": {
@@ -133,24 +140,38 @@ async def visualize(payload: dict, current_user=Depends(get_current_user)):
     # ✅ C / C++ → Mermaid CFG (NEW)
     if lang in ("c", "cpp"):
         diagram = generate_mermaid_cfg(code)
-
-    return {
-        "success": True,
-        "visualization": {
-            "type": "mermaid",
-            "diagram": diagram
+        await save_visualization(
+            uid=current_user["uid"],
+            language=lang,
+            code=code,
+            viz_type="mermaid-cfg"
+        )
+        return {
+            "success": True,
+            "visualization": {
+                "type": "mermaid",
+                "diagram": diagram
+            }
         }
-    }
 
 
     # ⏳ Other languages (UNCHANGED PLACEHOLDER)
-    return {
-        "success": True,
-        "visualization": {
-            "type": "message",
-            "message": f"Visualization for {language} coming soon"
+    if lang in ("javascript", "java"):
+        await save_visualization(
+            uid=current_user["uid"],
+            language=lang,
+            code=code,
+            viz_type="external"
+        )
+
+        return {
+            "success": True,
+            "visualization": {
+                "type": "external",
+                "message": f"Use external visualizer for {language}"
+            }
         }
-    }
+
 
 
 @app.get("/test-generate-code")

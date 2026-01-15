@@ -22,7 +22,10 @@ def serialize_user(user):
             "xp_next_level": 100,
             "streak": 0,
         }),
-        "recent_activity": user.get("recent_activity", [])
+        "recent_activity": user.get("recent_activity", []),
+        "visualizations": user.get("visualizations", []),
+        "generated_codes": user.get("generated_codes", []),
+        "badges": user.get("badges", []),
     }
 
 # ---------------- GET USER ----------------
@@ -50,6 +53,7 @@ async def create_user(uid: str, email: str, provider: str, name: str = None):
         "badges": [],
         "recent_activity": [], 
         "generated_codes": [], 
+        "visualizations": [], 
     }
 
     await users_collection.insert_one(user)
@@ -166,6 +170,30 @@ async def save_generated_code(
         {
             "$push": {"generated_codes": record},
             "$inc": {"stats.codes_generated": 1}
+        }
+    )
+
+    return record
+
+# ---------------- SAVE VISUALIZATION ----------------
+async def save_visualization(
+    uid: str,
+    language: str,
+    code: str,
+    viz_type: str
+):
+    record = {
+        "language": language,
+        "type": viz_type,
+        "code": code,
+        "created_at": datetime.utcnow(),
+    }
+
+    await users_collection.update_one(
+        {"uid": uid},
+        {
+            "$push": {"visualizations": record},
+            "$inc": {"stats.visualizations": 1}
         }
     )
 

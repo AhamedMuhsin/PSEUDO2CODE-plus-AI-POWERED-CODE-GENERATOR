@@ -9,7 +9,7 @@
         <span class="action-arrow">→</span>
       </li>
 
-      <li class="action-item" @click="goTo('/visualize')">
+      <li class="action-item" @click="goTo('/visualize-playground')">
         <span class="icon visual"><Eye size="20" /></span>
         <span class="action-text">Visualize Code</span>
         <span class="action-arrow">→</span>
