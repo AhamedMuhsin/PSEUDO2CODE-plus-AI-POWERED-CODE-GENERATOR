@@ -171,8 +171,10 @@ async def visualize(payload: dict, current_user=Depends(get_current_user)):
                 "message": f"Use external visualizer for {language}"
             }
         }
-
-
+    return {
+        "success": False,
+        "message": f"Visualization not supported for {language}"
+    }
 
 @app.get("/test-generate-code")
 async def test_generate_code():

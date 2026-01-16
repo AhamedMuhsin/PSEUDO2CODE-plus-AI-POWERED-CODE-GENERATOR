@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import api from "@/services/api";
 import AuthNavbar from "@/components/Navbar/AuthNavbar.vue";
 
 const router = useRouter();
@@ -8,13 +9,24 @@ const router = useRouter();
 const code = ref("");
 const language = ref("python");
 
-const visualize = () => {
+const visualize = async () => {
   if (!code.value.trim()) return;
 
-  sessionStorage.setItem("visualize_code", code.value);
-  sessionStorage.setItem("visualize_language", language.value);
+  try {
+    // ✅ THIS IS THE FIX
+    await api.post("/visualize", {
+      language: language.value,
+      code: code.value,
+    });
 
-  router.push("/visualize");
+    // keep existing flow
+    sessionStorage.setItem("visualize_code", code.value);
+    sessionStorage.setItem("visualize_language", language.value);
+
+    router.push("/visualize");
+  } catch (err) {
+    console.error("Visualization failed", err);
+  }
 };
 </script>
 

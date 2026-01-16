@@ -15,22 +15,26 @@ def has_else_block(code: str):
     return bool(re.search(r"\belse\b", code))
 
 def sanitize_label(text: str) -> str:
-    """
-    Make text safe for Mermaid labels
-    """
     if not text:
-        return ""
+        return "condition"
 
     return (
-        text.replace("<", "&lt;")
-            .replace(">", "&gt;")
+        text.replace("&", "and")
+            .replace("<", "lt")
+            .replace(">", "gt")
             .replace("==", "=")
             .replace("!=", "≠")
             .replace("&&", "and")
             .replace("||", "or")
             .replace("%", "mod")
+            .replace("[", "")
+            .replace("]", "")
             .replace("(", "")
             .replace(")", "")
+            .replace("=", " eq ")
+            .replace("/", " div ")
+            .replace("*", " mul ")
+            .strip()
     )
 
 def generate_mermaid_cfg(code: str) -> str:
@@ -47,19 +51,14 @@ def generate_mermaid_cfg(code: str) -> str:
 
     # 🔁 LOOP + IF
     if (has_for or has_while) and if_conditions:
-        loop_cond = (
+        loop_cond = sanitize_label(
             extract_for_condition(code)
             if has_for
             else extract_while_condition(code)
         )
 
-        lines += [
-            f"LoopCond{{{loop_cond}}}",
-            "LoopBody[Loop Body]"
-        ]
-
-        lines.append("Start --> LoopCond")
-        lines.append("LoopCond -->|true| LoopBody")
+        lines.append(f"Start --> LoopCond{{{loop_cond}}}")
+        lines.append("LoopCond -->|true| LoopBody[Loop Body]")
 
         prev_node = "LoopBody"
 
@@ -71,8 +70,6 @@ def generate_mermaid_cfg(code: str) -> str:
             else_node = f"Else{idx}[False]"
             merge_node = f"Merge{idx}[merge]"
 
-            lines += [if_node, then_node, else_node, merge_node]
-
             lines.append(f"{prev_node} --> {if_node}")
             lines.append(f"{if_node} -->|true| {then_node}")
             lines.append(f"{then_node} --> {merge_node}")
@@ -81,16 +78,17 @@ def generate_mermaid_cfg(code: str) -> str:
 
             prev_node = merge_node
 
-
         lines.append(f"{prev_node} --> LoopCond")
         lines.append("LoopCond -->|false| Exit")
+
 
     # 🔀 MULTIPLE IFs (NO LOOP)
     elif len(if_conditions) > 1:
         prev_node = "Start"
 
         for idx, cond in enumerate(if_conditions):
-            if_node = f"If{idx}{{{cond}}}"
+            safe_cond = sanitize_label(cond)
+            if_node = f"If{idx}{{{safe_cond}}}"
             then_node = f"Then{idx}[True]"
             merge_node = f"Merge{idx}((merge))"
 

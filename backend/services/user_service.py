@@ -184,8 +184,8 @@ async def save_visualization(
 ):
     record = {
         "language": language,
-        "type": viz_type,
         "code": code,
+        "viz_type": viz_type,
         "created_at": datetime.utcnow(),
     }
 
@@ -195,6 +195,12 @@ async def save_visualization(
             "$push": {"visualizations": record},
             "$inc": {"stats.visualizations": 1}
         }
+    )
+
+    await add_activity(
+        uid,
+        "visualization",
+        f"Visualized {language} code"
     )
 
     return record
