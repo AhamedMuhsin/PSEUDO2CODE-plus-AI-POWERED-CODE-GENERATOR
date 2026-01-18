@@ -8,7 +8,7 @@
         <ProfileCard v-if="user" :name="user.name" :email="user.email" :level="user.level" :xp="user.xp"
           :nextXp="user.nextXp" :totalXp="user.totalXp" :streak="user.streak" />
         <QuickActions />
-<SuggestedTasks :tasks="suggestedTasks" />
+        <SuggestedTasks :tasks="suggestedTasks" />
 
       </div>
 
@@ -16,7 +16,7 @@
       <div class="right-column dashboard-main">
         <WelcomeHeader v-if="user" :name="user.name" />
         <StatsCards v-if="stats" :stats="stats" />
-<RecentActivity :activities="activities" />
+        <RecentActivity :activities="activities" />
 
 
       </div>
@@ -73,10 +73,10 @@ const suggestedTasks = ref([
 
 // 🔹 Activity mapper (IMPORTANT)
 const activityMap = {
-  code: { icon: Code, color: "blue" },
-  visual: { icon: Eye, color: "purple" },
-  badge: { icon: Trophy, color: "yellow" },
-  level: { icon: ArrowUp, color: "green" },
+  generated_code: { icon: Code, color: "blue" },
+  visualized_code: { icon: Eye, color: "purple" },
+  badge_earned: { icon: Trophy, color: "yellow" },
+  level_up: { icon: ArrowUp, color: "green" },
 };
 
 onMounted(async () => {
@@ -102,12 +102,14 @@ onMounted(async () => {
     suggestedTasks.value = buildSuggestedTasks(data.stats);
 
     // RECENT ACTIVITY
-    activities.value = (data.recent_activity || []).map((a) => ({
-      title: a.title,
-      time: new Date(a.created_at).toLocaleString(),
-      icon: activityMap[a.type]?.icon,
-      color: activityMap[a.type]?.color || "blue",
-    }));
+    activities.value = (data.recent_activity || [])
+      .slice(0, 4)
+      .map((a) => ({
+        title: a.title,
+        time: new Date(a.created_at).toLocaleString(),
+        icon: activityMap[a.type]?.icon,
+        color: activityMap[a.type]?.color || "blue",
+      }));
 
   } catch (err) {
     console.error("Failed to load dashboard", err);
@@ -194,6 +196,7 @@ const buildSuggestedTasks = (stats) => {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: 320px 1fr;

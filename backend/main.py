@@ -237,11 +237,6 @@ async def generate_code_endpoint(
 
     # XP + Activity
     await add_xp(uid, 10 * len(languages))
-    await add_activity(
-        uid,
-        "code",
-        f"Generated {', '.join(languages)} code ({level})"
-    )
 
     return {
         "success": True,
@@ -288,13 +283,6 @@ async def generate_code_multi_endpoint(payload: dict, current_user=Depends(get_c
         
         # Add XP
         await add_xp(uid, 10 * len(languages))
-        
-        # Log activity
-        await add_activity(
-            uid,
-            "code",
-            f"Generated code in {', '.join(languages)}"
-        )
         
         return {
             "success": True,

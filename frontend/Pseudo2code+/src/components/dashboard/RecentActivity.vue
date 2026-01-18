@@ -1,5 +1,12 @@
 <script setup>
 import { History } from "lucide-vue-next";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const goToHistory = () => {
+  router.push("/history");
+};
 
 const props = defineProps({
   activities: {
@@ -13,7 +20,10 @@ const props = defineProps({
   <div class="activity-card">
     <div class="header">
       <h3>Recent Activity</h3>
-      <span class="view-all">View All →</span>
+      <span class="view-all" @click="goToHistory">
+        View All →
+      </span>
+
     </div>
 
     <div v-if="!activities.length" class="empty-state">
@@ -25,10 +35,11 @@ const props = defineProps({
     </div>
 
     <ul v-else class="activity-list">
-      <li v-for="(item, i) in activities" :key="i" :class="item.color">
-        <div class="icon">
+      <li v-for="(item, i) in activities" :key="i">
+        <div class="icon-circle" :class="item.color">
           <component :is="item.icon" size="16" />
         </div>
+
 
         <div class="content">
           <p class="title">{{ item.title }}</p>
@@ -52,7 +63,6 @@ const props = defineProps({
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
 }
 
 .view-all {
@@ -86,6 +96,38 @@ const props = defineProps({
   font-size: 16px;
   flex-shrink: 0;
 }
+/* ICON CIRCLE */
+.icon-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 15px;
+}
+
+/* COLORS */
+.icon-circle.blue {
+  background: rgba(96, 165, 250, 0.18);
+  color: #60a5fa;
+}
+
+.icon-circle.purple {
+  background: rgba(192, 132, 252, 0.18);
+  color: #c084fc;
+}
+
+.icon-circle.yellow {
+  background: rgba(250, 204, 21, 0.18);
+  color: #facc15;
+}
+
+.icon-circle.green {
+  background: rgba(34, 197, 94, 0.18);
+  color: #22c55e;
+}
 
 .blue {
   background: rgba(96, 165, 250, 0.15);
@@ -111,10 +153,23 @@ const props = defineProps({
 .content {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .title {
+  font-size: 0.95rem;
+  color: #e5e7eb;
+  line-height: 0.9;
+}
+
+.time {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  line-height: 0.9;
+}
+
+
+/* .title {
   font-size: 0.95rem;
   color: #e5e7eb;
 }
@@ -122,7 +177,7 @@ const props = defineProps({
 .time {
   font-size: 0.75rem;
   color: #94a3b8;
-}
+} */
 
 /* EMPTY STATE */
 .empty-state {

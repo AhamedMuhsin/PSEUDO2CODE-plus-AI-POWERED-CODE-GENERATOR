@@ -3,6 +3,7 @@ from db import db
 from datetime import datetime
 
 users_collection = db["users"]
+MAX_ACTIVITY = 50
 
 # ---------------- SERIALIZER ----------------
 def serialize_user(user):
@@ -66,16 +67,30 @@ async def update_last_login(uid: str):
         {"$set": {"last_login": datetime.utcnow()}}
     )
 
-async def add_activity(uid: str, activity_type: str, title: str):
+async def add_activity(
+    uid: str,
+    activity_type: str,
+    title: str,
+    meta: dict | None = None
+):
     activity = {
         "type": activity_type,
         "title": title,
+        "meta": meta or {},
         "created_at": datetime.utcnow(),
     }
 
     await users_collection.update_one(
         {"uid": uid},
-        {"$push": {"recent_activity": {"$each": [activity], "$position": 0, "$slice": 10}}}
+        {
+            "$push": {
+                "recent_activity": {
+                    "$each": [activity],
+                    "$position": 0,   # newest first
+                    "$slice": MAX_ACTIVITY
+                }
+            }
+        }
     )
 
 async def add_xp(uid: str, xp_to_add: int):
@@ -86,6 +101,7 @@ async def add_xp(uid: str, xp_to_add: int):
     stats = user.get("stats", {})
     current_xp = stats.get("xp", 0)
     level = stats.get("level", 1)
+    old_level = level
 
     new_xp = current_xp + xp_to_add
     leveled_up = False
@@ -110,11 +126,24 @@ async def add_xp(uid: str, xp_to_add: int):
         }
     )
 
+    # 🔥 ADD THIS BLOCK
+    if leveled_up:
+        await add_activity(
+            uid,
+            "level_up",
+            f"Reached Level {level}",
+            meta={
+                "from_level": old_level,
+                "to_level": level
+            }
+        )
+
     return {
         "leveled_up": leveled_up,
         "level": level,
         "xp": new_xp,
     }
+
 
 async def award_badge(uid: str, badge_id: str, title: str, icon: str):
     user = await users_collection.find_one({"uid": uid})
@@ -142,9 +171,14 @@ async def award_badge(uid: str, badge_id: str, title: str, icon: str):
     # Log activity
     await add_activity(
         uid,
-        "badge",
-        f'Earned badge "{title}"'
+        "badge_earned",
+        f'Earned badge "{title}"',
+        meta={
+            "badge_id": badge_id,
+            "icon": icon
+        }
     )
+
 
     return True
 
@@ -173,6 +207,17 @@ async def save_generated_code(
         }
     )
 
+    await add_activity(
+        uid,
+        "generated_code",
+        f"Generated {language} code ({level})",
+        meta={
+            "language": language,
+            "level": level
+        }
+    )
+
+
     return record
 
 # ---------------- SAVE VISUALIZATION ----------------
@@ -199,8 +244,12 @@ async def save_visualization(
 
     await add_activity(
         uid,
-        "visualization",
-        f"Visualized {language} code"
+        "visualized_code",
+        f"Visualized {language} code",
+        meta={
+            "language": language,
+            "viz_type": viz_type
+        }
     )
 
     return record

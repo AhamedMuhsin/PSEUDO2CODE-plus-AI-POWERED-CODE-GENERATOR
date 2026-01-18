@@ -286,14 +286,25 @@ const copyToClipboard = async () => {
 const visualizeCode = async () => {
   if (!generatedCode.value || !selectedLanguage.value) return;
 
-  // 🔥 STRIP ```python ``` BEFORE VISUALIZATION
   const cleanCode = stripMarkdownCodeFence(generatedCode.value);
 
-  // Store ONLY clean code for visualization
+  try {
+    // 🔥 IMPORTANT: Notify backend that visualization happened
+    await api.post("/visualize", {
+      language: selectedLanguage.value,
+      code: cleanCode,
+      viz_type: "from_generate",
+    });
+  } catch (err) {
+    console.error("Failed to save visualization", err);
+    // ❗ Do NOT block user — visualization should still work
+  }
+
+  // Store for visualize page rendering
   sessionStorage.setItem("visualize_code", cleanCode);
   sessionStorage.setItem("visualize_language", selectedLanguage.value);
 
-  // 🚀 Navigate (NO API CALL HERE)
+  // Navigate
   router.push("/visualize");
 };
 </script>
