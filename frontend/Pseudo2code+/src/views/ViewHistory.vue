@@ -1,123 +1,476 @@
 <template>
   <AuthNavbar />
+  <div class="history-page">
+    <div class="page-layout">
+      <aside class="sidebar">
+        <ProfileCard v-if="user" :name="user.name" :email="user.email" :level="user.level" :xp="user.xp"
+          :nextXp="user.nextXp" :totalXp="user.totalXp" :streak="user.streak" />
+        <NavigationCard />
+      </aside>
+      <main>
+        <header class="history-header">
+          <!-- Title row -->
+          <div class="header-text">
+            <h1>Activity History</h1>
+            <p>Track everything you’ve done on the platform</p>
+          </div>
 
-  <main class="history-container">
-    <header class="page-header">
-      <h1>Code History</h1>
-      <p>Your learning timeline</p>
-    </header>
+          <!-- Search + filter row -->
+          <div class="header-controls">
+            <div class="search-box">
+              <Search size="18" />
+              <input v-model="search" placeholder="Search by language, level, or keyword" />
+            </div>
 
-    <!-- FILTERS -->
-    <div class="filters">
-      <button v-for="f in filters" :key="f.key" :class="{ active: activeFilter === f.key }"
-        @click="activeFilter = f.key">
-        {{ f.label }}
-      </button>
-    </div>
+            <select v-model="activeFilter">
+              <option value="all">All</option>
+              <option value="generated_code">Generated</option>
+              <option value="visualized_code">Visualized</option>
+              <option value="badge_earned">Badges</option>
+              <option value="level_up">Levels</option>
+            </select>
+          </div>
+        </header>
 
-    <!-- TIMELINE -->
-    <div v-if="filteredActivities.length" class="history-list">
-      <div v-for="(item, index) in filteredActivities" :key="index" class="history-item">
-        <div class="icon-circle" :class="getColor(item.type)">
-          <component :is="getIcon(item.type)" size="16" />
+        <!-- FILTERS
+      <div class="filters">
+        <button v-for="f in filters" :key="f.key" :class="{ active: activeFilter === f.key }" @click="setFilter(f.key)">
+          {{ f.label }}
+        </button>
+      </div> -->
+
+        <!-- LIST -->
+        <div v-if="filteredActivities.length" class="history-list">
+          <div v-for="item in filteredActivities" :key="item.created_at" class="history-item">
+
+
+            <!-- LEFT ICON -->
+            <div class="icon-circle" :class="getColor(item.type)">
+              <component :is="getIcon(item.type)" size="18" />
+            </div>
+
+            <!-- CENTER CONTENT -->
+            <div class="content">
+              <p class="title">{{ item.title }}</p>
+              <span class="time">{{ formatDate(item.created_at) }}</span>
+            </div>
+
+            <!-- RIGHT ACTIONS -->
+            <!-- RIGHT ACTIONS -->
+            <div class="actions">
+              <!-- Generated code -->
+              <button v-if="item.type === 'generated_code'" class="btn action-blue" @click.stop="viewCode(item)">
+                View Code
+              </button>
+
+              <button v-if="item.type === 'visualized_code'" class="btn action-purple" @click.stop="reVisualize(item)">
+                Re-visualize
+              </button>
+
+              <button v-if="item.type === 'badge_earned'" class="btn action-gold" @click.stop="viewBadge(item)">
+                View Badge
+              </button>
+
+              <button v-if="item.type === 'level_up'" class="btn action-cyan" @click.stop="viewLevel(item)">
+                Level Details
+              </button>
+
+
+              <button v-if="item.type === 'generated_code' || item.type === 'visualized_code'" class="btn danger"
+                @click.stop="deleteActivity(item)">
+                🗑
+              </button>
+
+            </div>
+
+          </div>
+
         </div>
 
-        <div class="content">
-          <p class="title">{{ item.title }}</p>
-          <span class="time">
-            {{ formatDate(item.created_at) }}
-          </span>
+        <div v-else class="empty">
+          No activity found.
         </div>
-      </div>
+      </main>
     </div>
-
-    <div v-else class="empty">
-      No activity found for this filter.
-    </div>
-  </main>
+  </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
+import { Search } from "lucide-vue-next";
+import { useRoute, useRouter } from "vue-router";
 import api from "@/services/api";
 import AuthNavbar from "@/components/Navbar/AuthNavbar.vue";
-import {
-  Code,
-  Eye,
-  Trophy,
-  ArrowUp
-} from "lucide-vue-next";
+import ProfileCard from "@/components/dashboard/ProfileCard.vue";
+import NavigationCard from "@/components/dashboard/NavigationCard.vue";
+import { Code, Eye, Trophy, ArrowUp } from "lucide-vue-next";
+import BaseModal from "@/components/common/BaseModal.vue";
 
-
-const activities = ref([]);
+const search = ref("");
+const route = useRoute();
+const router = useRouter();
+const user = ref(null);
+const stats = ref(null);
 const activeFilter = ref("all");
+const activities = ref([]);
 
 const filters = [
   { key: "all", label: "All" },
   { key: "generated_code", label: "Generated" },
   { key: "visualized_code", label: "Visualized" },
   { key: "badge_earned", label: "Badges" },
-  { key: "level_up", label: "Level Ups" },
+  { key: "level_up", label: "Levels" },
 ];
 
 onMounted(async () => {
   const res = await api.get("/me");
-  activities.value = res.data.recent_activity || [];
-});
-const filteredActivities = computed(() => {
-  if (activeFilter.value === "all") {
-    return activities.value;
+  const data = res.data;
+  user.value = {
+    name: data.name,
+    email: data.email,
+    level: data.stats.level,
+    xp: data.stats.xp,
+    nextXp: data.stats.xp_next_level,
+    totalXp: data.stats.xp,
+    streak: data.stats.streak,
+  };
+
+  activities.value = data.recent_activity || [];
+  if (route.query.type) {
+    activeFilter.value = route.query.type;
   }
-  return activities.value.filter(
-    (a) => a.type === activeFilter.value
-  );
+});
+
+const setFilter = (key) => {
+  router.push({
+    query: key === "all" ? {} : { type: key }
+  });
+};
+watch(activeFilter, (value) => {
+  router.replace({
+    query: value === "all" ? {} : { type: value },
+  });
 });
 
 const getIcon = (type) => {
   switch (type) {
-    case "generated_code":
-      return Code;
-    case "visualized_code":
-      return Eye;
-    case "badge_earned":
-      return Trophy;
-    case "level_up":
-      return ArrowUp;
-    default:
-      return Code;
+    case "generated_code": return Code;
+    case "visualized_code": return Eye;
+    case "badge_earned": return Trophy;
+    case "level_up": return ArrowUp;
+    default: return Code;
   }
 };
+const filteredActivities = computed(() => {
+  let list = activities.value;
+
+  /* 1️⃣ Apply dropdown filter (if selected) */
+  if (activeFilter.value !== "all") {
+    list = list.filter(a => a.type === activeFilter.value);
+  }
+
+  /* 2️⃣ Search logic */
+  const query = search.value
+    .toLowerCase()
+    .trim()
+    .split(/\s+/)        // split by spaces
+    .filter(Boolean);    // remove empty strings
+
+  if (!query.length) return list;
+
+  return list.filter(a => {
+    const haystack = [
+      a.title,
+      a.type,
+      a.meta?.language,
+      a.meta?.level,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+    // ALL words must be found somewhere
+    return query.every(word => haystack.includes(word));
+  });
+});
+
+
+const hasActions = (item) => {
+  return item.type === "visualized_code" || item.type === "generated_code";
+};
+
+const reVisualize = (item) => {
+  if (!item.meta || !item.meta.code || !item.meta.language) {
+    console.error("Missing visualization data", item.meta);
+    return;
+  }
+
+  sessionStorage.setItem("visualize_code", item.meta.code);
+  sessionStorage.setItem("visualize_language", item.meta.language);
+
+  router.push("/visualize-playground");
+};
+
 
 const getColor = (type) => {
   switch (type) {
-    case "generated_code":
-      return "blue";
-    case "visualized_code":
-      return "purple";
-    case "badge_earned":
-      return "yellow";
-    case "level_up":
-      return "green";
-    default:
-      return "blue";
+    case "generated_code": return "blue";
+    case "visualized_code": return "purple";
+    case "badge_earned": return "yellow";
+    case "level_up": return "green";
+    default: return "blue";
   }
 };
 
-const formatDate = (date) =>
-  new Date(date).toLocaleString();
+
+const formatDate = (d) => new Date(d).toLocaleString();
+
+const viewCode = (item) => {
+  if (!item?.meta) return;
+
+  sessionStorage.setItem(
+    "generate_pseudocode",
+    item.meta.pseudocode || ""
+  );
+
+  sessionStorage.setItem(
+    "generate_code",
+    item.meta.code || ""
+  );
+
+  sessionStorage.setItem(
+    "generate_language",
+    item.meta.language || "python"
+  );
+
+  sessionStorage.setItem(
+    "generate_level",
+    item.meta.level || "intermediate"
+  );
+
+  router.push("/generate-code");
+};
+
+
+const viewBadge = () => {
+  router.push("/badges");
+};
+
+const viewLevel = (item) => {
+  alert(`Reached ${item.title}`);
+};
+
+const deleteActivity = (item) => {
+  alert("Delete coming next");
+};
+
 
 </script>
 
 <style scoped>
-  .history-container {
+.history-page {
   min-height: 100vh;
-  padding: 40px 24px;
-  background: radial-gradient(circle at top, #0f172a, #020617);
+  background:
+    radial-gradient(circle at top left, #0f172a, transparent 60%),
+    radial-gradient(circle at top right, #020617, transparent 60%),
+    linear-gradient(180deg, #020617, #020617);
+}
+
+.history-container {
+  padding: 32px;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #0b1220, #0e1628);
 }
 
 .page-header {
   max-width: 1200px;
   margin: 0 auto 24px;
+}
+
+.page-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 28px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.history-header {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.header-text h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.header-text p {
+  color: #94a3b8;
+  margin-top: 6px;
+}
+
+/* Search + filter row */
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  /* 👈 THIS IS CRITICAL */
+}
+
+/* Search box stays wide */
+.header-controls .search-box {
+  flex: 1;
+  width: 100%;
+}
+
+/* Filter dropdown */
+.header-controls select {
+  min-width: 120px;
+}
+
+/* Hide actions safely */
+.history-item .actions {
+  visibility: hidden;
+  transform: translateX(8px);
+  pointer-events: none;
+  transition: transform 0.2s ease;
+}
+
+/* Show actions on hover */
+.history-item:hover .actions {
+  visibility: visible;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.actions .btn {
+  white-space: nowrap;
+}
+
+.history-item {
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.history-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.15);
+}
+
+.code-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-bottom: 10px;
+}
+
+.actions .btn {
+  background-image: none;
+  /* reset */
+}
+
+/* Force color buttons to override base .btn */
+.actions .action-blue {
+  background: #4f46e5 !important;
+}
+
+.actions .action-purple {
+  background: linear-gradient(135deg, #9333ea, #7c3aed) !important;
+}
+
+.actions .action-gold {
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+  color: #1f2937 !important;
+}
+
+.actions .action-cyan {
+  background: linear-gradient(135deg, #06b6d4, #0891b2) !important;
+}
+
+.actions .danger {
+  background: #020617 !important;
+  border-color: #7f1d1d !important;
+  color: #fca5a5 !important;
+}
+
+.actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.code-preview {
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 14px;
+  color: #e5e7eb;
+  font-size: 0.85rem;
+  max-height: 420px;
+  overflow: auto;
+}
+
+.history-header p {
+  color: #94a3b8;
+  margin-top: 6px;
+}
+
+.controls {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 14px;
+  padding: 12px 16px;
+  color: #94a3b8;
+  flex: 1;
+}
+
+.search-box input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #e5e7eb;
+  width: 260px;
+}
+
+.header-controls select {
+  min-width: 160px;
+  flex-shrink: 0;
+}
+
+/* Filter */
+select {
+  background: #020617;
+  border: 1px solid #1e293b;
+  color: #e5e7eb;
+  padding: 10px 14px;
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.content {
+  min-width: 0;
 }
 
 .page-header h1 {
@@ -129,6 +482,15 @@ const formatDate = (date) =>
   color: #94a3b8;
 }
 
+.history-item {
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.history-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
 /* FILTERS */
 .filters {
   display: flex;
@@ -137,10 +499,16 @@ const formatDate = (date) =>
   max-width: 1200px;
 }
 
+.meta {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
 .filters button {
   padding: 6px 14px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.06);
   color: #cbd5f5;
   border: none;
   cursor: pointer;
@@ -181,22 +549,22 @@ const formatDate = (date) =>
 }
 
 .icon-circle.blue {
-  background: rgba(96,165,250,0.18);
+  background: rgba(96, 165, 250, 0.18);
   color: #60a5fa;
 }
 
 .icon-circle.purple {
-  background: rgba(192,132,252,0.18);
+  background: rgba(192, 132, 252, 0.18);
   color: #c084fc;
 }
 
 .icon-circle.yellow {
-  background: rgba(250,204,21,0.18);
+  background: rgba(250, 204, 21, 0.18);
   color: #facc15;
 }
 
 .icon-circle.green {
-  background: rgba(34,197,94,0.18);
+  background: rgba(34, 197, 94, 0.18);
   color: #22c55e;
 }
 
@@ -207,6 +575,7 @@ const formatDate = (date) =>
   gap: 2px;
   margin-bottom: 10px;
 }
+
 .title {
   color: #e5e7eb;
 }

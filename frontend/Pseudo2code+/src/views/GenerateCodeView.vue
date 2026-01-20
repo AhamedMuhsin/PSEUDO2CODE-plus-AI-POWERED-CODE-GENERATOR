@@ -144,7 +144,7 @@ import AuthNavbar from "@/components/Navbar/AuthNavbar.vue";
 import { generateCode } from "@/services/codeGenerationService";
 import hljs from "highlight.js";
 import "highlight.js/styles/github-dark.css";
-import { watch, nextTick, computed } from "vue";
+import { watch, nextTick, computed , onMounted} from "vue";
 import {
   Check,
   Download,
@@ -187,6 +187,35 @@ const canVisualize = computed(() => {
   return ["python", "javascript", "java", "c", "cpp"].includes(
     selectedLanguage.value
   );
+});
+
+onMounted(() => {
+  const storedPseudocode = sessionStorage.getItem("generate_pseudocode");
+  const storedCode = sessionStorage.getItem("generate_code");
+  const storedLanguage = sessionStorage.getItem("generate_language");
+  const storedLevel = sessionStorage.getItem("generate_level");
+
+  if (storedPseudocode) {
+    pseudocode.value = storedPseudocode;
+  }
+
+  if (storedLanguage) {
+    selectedLanguage.value = storedLanguage;
+  }
+
+  if (storedLevel) {
+    selectedLevel.value = storedLevel;
+  }
+
+  if (storedCode) {
+    generatedCode.value = storedCode;
+  }
+
+  // Optional cleanup (recommended)
+  sessionStorage.removeItem("generate_pseudocode");
+  sessionStorage.removeItem("generate_code");
+  sessionStorage.removeItem("generate_language");
+  sessionStorage.removeItem("generate_level");
 });
 
 // Methods

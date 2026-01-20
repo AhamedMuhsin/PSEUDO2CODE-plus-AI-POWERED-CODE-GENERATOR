@@ -1,6 +1,11 @@
 
 from db import db
 from datetime import datetime
+from uuid import uuid4
+from services.badges.badge_engine import evaluate_badges
+from services.xp.xp_config import XP, xp_needed_for_level
+from services.activity.activity_service import add_activity
+
 
 users_collection = db["users"]
 MAX_ACTIVITY = 50
@@ -67,121 +72,6 @@ async def update_last_login(uid: str):
         {"$set": {"last_login": datetime.utcnow()}}
     )
 
-async def add_activity(
-    uid: str,
-    activity_type: str,
-    title: str,
-    meta: dict | None = None
-):
-    activity = {
-        "type": activity_type,
-        "title": title,
-        "meta": meta or {},
-        "created_at": datetime.utcnow(),
-    }
-
-    await users_collection.update_one(
-        {"uid": uid},
-        {
-            "$push": {
-                "recent_activity": {
-                    "$each": [activity],
-                    "$position": 0,   # newest first
-                    "$slice": MAX_ACTIVITY
-                }
-            }
-        }
-    )
-
-async def add_xp(uid: str, xp_to_add: int):
-    user = await users_collection.find_one({"uid": uid})
-    if not user:
-        return
-
-    stats = user.get("stats", {})
-    current_xp = stats.get("xp", 0)
-    level = stats.get("level", 1)
-    old_level = level
-
-    new_xp = current_xp + xp_to_add
-    leveled_up = False
-
-    while True:
-        xp_needed = level * 100
-        if new_xp >= xp_needed:
-            new_xp -= xp_needed
-            level += 1
-            leveled_up = True
-        else:
-            break
-
-    await users_collection.update_one(
-        {"uid": uid},
-        {
-            "$set": {
-                "stats.xp": new_xp,
-                "stats.level": level,
-                "stats.xp_next_level": level * 100,
-            }
-        }
-    )
-
-    # 🔥 ADD THIS BLOCK
-    if leveled_up:
-        await add_activity(
-            uid,
-            "level_up",
-            f"Reached Level {level}",
-            meta={
-                "from_level": old_level,
-                "to_level": level
-            }
-        )
-
-    return {
-        "leveled_up": leveled_up,
-        "level": level,
-        "xp": new_xp,
-    }
-
-
-async def award_badge(uid: str, badge_id: str, title: str, icon: str):
-    user = await users_collection.find_one({"uid": uid})
-
-    # Prevent duplicate badges
-    existing = user.get("badges", [])
-    if any(b["id"] == badge_id for b in existing):
-        return False
-
-    badge = {
-        "id": badge_id,
-        "title": title,
-        "icon": icon,
-        "earned_at": datetime.utcnow(),
-    }
-
-    await users_collection.update_one(
-        {"uid": uid},
-        {
-            "$push": {"badges": badge},
-            "$inc": {"stats.badges": 1}
-        }
-    )
-
-    # Log activity
-    await add_activity(
-        uid,
-        "badge_earned",
-        f'Earned badge "{title}"',
-        meta={
-            "badge_id": badge_id,
-            "icon": icon
-        }
-    )
-
-
-    return True
-
 async def save_generated_code(
     uid: str,
     pseudocode: str,
@@ -191,6 +81,7 @@ async def save_generated_code(
     explanation: str = None
 ):
     record = {
+        "id": str(uuid4()),
         "pseudocode": pseudocode,
         "language": language,
         "level": level,
@@ -213,11 +104,15 @@ async def save_generated_code(
         f"Generated {language} code ({level})",
         meta={
             "language": language,
-            "level": level
+            "level": level,
+            "pseudocode": pseudocode,
+            "code": code,
+            "code_id": record["id"]
         }
     )
 
-
+    user = await users_collection.find_one({"uid": uid})
+    await evaluate_badges(user, uid)
     return record
 
 # ---------------- SAVE VISUALIZATION ----------------
@@ -228,6 +123,7 @@ async def save_visualization(
     viz_type: str
 ):
     record = {
+        "id": str(uuid4()),
         "language": language,
         "code": code,
         "viz_type": viz_type,
@@ -248,8 +144,12 @@ async def save_visualization(
         f"Visualized {language} code",
         meta={
             "language": language,
-            "viz_type": viz_type
+            "code": code,
+            "viz_type": viz_type,
+            "viz_id": record["id"]
         }
     )
 
+    user = await users_collection.find_one({"uid": uid})
+    await evaluate_badges(user, uid)
     return record

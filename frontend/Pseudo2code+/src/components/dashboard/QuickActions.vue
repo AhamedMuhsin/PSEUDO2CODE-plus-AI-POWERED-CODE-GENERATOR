@@ -4,20 +4,42 @@
 
     <ul class="actions-list">
       <li class="action-item" @click="goTo('/generate-code')">
-        <span class="icon code"><Sparkles size="20" /></span>
+        <span class="icon code">
+          <Sparkles size="20" />
+        </span>
         <span class="action-text">Generate Code</span>
         <span class="action-arrow">→</span>
       </li>
 
       <li class="action-item" @click="goTo('/visualize-playground')">
-        <span class="icon visual"><Eye size="20" /></span>
+        <span class="icon visual">
+          <Eye size="20" />
+        </span>
         <span class="action-text">Visualize Code</span>
         <span class="action-arrow">→</span>
       </li>
 
       <li class="action-item" @click="goTo('/history')">
-        <span class="icon history"><Clock size="20" /></span>
-        <span class="action-text">View History</span>
+        <span class="icon history">
+          <Clock size="20" />
+        </span>
+        <span class="action-text">Activity History</span>
+        <span class="action-arrow">→</span>
+      </li>
+
+      <li class="action-item" @click="goTo('/history')">
+        <span class="icon badge">
+          <Trophy size="20" />
+        </span>
+        <span class="action-text">Badges</span>
+        <span class="action-arrow">→</span>
+      </li>
+
+      <li class="action-item" @click="goTo('/history')">
+        <span class="icon leaderboard">
+          <BarChart3 size="20" />
+        </span>
+        <span class="action-text">Leaderboard</span>
         <span class="action-arrow">→</span>
       </li>
     </ul>
@@ -26,7 +48,7 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { Sparkles, Eye, Clock } from "lucide-vue-next";
+import { Sparkles, Eye, Clock, Trophy, BarChart3 } from "lucide-vue-next";
 
 const router = useRouter();
 
@@ -106,6 +128,16 @@ const goTo = (path) => {
 .icon.history {
   background: rgba(34, 197, 94, 0.15);
   color: #4ade80;
+}
+
+.icon.badge {
+  background: rgba(189, 197, 34, 0.15);
+  color: #d9de4a;
+}
+
+.icon.leaderboard {
+  background: rgba(197, 34, 34, 0.15);
+  color: #d91212;
 }
 
 .action-text {

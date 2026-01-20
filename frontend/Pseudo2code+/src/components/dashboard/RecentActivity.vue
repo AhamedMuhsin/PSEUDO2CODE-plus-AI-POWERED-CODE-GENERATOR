@@ -3,6 +3,7 @@ import { History } from "lucide-vue-next";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+const emit = defineEmits(["select"]);
 
 const goToHistory = () => {
   router.push("/history");
@@ -35,7 +36,7 @@ const props = defineProps({
     </div>
 
     <ul v-else class="activity-list">
-      <li v-for="(item, i) in activities" :key="i">
+      <li v-for="(item, i) in activities" :key="i" class="activity-item" @click="emit('select', item)">
         <div class="icon-circle" :class="item.color">
           <component :is="item.icon" size="16" />
         </div>
@@ -63,6 +64,14 @@ const props = defineProps({
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.activity-item {
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.activity-item:hover {
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .view-all {
@@ -96,6 +105,7 @@ const props = defineProps({
   font-size: 16px;
   flex-shrink: 0;
 }
+
 /* ICON CIRCLE */
 .icon-circle {
   width: 36px;

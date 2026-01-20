@@ -12,7 +12,9 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from db import users_collection
 import re
-from services.user_service import add_xp, award_badge
+from services.xp.xp_service import add_xp
+from services.activity.activity_service import add_activity
+from services.xp.xp_config import XP
 from services.gemini_service import generate_code, generate_multi_language
 from services.visualization.visualizer_router import get_visualization
 from urllib.parse import quote_plus
@@ -25,8 +27,7 @@ from services.user_service import (
     update_last_login,
     serialize_user,
     save_generated_code,
-    save_visualization, 
-    add_activity,
+    save_visualization,
 )
 
 app = FastAPI()
@@ -129,6 +130,7 @@ async def visualize(payload: dict, current_user=Depends(get_current_user)):
             code=code,
             viz_type="python-tutor"
         )
+        await add_xp(current_user["uid"], XP["VISUALIZE"])
         return {
             "success": True,
             "visualization": {
@@ -146,6 +148,7 @@ async def visualize(payload: dict, current_user=Depends(get_current_user)):
             code=code,
             viz_type="mermaid-cfg"
         )
+        await add_xp(current_user["uid"], XP["VISUALIZE"])
         return {
             "success": True,
             "visualization": {
@@ -163,7 +166,7 @@ async def visualize(payload: dict, current_user=Depends(get_current_user)):
             code=code,
             viz_type="external"
         )
-
+        await add_xp(current_user["uid"], XP["VISUALIZE"])
         return {
             "success": True,
             "visualization": {
@@ -235,8 +238,7 @@ async def generate_code_endpoint(
             explanation=None
         )
 
-    # XP + Activity
-    await add_xp(uid, 10 * len(languages))
+    await add_xp(uid, XP["GENERATE_CODE"])
 
     return {
         "success": True,
@@ -245,53 +247,53 @@ async def generate_code_endpoint(
         "level": level
     }
 
-@app.post("/generate-code-multi")
-async def generate_code_multi_endpoint(payload: dict, current_user=Depends(get_current_user)):
-    """Generate code in multiple languages"""
-    uid = current_user["uid"]
+# @app.post("/generate-code-multi")
+# async def generate_code_multi_endpoint(payload: dict, current_user=Depends(get_current_user)):
+#     """Generate code in multiple languages"""
+#     uid = current_user["uid"]
     
-    pseudocode = payload.get("pseudocode", "")
-    languages = payload.get("languages", ["python", "javascript", "java"])
+#     pseudocode = payload.get("pseudocode", "")
+#     languages = payload.get("languages", ["python", "javascript", "java"])
     
-    if not pseudocode:
-        raise HTTPException(status_code=400, detail="Pseudocode is required")
+#     if not pseudocode:
+#         raise HTTPException(status_code=400, detail="Pseudocode is required")
     
-    # Generate code for all languages
-    result = generate_multi_language(pseudocode, languages=languages)
+#     # Generate code for all languages
+#     result = generate_multi_language(pseudocode, languages=languages)
     
-    if not result.get("success"):
-        raise HTTPException(status_code=500, detail="Code generation failed")
+#     if not result.get("success"):
+#         raise HTTPException(status_code=500, detail="Code generation failed")
     
-    # Save to database
-    try:
-        await users_collection.update_one(
-            {"uid": uid},
-            {
-                "$push": {
-                    "generated_codes": {
-                        "pseudocode": pseudocode,
-                        "code_by_language": result.get("generated_code"),
-                        "languages": languages,
-                        "created_at": __import__("datetime").datetime.utcnow()
-                    }
-                },
-                "$inc": {
-                    "stats.codes_generated": len(languages)
-                }
-            }
-        )
+#     # Save to database
+#     try:
+#         await users_collection.update_one(
+#             {"uid": uid},
+#             {
+#                 "$push": {
+#                     "generated_codes": {
+#                         "pseudocode": pseudocode,
+#                         "code_by_language": result.get("generated_code"),
+#                         "languages": languages,
+#                         "created_at": __import__("datetime").datetime.utcnow()
+#                     }
+#                 },
+#                 "$inc": {
+#                     "stats.codes_generated": len(languages)
+#                 }
+#             }
+#         )
         
-        # Add XP
-        await add_xp(uid, 10 * len(languages))
+#         # Add XP
+#         await add_xp(uid, XP["GENERATE_CODE"])
         
-        return {
-            "success": True,
-            "generated_code": result.get("generated_code"),
-            "xp_earned": 10 * len(languages)
-        }
+#         return {
+#             "success": True,
+#             "generated_code": result.get("generated_code"),
+#             "xp_earned": XP["GENERATE_CODE"]
+#         }
     
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}") 
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}") 
     
 @app.get("/list-models")
 def list_models():
@@ -302,3 +304,88 @@ def list_models():
     models = client.models.list()
 
     return [m.name for m in models]
+
+@app.get("/history/code/{code_id}")
+async def get_generated_code(
+    code_id: str,
+    current_user=Depends(get_current_user)
+):
+    user = await get_user_by_uid(current_user["uid"])
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    for code in user.get("generated_codes", []):
+        if code.get("id") == code_id:
+            return {
+                "success": True,
+                "code": code
+            }
+
+    raise HTTPException(status_code=404, detail="Code not found")
+
+@app.get("/leaderboard")
+async def get_leaderboard(
+    type: str = "level",
+    limit: int = 20,
+    page: int = 1,
+):
+    """
+    Global leaderboard
+    type: level | xp | codes | visualizations
+    """
+
+    limit = min(limit, 50)
+    skip = (page - 1) * limit
+
+    if type == "level":
+        sort = [
+            ("stats.level", -1),
+            ("stats.xp", -1),
+        ]
+    elif type == "xp":
+        sort = [("stats.xp", -1)]
+    elif type == "codes":
+        sort = [("stats.codes_generated", -1)]
+    elif type == "visualizations":
+        sort = [("stats.visualizations", -1)]
+    else:
+        raise HTTPException(status_code=400, detail="Invalid leaderboard type")
+
+    cursor = (
+        users_collection
+        .find(
+            {},
+            {
+                "_id": 0,
+                "uid": 1,
+                "name": 1,
+                "stats": 1,
+            }
+        )
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+    )
+
+    users = await cursor.to_list(length=limit)
+
+    leaderboard = []
+    rank_start = skip + 1
+
+    for idx, user in enumerate(users):
+        leaderboard.append({
+            "rank": rank_start + idx,
+            "uid": user["uid"],
+            "name": user.get("name"),
+            "level": user["stats"]["level"],
+            "xp": user["stats"]["xp"],
+            "codes_generated": user["stats"]["codes_generated"],
+            "visualizations": user["stats"]["visualizations"],
+        })
+
+    return {
+        "type": type,
+        "page": page,
+        "limit": limit,
+        "results": leaderboard
+    }

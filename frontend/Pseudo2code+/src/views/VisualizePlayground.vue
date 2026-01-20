@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import api from "@/services/api";
 import AuthNavbar from "@/components/Navbar/AuthNavbar.vue";
@@ -8,6 +8,16 @@ const router = useRouter();
 
 const code = ref("");
 const language = ref("python");
+
+onMounted(() => {
+  const savedCode = sessionStorage.getItem("visualize_code");
+  const savedLanguage = sessionStorage.getItem("visualize_language");
+
+  if (savedCode && savedLanguage) {
+    code.value = savedCode;
+    language.value = savedLanguage;
+  }
+});
 
 const visualize = async () => {
   if (!code.value.trim()) return;

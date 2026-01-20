@@ -16,7 +16,8 @@
       <div class="right-column dashboard-main">
         <WelcomeHeader v-if="user" :name="user.name" />
         <StatsCards v-if="stats" :stats="stats" />
-        <RecentActivity :activities="activities" />
+        <RecentActivity :activities="activities" @select="handleActivityClick" />
+
 
 
       </div>
@@ -105,11 +106,18 @@ onMounted(async () => {
     activities.value = (data.recent_activity || [])
       .slice(0, 4)
       .map((a) => ({
+        // 🔥 KEEP ORIGINAL DATA
+        type: a.type,
         title: a.title,
+        meta: a.meta,
+        created_at: a.created_at,
+
+        // 🔹 UI helpers
         time: new Date(a.created_at).toLocaleString(),
         icon: activityMap[a.type]?.icon,
         color: activityMap[a.type]?.color || "blue",
       }));
+
 
   } catch (err) {
     console.error("Failed to load dashboard", err);
@@ -166,6 +174,26 @@ const buildSuggestedTasks = (stats) => {
   });
 
   return tasks;
+};
+const handleActivityClick = (activity) => {
+  switch (activity.type) {
+    case "generated_code":
+      router.push("/history");
+      break;
+
+    case "visualized_code":
+      sessionStorage.setItem("visualize_language", activity.meta.language);
+      router.push("/visualize");
+      break;
+
+    case "badge_earned":
+      alert(activity.title);
+      break;
+
+    case "level_up":
+      alert(activity.title);
+      break;
+  }
 };
 
 </script>
