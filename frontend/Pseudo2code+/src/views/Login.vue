@@ -1,61 +1,61 @@
 <template>
-    <div class="page">
-        <!-- Back -->
-        <div class="back" @click="router.push('/')">
+  <div class="page">
+    <!-- Back -->
+    <div class="back" @click="router.push('/')">
       <img :src="arrowLeft" class="arrow" />
       Back to Home
     </div>
 
-        <!-- App Title -->
-        <div class="app-title">
-            <img :src="logo" alt="Pseudo2code+ Logo" class="icon" width="100" />
-        </div>
-
-        <!-- Login Card -->
-        <div class="card">
-            <h1>Welcome Back</h1>
-            <p class="subtitle">
-                Sign in to your account to continue learning
-            </p>
-
-            <!-- Email -->
-            <label>Email</label>
-            <input type="email" placeholder="demo@example.com" v-model="email"/>
-
-            <!-- Password -->
-            <div class="password-row">
-                <label>Password</label>
-                <span class="forgot" @click="handleForgotPassword">Forgot password?</span>
-            </div>
-            <input type="password" placeholder="test@123" v-model="password"/>
-            <p v-if="error" class="error-msg">{{ error }}</p>
-            <p v-if="success" class="success-msg">{{ success }}</p>
-
-            <!-- Sign In -->
-            <button class="primary-btn" @click="handleEmailLogin" :disabled="loading">Sign In</button>
-
-            <!-- Divider -->
-            <div class="divider">OR CONTINUE WITH</div>
-
-            <!-- Google -->
-            <button class="social-btn google" @click="handleGoogleLogin" :disabled="loading">
-                <img src="https://www.svgrepo.com/show/475656/google-color.svg" />
-                Sign in with Google
-            </button>
-
-            <!-- GitHub -->
-            <button class="social-btn github" @click="handleGithubLogin" :disabled="loading">           
-                <img src="https://www.svgrepo.com/show/512317/github-142.svg" />
-                Sign in with GitHub
-            </button>
-
-            <!-- Footer -->
-            <p class="footer">
-                Don't have an account?
-                <span @click="router.push('/signup')">Sign up</span>
-            </p>
-        </div>
+    <!-- App Title -->
+    <div class="app-title">
+      <img :src="logo" alt="Pseudo2code+ Logo" class="icon" width="100" />
     </div>
+
+    <!-- Login Card -->
+    <div class="card">
+      <h1>Welcome Back</h1>
+      <p class="subtitle">
+        Sign in to your account to continue learning
+      </p>
+
+      <!-- Email -->
+      <label>Email</label>
+      <input type="email" placeholder="demo@example.com" v-model="email" />
+
+      <!-- Password -->
+      <div class="password-row">
+        <label>Password</label>
+        <span class="forgot" @click="handleForgotPassword">Forgot password?</span>
+      </div>
+      <input type="password" placeholder="test@123" v-model="password" />
+      <p v-if="error" class="error-msg">{{ error }}</p>
+      <p v-if="success" class="success-msg">{{ success }}</p>
+
+      <!-- Sign In -->
+      <button class="primary-btn" @click="handleEmailLogin" :disabled="loading">Sign In</button>
+
+      <!-- Divider -->
+      <div class="divider">OR CONTINUE WITH</div>
+
+      <!-- Google -->
+      <button class="social-btn google" @click="handleGoogleLogin" :disabled="loading">
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg" />
+        Sign in with Google
+      </button>
+
+      <!-- GitHub -->
+      <button class="social-btn github" @click="handleGithubLogin" :disabled="loading">
+        <img src="https://www.svgrepo.com/show/512317/github-142.svg" />
+        Sign in with GitHub
+      </button>
+
+      <!-- Footer -->
+      <p class="footer">
+        Don't have an account?
+        <span @click="router.push('/signup')">Sign up</span>
+      </p>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -163,8 +163,8 @@ const handleGithubLogin = async () => {
 <style scoped>
 /* Page */
 * {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .page {
@@ -190,6 +190,7 @@ const handleGithubLogin = async () => {
 .arrow {
   width: 18px;
 }
+
 .error-msg {
   margin-top: 15px;
   color: #ef4444;
@@ -212,116 +213,122 @@ const handleGithubLogin = async () => {
 
 /* App title */
 .app-title {
-    margin-top: 10px;
-    margin-bottom: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .icon {
-    color: #6c7bff;
-    margin-right: 2px;
+  color: #6c7bff;
+  margin-right: 2px;
 }
 
 /* Card */
 .card {
-    width: 500px;
-    padding: 36px;
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(20px);
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
-    margin-bottom: 15px;
+  width: 500px;
+  padding: 36px;
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transition: box-shadow 0.2s ease;
+  margin-bottom: 20px;
+}
+
+.card:hover {
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
 }
 
 /* ===== Google & GitHub Button Base ===== */
 .social-btn {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 12px;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    cursor: pointer;
-    background: #ffffff;
-    color: #000000;
-    font-weight: 700;
-    border: none;
-    transition: all 0.25s ease;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  background: #ffffff;
+  color: #000000;
+  font-weight: 700;
+  border: none;
+  transition: all 0.25s ease;
 }
 
 /* ===== Hover Effect ===== */
 .social-btn:hover {
-    background: #000000;
-    color: #ffffff;
-    transform: translateY(-2px);
-    border: 1px solid #ffffff;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  background: #000000;
+  color: #ffffff;
+  transform: translateY(-2px);
+  border: 1px solid #ffffff;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
 }
 
 .social-btn img {
-    width: 18px;
-    transition: filter 0.25s ease;
+  width: 18px;
+  transition: filter 0.25s ease;
 }
 
 .social-btn:hover img {
-    filter: brightness(0) invert(1);
+  filter: brightness(0) invert(1);
 }
 
 .google {
-    transition: all 0.25s ease;
+  transition: all 0.25s ease;
 }
 
 .google:hover {
-    transform: translateY(-2px);
-    border-color: #6c7bff;
-    color: white;
-    box-shadow: 0 10px 30px rgba(108, 123, 255, 0.25);
+  transform: translateY(-2px);
+  border-color: #6c7bff;
+  color: white;
+  box-shadow: 0 10px 30px rgba(108, 123, 255, 0.25);
 }
 
 /* GitHub hover */
 .github {
-    transition: all 0.25s ease;
+  transition: all 0.25s ease;
 }
 
 .github:hover {
-    transform: translateY(-2px);
-    border-color: #6c7bff;
-    color: white;
-    box-shadow: 0 10px 30px rgba(108, 123, 255, 0.25);
+  transform: translateY(-2px);
+  border-color: #6c7bff;
+  color: white;
+  box-shadow: 0 10px 30px rgba(108, 123, 255, 0.25);
 }
 
 /* Forgot password hover */
 .forgot {
-    transition: color 0.2s ease;
+  transition: color 0.2s ease;
 }
 
 .forgot:hover {
-    color: #8b95ff;
-    text-decoration: underline;
+  color: #8b95ff;
+  text-decoration: underline;
 }
 
 /* Sign up hover */
 .footer span {
-    transition: color 0.2s ease;
+  transition: color 0.2s ease;
 }
 
 .footer span:hover {
-    color: #8b95ff;
-    text-decoration: underline;
+  color: #8b95ff;
+  text-decoration: underline;
 }
 
 /* Headings */
 h1 {
-    text-align: center;
-    margin-bottom: 6px;
+  text-align: center;
+  margin-bottom: 6px;
 }
 
 .subtitle {
-    text-align: center;
-    color: #9aa4b2;
-    font-size: 14px;
-    margin-bottom: 28px;
+  text-align: center;
+  color: #9aa4b2;
+  font-size: 14px;
+  margin-bottom: 28px;
 }
 
 /* Labels */
@@ -342,74 +349,75 @@ input {
   border: 1px solid #1f2a44;
   color: #fff;
 }
+
 /* Password row */
 .password-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .forgot {
-    font-size: 12px;
-    color: #6c7bff;
-    cursor: pointer;
+  font-size: 12px;
+  color: #6c7bff;
+  cursor: pointer;
 }
 
 /* Primary button */
 .primary-btn {
-    width: 100%;
-    padding: 14px;
-    background: #5b6cff;
-    border: none;
-    border-radius: 12px;
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 15px;
+  width: 100%;
+  padding: 14px;
+  background: #5b6cff;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 15px;
 }
 
 .primary-btn:hover {
-    background: #4b5cf0;
+  background: #4b5cf0;
 }
 
 /* Divider */
 .divider {
-    text-align: center;
-    color: #6b7280;
-    font-size: 12px;
-    margin: 22px 0;
-    position: relative;
+  text-align: center;
+  color: #6b7280;
+  font-size: 12px;
+  margin: 22px 0;
+  position: relative;
 }
 
 .divider::before,
 .divider::after {
-    content: "";
-    height: 2px;
-    width: 30%;
-    background: #1f2937;
-    position: absolute;
-    top: 50%;
+  content: "";
+  height: 2px;
+  width: 30%;
+  background: #1f2937;
+  position: absolute;
+  top: 50%;
 }
 
 .divider::before {
-    left: 0;
+  left: 0;
 }
 
 .divider::after {
-    right: 0;
+  right: 0;
 }
 
 /* Footer */
 .footer {
-    text-align: center;
-    margin-top: 10px;
-    font-size: 14px;
-    color: #9aa4b2;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #9aa4b2;
 }
 
 .footer span {
-    color: #6c7bff;
-    cursor: pointer;
+  color: #6c7bff;
+  cursor: pointer;
 }
 </style>

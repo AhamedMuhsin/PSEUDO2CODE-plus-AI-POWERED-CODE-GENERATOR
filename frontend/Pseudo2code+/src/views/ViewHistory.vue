@@ -32,17 +32,9 @@
           </div>
         </header>
 
-        <!-- FILTERS
-      <div class="filters">
-        <button v-for="f in filters" :key="f.key" :class="{ active: activeFilter === f.key }" @click="setFilter(f.key)">
-          {{ f.label }}
-        </button>
-      </div> -->
-
         <!-- LIST -->
         <div v-if="filteredActivities.length" class="history-list">
           <div v-for="item in filteredActivities" :key="item.created_at" class="history-item">
-
 
             <!-- LEFT ICON -->
             <div class="icon-circle" :class="getColor(item.type)">
@@ -55,7 +47,6 @@
               <span class="time">{{ formatDate(item.created_at) }}</span>
             </div>
 
-            <!-- RIGHT ACTIONS -->
             <!-- RIGHT ACTIONS -->
             <div class="actions">
               <!-- Generated code -->
@@ -770,16 +761,17 @@ select {
 
 /* Card */
 .history-card {
-  background: linear-gradient(145deg, #0b1220, #0e1628);
-  border: 1px solid #1e293b;
-  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.85); 
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
   padding: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .history-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
 }
 
 .title {

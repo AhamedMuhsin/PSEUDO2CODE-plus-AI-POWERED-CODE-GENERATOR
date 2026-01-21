@@ -64,14 +64,21 @@ const formatDate = (date) =>
 
 .badge-card {
     /* background: linear-gradient(145deg, #0b1220, #0e1628); */
-    background: rgba(15, 23, 42, 0.85);
-    border-radius: 18px;
+  background: rgba(15, 23, 42, 0.85); 
+  border-radius: 16px;
     padding: 24px;
-    border: 1px solid #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     text-align: center;
-    transition: all 0.25s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     cursor: default;
 }
+
+.badge-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+}
+
 .badge-icon {
   font-size: 3rem;
   margin-bottom: 14px;

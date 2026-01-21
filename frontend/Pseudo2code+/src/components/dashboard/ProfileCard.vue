@@ -73,7 +73,7 @@ const initials = computed(() => {
 </script>
 <style scoped>
 .profile-card {
-  background: rgba(15, 23, 42, 0.85); /* ✅ SAME AS OTHER CARDS */
+  background: rgba(15, 23, 42, 0.85); 
   border-radius: 16px;
   padding: 20px;
   border: 1px solid rgba(255, 255, 255, 0.06);

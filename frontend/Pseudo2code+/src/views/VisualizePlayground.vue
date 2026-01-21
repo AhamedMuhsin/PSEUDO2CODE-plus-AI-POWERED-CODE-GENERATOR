@@ -121,14 +121,16 @@ const visualize = async () => {
 
 /* 🔮 Glass Card */
 .playground-card {
-  margin-top: 32px;
-  background: rgba(15, 23, 42, 0.85);
-  border-radius: 18px;
-  padding: 24px;
+  background: rgba(15, 23, 42, 0.85); 
+  border-radius: 16px;
+  padding: 32px;
   border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.03),
-    0 20px 40px rgba(0,0,0,0.6);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transition: box-shadow 0.2s ease;
+}
+
+.playground-card:hover {
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
 }
 
 /* 🧠 Code Input */

@@ -34,12 +34,13 @@ defineProps({
   justify-content: space-between;
   gap: 28px;
   border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
 }
 
 .icon-container {

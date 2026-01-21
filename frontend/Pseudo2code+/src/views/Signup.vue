@@ -8,7 +8,7 @@
 
     <!-- Logo -->
     <div class="app-title">
-      <img :src="logo" alt="pseudo2code logo" class="icon" width="100"/>
+      <img :src="logo" alt="pseudo2code logo" class="icon" width="100" />
     </div>
 
     <!-- Card -->
@@ -143,91 +143,93 @@ const handleGithub = async () => {
 
 /* Divider */
 .divider {
-    text-align: center;
-    color: #6b7280;
-    font-size: 12px;
-    margin: 22px 0;
-    position: relative;
+  text-align: center;
+  color: #6b7280;
+  font-size: 12px;
+  margin: 22px 0;
+  position: relative;
 }
+
 .social-btn {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 12px;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    cursor: pointer;
-    background: #ffffff;
-    color: #000000;
-    font-weight: 700;
-    border: none;
-    transition: all 0.25s ease;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  background: #ffffff;
+  color: #000000;
+  font-weight: 700;
+  border: none;
+  transition: all 0.25s ease;
 }
 
 /* ===== Hover Effect ===== */
 .social-btn:hover {
-    background: #000000;
-    color: #ffffff;
-    transform: translateY(-2px);
-    border: 1px solid #ffffff;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  background: #000000;
+  color: #ffffff;
+  transform: translateY(-2px);
+  border: 1px solid #ffffff;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
 }
 
 .social-btn img {
-    width: 18px;
-    transition: filter 0.25s ease;
+  width: 18px;
+  transition: filter 0.25s ease;
 }
 
 .social-btn:hover img {
-    filter: brightness(0) invert(1);
+  filter: brightness(0) invert(1);
 }
 
 .divider::before,
 .divider::after {
-    content: "";
-    height: 2px;
-    width: 30%;
-    background: #1f2937;
-    position: absolute;
-    top: 50%;
+  content: "";
+  height: 2px;
+  width: 30%;
+  background: #1f2937;
+  position: absolute;
+  top: 50%;
 }
 
 .divider::before {
-    left: 0;
+  left: 0;
 }
 
 .divider::after {
-    right: 0;
+  right: 0;
 }
 
 .google {
-    transition: all 0.25s ease;
+  transition: all 0.25s ease;
 }
 
 .google:hover {
-    transform: translateY(-2px);
-    border-color: #6c7bff;
-    color: white;
-    box-shadow: 0 10px 30px rgba(108, 123, 255, 0.25);
+  transform: translateY(-2px);
+  border-color: #6c7bff;
+  color: white;
+  box-shadow: 0 10px 30px rgba(108, 123, 255, 0.25);
 }
 
 /* GitHub hover */
 .github {
-    transition: all 0.25s ease;
+  transition: all 0.25s ease;
 }
 
 .github:hover {
-    transform: translateY(-2px);
-    border-color: #6c7bff;
-    color: white;
-    box-shadow: 0 10px 30px rgba(108, 123, 255, 0.25);
+  transform: translateY(-2px);
+  border-color: #6c7bff;
+  color: white;
+  box-shadow: 0 10px 30px rgba(108, 123, 255, 0.25);
 }
 
 .arrow {
   width: 18px;
 }
+
 .error-msg {
   color: #ef4444;
   background: rgba(239, 68, 68, 0.1);
@@ -247,24 +249,30 @@ const handleGithub = async () => {
 }
 
 .app-title {
-    margin-top: 10px;
-    margin-bottom: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .icon {
-    color: #6c7bff;
-    margin-right: 2px;
+  color: #6c7bff;
+  margin-right: 2px;
 }
 
 .card {
   /* margin-top: 30px; */
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   width: 500px;
   padding: 36px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(20px);
-  box-shadow: 0 0 60px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
 }
 
 h1 {
@@ -295,31 +303,31 @@ input {
 }
 
 .google {
-    transition: all 0.25s ease;
+  transition: all 0.25s ease;
 }
 
 .google:hover {
-    transform: translateY(-2px);
-    border-color: #6c7bff;
-    color: white;
-    box-shadow: 0 10px 30px rgba(108, 123, 255, 0.25);
+  transform: translateY(-2px);
+  border-color: #6c7bff;
+  color: white;
+  box-shadow: 0 10px 30px rgba(108, 123, 255, 0.25);
 }
 
 .primary-btn {
-    width: 100%;
-    padding: 14px;
-    background: #5b6cff;
-    border: none;
-    border-radius: 12px;
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 15px;
+  width: 100%;
+  padding: 14px;
+  background: #5b6cff;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 15px;
 }
 
 .primary-btn:hover {
-    background: #4b5cf0;
+  background: #4b5cf0;
 }
 
 .divider {
@@ -330,33 +338,34 @@ input {
 }
 
 .github {
-    transition: all 0.25s ease;
+  transition: all 0.25s ease;
 }
 
 .github:hover {
-    transform: translateY(-2px);
-    border-color: #6c7bff;
-    color: white;
-    box-shadow: 0 10px 30px rgba(108, 123, 255, 0.25);
+  transform: translateY(-2px);
+  border-color: #6c7bff;
+  color: white;
+  box-shadow: 0 10px 30px rgba(108, 123, 255, 0.25);
 }
+
 .footer span {
-    transition: color 0.2s ease;
+  transition: color 0.2s ease;
 }
 
 .footer span:hover {
-    color: #8b95ff;
-    text-decoration: underline;
+  color: #8b95ff;
+  text-decoration: underline;
 }
 
 .footer {
-    text-align: center;
-    margin-top: 10px;
-    font-size: 14px;
-    color: #9aa4b2;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #9aa4b2;
 }
 
 .footer span {
-    color: #6c7bff;
-    cursor: pointer;
+  color: #6c7bff;
+  cursor: pointer;
 }
 </style>

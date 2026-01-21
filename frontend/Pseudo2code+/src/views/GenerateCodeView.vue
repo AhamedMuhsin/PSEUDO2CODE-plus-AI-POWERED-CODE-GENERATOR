@@ -693,11 +693,16 @@ code {
 }
 
 .card {
-  background: rgba(15, 23, 42, 0.85);
-  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.85); 
+  border-radius: 16px;
   padding: 32px;
   border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
 }
 
 .output-card {
