@@ -91,6 +91,43 @@
           No activity found.
         </div>
       </main>
+      <BaseModal v-if="showLevelModal" @close="showLevelModal = false">
+        <template #header>
+          <h3>Level Progress</h3>
+        </template>
+
+        <div class="level-modal">
+          <div class="level-header">
+            <h2>Level {{ user.level }}</h2>
+            <p class="muted">
+              {{ levelActivity?.title }}
+            </p>
+          </div>
+
+          <!-- XP Progress -->
+          <div class="xp-section">
+            <div class="xp-info">
+              <span>XP</span>
+              <span>{{ user.xp }} / {{ user.nextXp }}</span>
+            </div>
+
+            <div class="xp-bar">
+              <div class="xp-fill" :style="{ width: xpPercent + '%' }"></div>
+            </div>
+          </div>
+
+          <!-- XP Rules -->
+          <div class="xp-rules">
+            <h4>How XP works</h4>
+            <ul>
+              <li>Generate code → <strong>+10 XP</strong></li>
+              <li>Visualize code → <strong>+8 XP</strong></li>
+              <li>Earn badge → <strong>+5 XP</strong></li>
+              <li>Level up bonus → <strong>+20 XP</strong></li>
+            </ul>
+          </div>
+        </div>
+      </BaseModal>
     </div>
   </div>
 </template>
@@ -113,6 +150,8 @@ const user = ref(null);
 const stats = ref(null);
 const activeFilter = ref("all");
 const activities = ref([]);
+const showLevelModal = ref(false);
+const levelActivity = ref(null);
 
 const filters = [
   { key: "all", label: "All" },
@@ -199,6 +238,14 @@ const hasActions = (item) => {
   return item.type === "visualized_code" || item.type === "generated_code";
 };
 
+const xpPercent = computed(() => {
+  if (!user.value) return 0;
+  return Math.min(
+    Math.round((user.value.xp / user.value.nextXp) * 100),
+    100
+  );
+});
+
 const reVisualize = (item) => {
   if (!item.meta || !item.meta.code || !item.meta.language) {
     console.error("Missing visualization data", item.meta);
@@ -257,14 +304,13 @@ const viewBadge = () => {
 };
 
 const viewLevel = (item) => {
-  alert(`Reached ${item.title}`);
+  levelActivity.value = item;
+  showLevelModal.value = true;
 };
 
 const deleteActivity = (item) => {
   alert("Delete coming next");
 };
-
-
 </script>
 
 <style scoped>
@@ -404,6 +450,84 @@ const deleteActivity = (item) => {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.level-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.level-header h2 {
+  font-size: 1.8rem;
+  color: #f8fafc;
+}
+
+.muted {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.xp-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.xp-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #cbd5f5;
+}
+
+.xp-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: #020617;
+  overflow: hidden;
+  border: 1px solid #1e293b;
+}
+
+.xp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #22d3ee);
+  transition: width 0.3s ease;
+}
+
+.xp-rules h4 {
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+
+.xp-rules ul {
+  padding-left: 16px;
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.level-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.level-stats div {
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+}
+
+.level-stats span {
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
+.level-stats strong {
+  font-size: 1.1rem;
+  color: #f8fafc;
 }
 
 .code-preview {
