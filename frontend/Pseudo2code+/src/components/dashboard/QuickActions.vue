@@ -27,7 +27,7 @@
         <span class="action-arrow">→</span>
       </li>
 
-      <li class="action-item" @click="goTo('/history')">
+      <li class="action-item" @click="goTo('/badges')">
         <span class="icon badge">
           <Trophy size="20" />
         </span>
@@ -35,7 +35,7 @@
         <span class="action-arrow">→</span>
       </li>
 
-      <li class="action-item" @click="goTo('/history')">
+      <li class="action-item" @click="goTo('/leaderboard')">
         <span class="icon leaderboard">
           <BarChart3 size="20" />
         </span>

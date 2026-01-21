@@ -8,6 +8,7 @@ import Splash from '@/views/Splash.vue'
 import Visualize from '@/views/Visualize.vue'
 import VisualizePlayground from '@/views/VisualizePlayground.vue'
 import ViewHistory from '@/views/ViewHistory.vue'
+import ViewBadge from '@/views/BadgesView.vue'
 
 const routes = [
   {
@@ -55,6 +56,12 @@ const routes = [
     path: '/history',
     name: 'History',
     component: ViewHistory,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/badges',
+    name: 'Badges',
+    component: ViewBadge,
     meta: { requiresAuth: true },
   },
 ]

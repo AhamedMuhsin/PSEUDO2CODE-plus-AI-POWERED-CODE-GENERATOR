@@ -299,8 +299,19 @@ const viewCode = (item) => {
 };
 
 
-const viewBadge = () => {
-  router.push("/badges");
+const viewBadge = (item) => {
+  const badgeId = item.meta?.badge_id;
+
+  if (!badgeId) {
+    console.warn("No badge_id found in activity");
+    router.push("/badges");
+    return;
+  }
+
+  router.push({
+    path: "/badges",
+    query: { highlight: badgeId }
+  });
 };
 
 const viewLevel = (item) => {

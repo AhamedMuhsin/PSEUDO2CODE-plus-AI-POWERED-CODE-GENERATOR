@@ -17,9 +17,6 @@
         <WelcomeHeader v-if="user" :name="user.name" />
         <StatsCards v-if="stats" :stats="stats" />
         <RecentActivity :activities="activities" @select="handleActivityClick" />
-
-
-
       </div>
     </div>
   </main>
