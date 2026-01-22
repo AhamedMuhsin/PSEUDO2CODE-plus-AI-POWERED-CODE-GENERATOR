@@ -45,27 +45,28 @@ const formatDate = (date) =>
 </script>
 
 <style scoped>
-    .title {
-  color: #f8fafc;
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin-bottom: 6px;
+.title {
+    color: #f8fafc;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 6px;
 }
 
 .description {
-  color: #94a3b8;
-  font-size: 0.85rem;
-  min-height: 40px;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    min-height: 40px;
 }
+
 .badge-card.locked .description {
-  color: #64748b;
-  font-style: italic;
+    color: #64748b;
+    font-style: italic;
 }
 
 .badge-card {
     /* background: linear-gradient(145deg, #0b1220, #0e1628); */
-  background: rgba(15, 23, 42, 0.85); 
-  border-radius: 16px;
+    background: rgba(15, 23, 42, 0.85);
+    border-radius: 16px;
     padding: 24px;
     border: 1px solid rgba(255, 255, 255, 0.06);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
@@ -80,8 +81,8 @@ const formatDate = (date) =>
 }
 
 .badge-icon {
-  font-size: 3rem;
-  margin-bottom: 14px;
+    font-size: 3rem;
+    margin-bottom: 14px;
 }
 
 .badge-card:hover {

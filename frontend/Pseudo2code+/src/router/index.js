@@ -65,7 +65,7 @@ const routes = [
     component: ViewBadge,
     meta: { requiresAuth: true },
   },
-    {
+  {
     path: '/leaderboard',
     name: 'Leaderboard',
     component: ViewLeaderboard,

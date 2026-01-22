@@ -73,7 +73,7 @@ const initials = computed(() => {
 </script>
 <style scoped>
 .profile-card {
-  background: rgba(15, 23, 42, 0.85); 
+  background: rgba(15, 23, 42, 0.85);
   border-radius: 16px;
   padding: 20px;
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -85,6 +85,7 @@ const initials = computed(() => {
   transform: translateY(-2px);
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
 }
+
 .user {
   display: flex;
   align-items: center;
@@ -105,10 +106,11 @@ const initials = computed(() => {
 }
 
 .avatar {
-  box-shadow: 0 0 0 2px rgba(96,165,250,.3),
-              0 0 20px rgba(96,165,250,.25);
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, .3),
+    0 0 20px rgba(96, 165, 250, .25);
   transition: transform .2s ease;
 }
+
 .avatar:hover {
   transform: scale(1.05);
 }

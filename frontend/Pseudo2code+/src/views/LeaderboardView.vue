@@ -145,17 +145,17 @@ watch(activeType, () => {
 
 onMounted(fetchLeaderboard)
 const myEntry = computed(() =>
-  leaderboard.value.find(u => u.uid === currentUid.value)
+    leaderboard.value.find(u => u.uid === currentUid.value)
 )
 
 const myRank = computed(() => myEntry.value?.rank ?? null)
 
 const nextRankXp = computed(() => {
-  if (!myEntry.value) return 0
-  const higher = leaderboard.value.find(
-    u => u.rank === myEntry.value.rank - 1
-  )
-  return higher ? higher.xp - myEntry.value.xp : 0
+    if (!myEntry.value) return 0
+    const higher = leaderboard.value.find(
+        u => u.rank === myEntry.value.rank - 1
+    )
+    return higher ? higher.xp - myEntry.value.xp : 0
 })
 
 </script>

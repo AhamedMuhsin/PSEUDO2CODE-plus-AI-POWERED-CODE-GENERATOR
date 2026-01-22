@@ -60,14 +60,17 @@ defineProps({
   background: rgba(96, 165, 250, 0.15);
   color: #60a5fa;
 }
+
 .purple {
   background: rgba(192, 132, 252, 0.15);
   color: #c084fc;
 }
+
 .yellow {
   background: rgba(250, 204, 21, 0.15);
   color: #facc15;
 }
+
 .green {
   background: rgba(34, 197, 94, 0.15);
   color: #22c55e;

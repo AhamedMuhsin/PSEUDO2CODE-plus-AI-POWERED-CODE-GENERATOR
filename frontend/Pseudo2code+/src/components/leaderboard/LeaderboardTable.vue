@@ -118,6 +118,7 @@ const initials = (name = "") =>
   align-items: center;
   padding: 16px 22px;
 }
+
 .badge.muted {
   color: #64748b;
   font-size: 0.85rem;

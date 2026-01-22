@@ -3,12 +3,7 @@
     <h4 class="title">Navigation</h4>
 
     <ul class="nav-list">
-      <li
-        v-for="item in items"
-        :key="item.to"
-        :class="{ active: route.path === item.to }"
-        @click="go(item.to)"
-      >
+      <li v-for="item in items" :key="item.to" :class="{ active: route.path === item.to }" @click="go(item.to)">
         <component :is="item.icon" size="18" />
         <span>{{ item.label }}</span>
       </li>
@@ -37,12 +32,12 @@ const items = [
     to: "/dashboard",
     icon: LayoutDashboard,
   },
-    {
+  {
     label: "Generate Code",
     to: "/generate-code",
     icon: Sparkles,
   },
-    {
+  {
     label: "Visualize Code",
     to: "/visualize-playground",
     icon: Eye,
@@ -71,7 +66,7 @@ const go = (to) => {
 
 <style scoped>
 .nav-card {
-  background: rgba(15, 23, 42, 0.85); 
+  background: rgba(15, 23, 42, 0.85);
   border-radius: 16px;
   padding: 20px;
   border: 1px solid rgba(255, 255, 255, 0.06);

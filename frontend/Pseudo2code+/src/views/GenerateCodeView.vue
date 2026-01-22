@@ -144,7 +144,7 @@ import AuthNavbar from "@/components/Navbar/AuthNavbar.vue";
 import { generateCode } from "@/services/codeGenerationService";
 import hljs from "highlight.js";
 import "highlight.js/styles/github-dark.css";
-import { watch, nextTick, computed , onMounted} from "vue";
+import { watch, nextTick, computed, onMounted } from "vue";
 import {
   Check,
   Download,
@@ -693,7 +693,7 @@ code {
 }
 
 .card {
-  background: rgba(15, 23, 42, 0.85); 
+  background: rgba(15, 23, 42, 0.85);
   border-radius: 16px;
   padding: 32px;
   border: 1px solid rgba(255, 255, 255, 0.06);

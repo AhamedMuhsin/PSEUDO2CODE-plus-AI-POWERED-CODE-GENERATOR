@@ -167,10 +167,11 @@ const completionPercent = computed(() => {
   margin-top: 18px;
 }
 
-.filter-row select{
+.filter-row select {
   min-width: 160px;
   flex-shrink: 0;
 }
+
 select {
   background: #020617;
   border: 1px solid #1e293b;

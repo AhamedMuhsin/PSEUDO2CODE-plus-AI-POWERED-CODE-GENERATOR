@@ -1,11 +1,11 @@
 <template>
   <div class="welcome">
-<h1>
-  Welcome back,
-  <span v-if="name">{{ name.split(' ')[0] }}</span>
-  <span v-else>User</span>
-  !
-</h1>
+    <h1>
+      Welcome back,
+      <span v-if="name">{{ name.split(' ')[0] }}</span>
+      <span v-else>User</span>
+      !
+    </h1>
 
 
 

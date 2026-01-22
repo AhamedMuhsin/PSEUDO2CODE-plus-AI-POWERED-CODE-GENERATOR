@@ -1,11 +1,7 @@
 <template>
   <div class="leaderboard-tabs">
-    <button
-      v-for="tab in tabs"
-      :key="tab.type"
-      :class="{ active: modelValue === tab.type }"
-      @click="$emit('update:modelValue', tab.type)"
-    >
+    <button v-for="tab in tabs" :key="tab.type" :class="{ active: modelValue === tab.type }"
+      @click="$emit('update:modelValue', tab.type)">
       {{ tab.label }}
     </button>
   </div>
@@ -29,7 +25,7 @@ const tabs = [
 ]
 </script>
 <style>
-  .leaderboard-tabs {
+.leaderboard-tabs {
   display: inline-flex;
   gap: 6px;
   padding: 6px;

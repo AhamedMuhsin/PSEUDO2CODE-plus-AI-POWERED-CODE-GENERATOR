@@ -48,25 +48,21 @@ const visualize = async () => {
     <p>Paste your code and visualize its execution</p>
 
     <div class="playground-card">
-    <textarea
-      v-model="code"
-      placeholder="Paste your code here..."
-      class="code-input"
-    />
+      <textarea v-model="code" placeholder="Paste your code here..." class="code-input" />
 
-<div class="controls-row">
-  <select v-model="language" class="language-select">
-    <option value="python">Python</option>
-    <option value="javascript">JavaScript</option>
-    <option value="java">Java</option>
-    <option value="c">C</option>
-    <option value="cpp">C++</option>
-  </select>
+      <div class="controls-row">
+        <select v-model="language" class="language-select">
+          <option value="python">Python</option>
+          <option value="javascript">JavaScript</option>
+          <option value="java">Java</option>
+          <option value="c">C</option>
+          <option value="cpp">C++</option>
+        </select>
 
-  <button class="visualize-btn" @click="visualize">
-    Visualize Code
-  </button>
-</div>
+        <button class="visualize-btn" @click="visualize">
+          Visualize Code
+        </button>
+      </div>
 
     </div>
   </main>
@@ -77,7 +73,7 @@ const visualize = async () => {
   width: 100%;
   height: 260px;
   background: #020617;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 16px;
   color: #e5e7eb;
@@ -102,6 +98,7 @@ const visualize = async () => {
   font-weight: 600;
   cursor: pointer;
 }
+
 .playground-container {
   min-height: 100vh;
   padding: 48px 24px;
@@ -121,7 +118,7 @@ const visualize = async () => {
 
 /* 🔮 Glass Card */
 .playground-card {
-  background: rgba(15, 23, 42, 0.85); 
+  background: rgba(15, 23, 42, 0.85);
   border-radius: 16px;
   padding: 32px;
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -138,7 +135,7 @@ const visualize = async () => {
   width: 100%;
   height: 320px;
   background: #020617;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   padding: 18px;
   color: #e5e7eb;
@@ -154,7 +151,7 @@ const visualize = async () => {
 .code-input:focus {
   outline: none;
   border-color: #6366f1;
-  box-shadow: 0 0 0 1px rgba(99,102,241,0.4);
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.4);
 }
 
 /* ⚙️ Controls Row */
@@ -169,7 +166,7 @@ const visualize = async () => {
 /* 🌐 Language Select */
 .language-select {
   background: #020617;
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: #e5e7eb;
   padding: 10px 14px;
   border-radius: 10px;
@@ -190,7 +187,7 @@ const visualize = async () => {
 
 .visualize-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 30px rgba(34,197,94,0.35);
+  box-shadow: 0 10px 30px rgba(34, 197, 94, 0.35);
 }
 
 .visualize-btn:active {
@@ -203,5 +200,4 @@ const visualize = async () => {
     height: 260px;
   }
 }
-
 </style>

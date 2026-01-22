@@ -1,4 +1,4 @@
-import api from "./api";
+import api from './api'
 
 /**
  * Generate code from pseudocode (single or multiple languages)
@@ -9,15 +9,15 @@ import api from "./api";
  */
 export const generateCode = async (pseudocode, languages, level) => {
   try {
-    const response = await api.post("/generate-code", {
+    const response = await api.post('/generate-code', {
       pseudocode,
       languages,
-      level
-    });
+      level,
+    })
 
-    return response.data;
+    return response.data
   } catch (error) {
-    console.error("Code generation error:", error);
-    throw error;
+    console.error('Code generation error:', error)
+    throw error
   }
-};
+}

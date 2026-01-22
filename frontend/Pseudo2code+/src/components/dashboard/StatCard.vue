@@ -1,15 +1,17 @@
 <script setup>
+const emit = defineEmits(["click"])
+
 defineProps({
   title: String,
   value: Number,
   subtitle: String,
   icon: Object,
   iconColor: { type: String, default: "blue" },
-});
+})
 </script>
 
 <template>
-  <div class="stat-card">
+  <div class="stat-card" @click="emit('click')">
     <div class="content">
       <h4 class="title">{{ title }}</h4>
       <div class="value">{{ value }}</div>
@@ -26,6 +28,8 @@ defineProps({
 
 <style scoped>
 .stat-card {
+  cursor: pointer;
+  /* ✅ important */
   background: rgba(15, 23, 42, 0.85);
   border-radius: 16px;
   padding: 32px;

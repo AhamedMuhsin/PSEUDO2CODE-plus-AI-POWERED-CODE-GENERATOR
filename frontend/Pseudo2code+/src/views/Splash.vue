@@ -7,11 +7,7 @@
       <p class="subtitle">From Pseudocode to Code — Instantly.</p>
 
       <!-- GIF Loader -->
-      <img
-        src="@/assets/loading.gif"
-        alt="Loading"
-        class="loader"
-      />
+      <img src="@/assets/loading.gif" alt="Loading" class="loader" />
     </div>
   </div>
 </template>

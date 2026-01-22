@@ -32,16 +32,13 @@
         </div>
 
         <div v-else-if="visualizerType === 'mermaid'" ref="mermaidRef" class="mermaid-container"></div>
-        <div
-  v-else-if="visualizerType === 'mermaid'"
-  ref="mermaidRef"
-  class="mermaid-container">
-</div>
+        <div v-else-if="visualizerType === 'mermaid'" ref="mermaidRef" class="mermaid-container">
+        </div>
 
-<!-- ✅ ADD THIS BLOCK -->
-<div v-if="visualizerType === 'mermaid'" class="export-row">
-  <button class="export-btn" @click="exportSVG">Export SVG</button>
-</div>
+        <!-- ✅ ADD THIS BLOCK -->
+        <div v-if="visualizerType === 'mermaid'" class="export-row">
+          <button class="export-btn" @click="exportSVG">Export SVG</button>
+        </div>
 
         <div v-else-if="error" class="empty-state">
           {{ error }}
@@ -59,15 +56,15 @@
           <li>📦 Track variable changes</li>
           <li>🔁 Observe loops & functions</li>
         </ul>
-          <div class="cfg-legend">
-    <h3>CFG Legend</h3>
-    <ul>
-      <li><span class="dot start"></span> Start / End</li>
-      <li><span class="box"></span> Process</li>
-      <li><span class="diamond"></span> Condition</li>
-      <li><span class="arrow"></span> Loop Back</li>
-    </ul>
-  </div>
+        <div class="cfg-legend">
+          <h3>CFG Legend</h3>
+          <ul>
+            <li><span class="dot start"></span> Start / End</li>
+            <li><span class="box"></span> Process</li>
+            <li><span class="diamond"></span> Condition</li>
+            <li><span class="arrow"></span> Loop Back</li>
+          </ul>
+        </div>
       </section>
     </div>
   </main>
@@ -210,10 +207,11 @@ const exportSVG = () => {
   border-color: #22c55e;
   color: #22c55e;
 }
+
 .cfg-legend {
   margin-top: 24px;
   padding-top: 16px;
-  border-top: 1px solid rgba(255,255,255,0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .cfg-legend h3 {
@@ -276,6 +274,7 @@ const exportSVG = () => {
   gap: 14px;
   margin-top: 12px;
 }
+
 .mermaid-container {
   background: #020617;
   border-radius: 12px;
@@ -300,6 +299,7 @@ const exportSVG = () => {
 .copy-btn:hover {
   background: rgba(255, 255, 255, 0.08);
 }
+
 .export-row {
   display: flex;
   gap: 12px;
@@ -379,7 +379,7 @@ const exportSVG = () => {
 }
 
 .card {
-  background: rgba(15, 23, 42, 0.85); 
+  background: rgba(15, 23, 42, 0.85);
   border-radius: 16px;
   padding: 24px;
   border: 1px solid rgba(255, 255, 255, 0.06);

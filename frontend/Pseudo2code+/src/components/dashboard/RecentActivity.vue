@@ -53,7 +53,7 @@ const props = defineProps({
 
 <style scoped>
 .activity-card {
-  background: rgba(15, 23, 42, 0.85); 
+  background: rgba(15, 23, 42, 0.85);
   border-radius: 16px;
   padding: 24px;
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -72,6 +72,7 @@ const props = defineProps({
   justify-content: space-between;
   align-items: center;
 }
+
 .activity-item {
   cursor: pointer;
   transition: background 0.2s ease;
