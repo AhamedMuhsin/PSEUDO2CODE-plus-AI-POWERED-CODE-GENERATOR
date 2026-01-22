@@ -310,9 +310,24 @@ const viewLevel = (item) => {
   showLevelModal.value = true;
 };
 
-const deleteActivity = (item) => {
-  alert("Delete coming next");
-};
+const deleteActivity = async (activity) => {
+  const backup = [...activities.value]
+
+  // instant UI update
+  activities.value = activities.value.filter(
+    a => a.created_at !== activity.created_at
+  )
+
+  try {
+    await api.delete("/activity", {
+      data: activity
+    })
+  } catch (err) {
+    console.error("Delete failed", err)
+    activities.value = backup
+  }
+}
+
 </script>
 
 <style scoped>

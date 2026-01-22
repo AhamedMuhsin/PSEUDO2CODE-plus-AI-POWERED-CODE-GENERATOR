@@ -9,6 +9,7 @@ import Visualize from '@/views/Visualize.vue'
 import VisualizePlayground from '@/views/VisualizePlayground.vue'
 import ViewHistory from '@/views/ViewHistory.vue'
 import ViewBadge from '@/views/BadgesView.vue'
+import ViewLeaderboard from '@/views/LeaderboardView.vue'
 
 const routes = [
   {
@@ -62,6 +63,12 @@ const routes = [
     path: '/badges',
     name: 'Badges',
     component: ViewBadge,
+    meta: { requiresAuth: true },
+  },
+    {
+    path: '/leaderboard',
+    name: 'Leaderboard',
+    component: ViewLeaderboard,
     meta: { requiresAuth: true },
   },
 ]

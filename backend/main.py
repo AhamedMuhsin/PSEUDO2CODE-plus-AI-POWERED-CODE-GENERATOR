@@ -19,6 +19,7 @@ from services.gemini_service import generate_code, generate_multi_language
 from services.visualization.visualizer_router import get_visualization
 from urllib.parse import quote_plus
 from services.visualization.cfg_generator import generate_mermaid_cfg
+from services.activity.activity_service import delete_activity
 
 from firebase_auth import get_current_user
 from services.user_service import (
@@ -246,54 +247,6 @@ async def generate_code_endpoint(
         "languages": languages,
         "level": level
     }
-
-# @app.post("/generate-code-multi")
-# async def generate_code_multi_endpoint(payload: dict, current_user=Depends(get_current_user)):
-#     """Generate code in multiple languages"""
-#     uid = current_user["uid"]
-    
-#     pseudocode = payload.get("pseudocode", "")
-#     languages = payload.get("languages", ["python", "javascript", "java"])
-    
-#     if not pseudocode:
-#         raise HTTPException(status_code=400, detail="Pseudocode is required")
-    
-#     # Generate code for all languages
-#     result = generate_multi_language(pseudocode, languages=languages)
-    
-#     if not result.get("success"):
-#         raise HTTPException(status_code=500, detail="Code generation failed")
-    
-#     # Save to database
-#     try:
-#         await users_collection.update_one(
-#             {"uid": uid},
-#             {
-#                 "$push": {
-#                     "generated_codes": {
-#                         "pseudocode": pseudocode,
-#                         "code_by_language": result.get("generated_code"),
-#                         "languages": languages,
-#                         "created_at": __import__("datetime").datetime.utcnow()
-#                     }
-#                 },
-#                 "$inc": {
-#                     "stats.codes_generated": len(languages)
-#                 }
-#             }
-#         )
-        
-#         # Add XP
-#         await add_xp(uid, XP["GENERATE_CODE"])
-        
-#         return {
-#             "success": True,
-#             "generated_code": result.get("generated_code"),
-#             "xp_earned": XP["GENERATE_CODE"]
-#         }
-    
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}") 
     
 @app.get("/list-models")
 def list_models():
@@ -360,6 +313,7 @@ async def get_leaderboard(
                 "uid": 1,
                 "name": 1,
                 "stats": 1,
+                "badges": 1, 
             }
         )
         .sort(sort)
@@ -381,7 +335,12 @@ async def get_leaderboard(
             "xp": user["stats"]["xp"],
             "codes_generated": user["stats"]["codes_generated"],
             "visualizations": user["stats"]["visualizations"],
+            "badges": [
+                b["icon"]
+                for b in user.get("badges", [])[:3]  # ✅ TOP 3 ONLY
+            ]
         })
+
 
     return {
         "type": type,
@@ -389,3 +348,26 @@ async def get_leaderboard(
         "limit": limit,
         "results": leaderboard
     }
+
+@app.delete("/activity")
+async def delete_user_activity(
+    payload: dict,
+    current_user=Depends(get_current_user)
+):
+    """
+    Delete a single activity entry.
+    - Removes from recent_activity
+    - Decrements stats if applicable
+    - Does NOT affect XP, level, or badges
+    """
+    uid = current_user["uid"]
+
+    if not payload or "type" not in payload or "created_at" not in payload:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid activity payload"
+        )
+
+    await delete_activity(uid, payload)
+
+    return {"success": True}
