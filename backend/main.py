@@ -12,6 +12,7 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from db import users_collection
 import re
+from services.streak.streak_service import update_streak
 from services.xp.xp_service import add_xp
 from services.activity.activity_service import add_activity
 from services.xp.xp_config import XP
@@ -111,6 +112,7 @@ async def get_dashboard(current_user=Depends(get_current_user)):
 
 @app.post("/visualize")
 async def visualize(payload: dict, current_user=Depends(get_current_user)):
+    uid = current_user["uid"]
     language = payload.get("language")
     code = payload.get("code")
     algorithm = payload.get("algorithm") or payload.get("pseudocode")
@@ -132,6 +134,7 @@ async def visualize(payload: dict, current_user=Depends(get_current_user)):
             viz_type="python-tutor"
         )
         await add_xp(current_user["uid"], XP["VISUALIZE"])
+        await update_streak(uid)
         return {
             "success": True,
             "visualization": {
@@ -150,6 +153,7 @@ async def visualize(payload: dict, current_user=Depends(get_current_user)):
             viz_type="mermaid-cfg"
         )
         await add_xp(current_user["uid"], XP["VISUALIZE"])
+        await update_streak(uid)
         return {
             "success": True,
             "visualization": {
@@ -168,6 +172,7 @@ async def visualize(payload: dict, current_user=Depends(get_current_user)):
             viz_type="external"
         )
         await add_xp(current_user["uid"], XP["VISUALIZE"])
+        await update_streak(uid)
         return {
             "success": True,
             "visualization": {
@@ -240,6 +245,7 @@ async def generate_code_endpoint(
         )
 
     await add_xp(uid, XP["GENERATE_CODE"])
+    await update_streak(uid)
 
     return {
         "success": True,

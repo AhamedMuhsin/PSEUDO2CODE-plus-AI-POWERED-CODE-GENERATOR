@@ -38,4 +38,9 @@ BADGES = {
     "xp_500": { "title": "XP Hunter", "icon": "⚡", "type": "xp", "value": 500 },
     "xp_1000": { "title": "XP Grinder", "icon": "🔥", "type": "xp", "value": 1000 },
     "xp_5000": { "title": "XP Master", "icon": "💎", "type": "xp", "value": 5000 },
+
+    # 🔴 Streak badges
+    "streak_7": { "title": "7-Day Streak", "icon": "🔥", "type": "streak", "value": 7 },
+    "streak_14": { "title": "14-Day Streak", "icon": "🔥🔥", "type": "streak", "value": 14 },
+    "streak_30": { "title": "30-Day Streak", "icon": "🔥🔥🔥", "type": "streak", "value": 30 },
 }

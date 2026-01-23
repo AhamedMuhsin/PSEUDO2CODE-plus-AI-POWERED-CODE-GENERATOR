@@ -26,9 +26,13 @@
         <Trophy size="16" />
         <span>{{ totalXp }} Total XP</span>
       </div>
-      <div class="stat-item">
+      <div class="stat-item" :class="streakActiveToday ? 'streak-active' : 'streak-warning'">
         <Flame size="16" />
-        <span>{{ streak }} Day Streak</span>
+        <span>
+          {{ streak }} Day Streak
+          <small v-if="streak === 1 && !streakActiveToday"> (start today)</small>
+          <small v-else-if="streak >= 2 && !streakActiveToday"> (at risk)</small>
+        </span>
       </div>
     </div>
   </div>
@@ -47,6 +51,7 @@ const props = defineProps({
   nextXp: { type: Number, default: 100 },
   totalXp: { type: Number, default: 0 },
   streak: { type: Number, default: 0 },
+  streakActiveToday: { type: Boolean, default: false },
 });
 
 
@@ -84,6 +89,19 @@ const initials = computed(() => {
 .profile-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+}
+
+.streak-active {
+  color: #f97316;
+}
+
+.streak-warning {
+  color: #ef4444;
+}
+
+.streak-warning small {
+  font-size: 11px;
+  opacity: 0.85;
 }
 
 .user {

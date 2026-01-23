@@ -1,41 +1,45 @@
 <script setup>
-import { Code, Eye, Trophy, LayoutDashboard } from "lucide-vue-next";
+import { computed } from "vue"
+import { resolveSuggestedTasks } from "@/services/tasks/taskResolver"
 
 const props = defineProps({
-  tasks: {
-    type: Array,
-    default: () => [
-      {
-        title: "Generate your first code",
-        description: "Turn pseudocode into executable code",
-        icon: Code,
-      },
-      {
-        title: "Visualize an algorithm",
-        description: "Understand algorithms step-by-step",
-        icon: Eye,
-      },
-      {
-        title: "Earn your first badge",
-        description: "Complete tasks to unlock achievements",
-        icon: Trophy,
-      },
-      {
-        title: "Explore dashboard",
-        description: "Track your learning progress",
-        icon: LayoutDashboard,
-      },
-    ],
+  user: {
+    type: Object,
+    required: true,
   },
-});
-</script>
+})
 
+const safeUser = computed(() => {
+  if (!props.user) return null
+
+  return {
+    stats: {
+      codes_generated: props.user.stats?.codes_generated ?? 0,
+      visualizations: props.user.stats?.visualizations ?? 0,
+      badges: props.user.stats?.badges ?? 0,
+      xp: props.user.stats?.xp ?? 0,
+      xp_next_level: props.user.stats?.xp_next_level ?? 100,
+      streak: props.user.stats?.streak ?? 0,
+    },
+    completed_tasks: props.user.completed_tasks ?? [],
+  }
+})
+
+const resolvedTasks = computed(() =>
+  resolveSuggestedTasks(safeUser.value, 4)
+)
+</script>
 <template>
   <div class="dashboard-card">
     <h3 class="card-title">Suggested Tasks</h3>
 
     <ul class="tasks">
-      <li v-for="(task, i) in props.tasks" :key="i" class="task-item">
+      <li
+        v-for="task in resolvedTasks"
+        :key="task.id"
+        class="task-item"
+       @click="$router.push(task.route)"
+      >
         <div class="task-icon">
           <component :is="task.icon" size="18" />
         </div>

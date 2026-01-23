@@ -5,11 +5,11 @@
 
       <!-- LEFT COLUMN -->
       <div class="left-column">
-        <ProfileCard v-if="user" :name="user.name" :email="user.email" :level="user.level" :xp="user.xp"
-          :nextXp="user.nextXp" :totalXp="user.totalXp" :streak="user.streak" />
-        <QuickActions />
-        <SuggestedTasks :tasks="suggestedTasks" />
+        <ProfileCard v-if="user" :name="user.name" :email="user.email" :level="user.level" :xp="user.xp" :nextXp="user.nextXp"
+          :totalXp="user.totalXp" :streak="user.streak" :streakActiveToday="user.streak_active_today" />
 
+        <QuickActions />
+        <SuggestedTasks :user="user" />
       </div>
 
       <!-- RIGHT COLUMN -->
@@ -91,6 +91,7 @@ onMounted(async () => {
       nextXp: data.stats.xp_next_level,
       totalXp: data.stats.xp,
       streak: data.stats.streak,
+      streak_active_today: data.stats.streak_active_today,
     };
 
     // STATS
