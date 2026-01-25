@@ -1,4 +1,3 @@
-
 from db import db
 from uuid import uuid4
 from services.streak.streak_service import update_streak
@@ -6,6 +5,7 @@ from services.badges.badge_engine import evaluate_badges
 from services.xp.xp_config import XP, xp_needed_for_level
 from services.activity.activity_service import add_activity
 from datetime import date, datetime
+from services.tasks.task_engine import mark_task_completed
 
 users_collection = db["users"]
 MAX_ACTIVITY = 50
@@ -13,7 +13,11 @@ MAX_ACTIVITY = 50
 # ---------------- SERIALIZER ----------------
 
 def serialize_user(user):
-    stats = user.get("stats", {})
+    stats = {
+    **user.get("stats", {}),
+    "badges": len(user.get("badges", [])),  # 🔥 normalize
+}
+
 
     last_date = stats.get("last_activity_date")
     active_today = False
@@ -30,8 +34,12 @@ def serialize_user(user):
         "last_login": user.get("last_login"),
         "stats": {
             **stats,
-            "streak_active_today": active_today,  # ✅ FIXED
+            "streak_active_today": active_today,
         },
+        "user_tasks": user.get("user_tasks", {
+            "completed": [],
+            "last_suggested": []
+        }),
         "recent_activity": user.get("recent_activity", []),
         "visualizations": user.get("visualizations", []),
         "generated_codes": user.get("generated_codes", []),
@@ -60,6 +68,10 @@ async def create_user(uid: str, email: str, provider: str, name: str = None):
             "xp_next_level": 100,
             "streak": 0,
             "last_activity_date": None, 
+        },
+        "user_tasks": {
+            "completed": [],
+            "last_suggested": []
         },
         "badges": [],
         "recent_activity": [], 
@@ -115,6 +127,13 @@ async def save_generated_code(
             "code_id": record["id"]
         }
     )
+    await mark_task_completed(uid, "first_code")
+
+    user = await users_collection.find_one({"uid": uid})
+
+    if user["stats"]["codes_generated"] >= 5:
+        await mark_task_completed(uid, "generate_5_codes")
+
     await update_streak(uid)
     user = await users_collection.find_one({"uid": uid})
     await evaluate_badges(user, uid)
@@ -154,7 +173,13 @@ async def save_visualization(
             "viz_id": record["id"]
         }
     )
+    await mark_task_completed(uid, "first_visualization")
 
+    user = await users_collection.find_one({"uid": uid})
+    if user["stats"]["visualizations"] >= 5:
+        await mark_task_completed(uid, "visualize_5_algorithms")
+
+    await update_streak(uid)
     user = await users_collection.find_one({"uid": uid})
     await evaluate_badges(user, uid)
     return record

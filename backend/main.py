@@ -8,6 +8,9 @@ import os
 print("GROQ_API_KEY exists:", bool(os.getenv("GROQ_API_KEY")))
 
 from services.ai.provider_manager import AIProviderManager
+from routes import tasks
+
+
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from db import users_collection
@@ -46,6 +49,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 ai_manager = AIProviderManager()
+app.include_router(tasks.router)
 
 # ---------------- HEALTH CHECK (OPTIONAL BUT RECOMMENDED) ----------------
 @app.get("/")

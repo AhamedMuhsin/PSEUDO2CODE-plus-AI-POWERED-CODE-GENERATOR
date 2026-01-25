@@ -1,47 +1,57 @@
 <script setup>
-import { computed } from "vue"
-import { resolveSuggestedTasks } from "@/services/tasks/taskResolver"
+import { ref, onMounted } from "vue"
+import { useRouter } from "vue-router"
+import { fetchSuggestedTasks } from "@/services/taskService"
+import {
+  Code,
+  Flame,
+  Eye,
+  Trophy,
+  Rocket,
+  BarChart3,
+  History,
+} from "lucide-vue-next"
 
-const props = defineProps({
-  user: {
-    type: Object,
-    required: true,
-  },
-})
+const router = useRouter()
+const tasks = ref([])
+const loading = ref(true)
+const iconMap = {
+  code: Code,
+  flame: Flame,
+  eye: Eye,
+  trophy: Trophy,
+  rocket: Rocket,
+  leaderboard: BarChart3,
+  history: History,
+}
 
-const safeUser = computed(() => {
-  if (!props.user) return null
-
-  return {
-    stats: {
-      codes_generated: props.user.stats?.codes_generated ?? 0,
-      visualizations: props.user.stats?.visualizations ?? 0,
-      badges: props.user.stats?.badges ?? 0,
-      xp: props.user.stats?.xp ?? 0,
-      xp_next_level: props.user.stats?.xp_next_level ?? 100,
-      streak: props.user.stats?.streak ?? 0,
-    },
-    completed_tasks: props.user.completed_tasks ?? [],
+onMounted(async () => {
+  try {
+    tasks.value = await fetchSuggestedTasks()
+  } catch (e) {
+    console.error("Failed to load suggested tasks", e)
+  } finally {
+    loading.value = false
   }
 })
-
-const resolvedTasks = computed(() =>
-  resolveSuggestedTasks(safeUser.value, 4)
-)
 </script>
+
 <template>
   <div class="dashboard-card">
     <h3 class="card-title">Suggested Tasks</h3>
 
-    <ul class="tasks">
-      <li
-        v-for="task in resolvedTasks"
-        :key="task.id"
-        class="task-item"
-       @click="$router.push(task.route)"
-      >
+    <div v-if="loading" class="empty">
+      Loading tasks…
+    </div>
+
+    <div v-else-if="tasks.length === 0" class="empty">
+      🎉 You’re all caught up!
+    </div>
+
+    <ul v-else class="tasks">
+      <li v-for="task in tasks" :key="task.id" class="task-item" @click="router.push(task.route)">
         <div class="task-icon">
-          <component :is="task.icon" size="18" />
+          <component :is="iconMap[task.icon] || Code" size="18" />
         </div>
 
         <div class="task-content">

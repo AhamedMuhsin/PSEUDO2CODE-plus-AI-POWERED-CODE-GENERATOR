@@ -1,7 +1,7 @@
 from datetime import datetime
 from db import users_collection
 from services.activity.activity_service import add_activity
-
+from services.tasks.task_engine import mark_task_completed
 
 async def execute_badge_award(uid: str, badge: dict):
     badge_record = {
@@ -29,3 +29,5 @@ async def execute_badge_award(uid: str, badge: dict):
             "icon": badge["icon"],
         },
     )
+
+    await mark_task_completed(uid, "first_badge")

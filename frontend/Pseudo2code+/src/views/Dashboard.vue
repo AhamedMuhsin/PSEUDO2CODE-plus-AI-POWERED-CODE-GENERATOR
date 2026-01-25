@@ -5,11 +5,12 @@
 
       <!-- LEFT COLUMN -->
       <div class="left-column">
-        <ProfileCard v-if="user" :name="user.name" :email="user.email" :level="user.level" :xp="user.xp" :nextXp="user.nextXp"
-          :totalXp="user.totalXp" :streak="user.streak" :streakActiveToday="user.streak_active_today" />
+        <ProfileCard v-if="user" :name="user.name" :email="user.email" :level="user.level" :xp="user.xp"
+          :nextXp="user.nextXp" :totalXp="user.totalXp" :streak="user.streak"
+          :streakActiveToday="user.streak_active_today" />
 
         <QuickActions />
-        <SuggestedTasks :user="user" />
+        <SuggestedTasks :tasks="suggestedTasks" />
       </div>
 
       <!-- RIGHT COLUMN -->
@@ -25,6 +26,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { fetchSuggestedTasks } from "@/services/taskService"
 import { Code, Eye, Trophy, LayoutDashboard, ArrowUp } from "lucide-vue-next";
 
 import AuthNavbar from "@/components/Navbar/AuthNavbar.vue";
@@ -45,29 +47,7 @@ const user = ref(null);
 const stats = ref(null);
 const activities = ref([]);
 const loading = ref(true);
-const suggestedTasks = ref([
-  {
-    id: "first_code",
-    title: "Generate your first code",
-    description: "Turn pseudocode into executable code",
-    icon: Code,
-    action: "/generate",
-  },
-  {
-    id: "visualize",
-    title: "Visualize an algorithm",
-    description: "Understand algorithms step-by-step",
-    icon: Eye,
-    action: "/visualize",
-  },
-  {
-    id: "badge",
-    title: "Earn your first badge",
-    description: "Complete tasks to unlock achievements",
-    icon: Trophy,
-    action: "/dashboard",
-  },
-]);
+const suggestedTasks = ref([]);
 
 // 🔹 Activity mapper (IMPORTANT)
 const activityMap = {
@@ -98,7 +78,7 @@ onMounted(async () => {
     stats.value = data.stats;
 
     // SUGGESTED TASKS
-    suggestedTasks.value = buildSuggestedTasks(data.stats);
+    suggestedTasks.value = await fetchSuggestedTasks();
 
     // RECENT ACTIVITY
     activities.value = (data.recent_activity || [])
