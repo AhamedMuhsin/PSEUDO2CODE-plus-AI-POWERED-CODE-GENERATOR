@@ -11,6 +11,7 @@ import ViewHistory from '@/views/ViewHistory.vue'
 import ViewBadge from '@/views/BadgesView.vue'
 import ViewLeaderboard from '@/views/LeaderboardView.vue'
 import ProfilePage from '@/views/ProfilePage.vue'
+import AlgorithmHub from '@/views/AlgorithmHub.vue'
 
 const routes = [
   {
@@ -72,10 +73,21 @@ const routes = [
     component: ViewLeaderboard,
     meta: { requiresAuth: true },
   },
-    {
+  {
     path: '/profile',
     name: 'Profile',
     component: ProfilePage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/algorithm-hub',
+    name: 'AlgorithmHub',
+    component: AlgorithmHub,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/visualize/:id',
+    component: () => import('@/views/AlgorithmVisualizer.vue'),
     meta: { requiresAuth: true },
   },
 ]

@@ -19,6 +19,14 @@
         <span class="action-arrow">→</span>
       </li>
 
+      <li class="action-item" @click="goTo('/algorithm-hub')">
+        <span class="icon algo">
+          <Brain size="20" />
+        </span>
+        <span class="action-text">Algorithm Visualizer</span>
+        <span class="action-arrow">→</span>
+      </li>
+
       <li class="action-item" @click="goTo('/history')">
         <span class="icon history">
           <Clock size="20" />
@@ -48,7 +56,7 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { Sparkles, Eye, Clock, Trophy, BarChart3 } from "lucide-vue-next";
+import { Sparkles, Eye, Clock, Trophy, BarChart3,Brain } from "lucide-vue-next";
 
 const router = useRouter();
 
@@ -130,6 +138,11 @@ const goTo = (path) => {
 .icon.visual {
   background: rgba(168, 85, 247, 0.15);
   color: #c084fc;
+}
+
+.icon.algo {
+  background: rgba(247, 85, 236, 0.15);
+  color: #fc84f2;
 }
 
 .icon.history {
