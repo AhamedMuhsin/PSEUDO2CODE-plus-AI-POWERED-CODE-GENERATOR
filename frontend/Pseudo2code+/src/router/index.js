@@ -10,6 +10,7 @@ import VisualizePlayground from '@/views/VisualizePlayground.vue'
 import ViewHistory from '@/views/ViewHistory.vue'
 import ViewBadge from '@/views/BadgesView.vue'
 import ViewLeaderboard from '@/views/LeaderboardView.vue'
+import ProfilePage from '@/views/ProfilePage.vue'
 
 const routes = [
   {
@@ -69,6 +70,12 @@ const routes = [
     path: '/leaderboard',
     name: 'Leaderboard',
     component: ViewLeaderboard,
+    meta: { requiresAuth: true },
+  },
+    {
+    path: '/profile',
+    name: 'Profile',
+    component: ProfilePage,
     meta: { requiresAuth: true },
   },
 ]

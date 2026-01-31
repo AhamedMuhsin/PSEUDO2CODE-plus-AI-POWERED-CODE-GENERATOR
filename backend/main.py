@@ -13,6 +13,7 @@ from routes import tasks
 
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from firebase_admin import auth as firebase_auth
 from db import users_collection
 import re
 from services.streak.streak_service import update_streak
@@ -48,6 +49,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 ai_manager = AIProviderManager()
 app.include_router(tasks.router)
 
@@ -63,7 +65,10 @@ async def get_me(current_user=Depends(get_current_user)):
 
     user = await get_user_by_uid(uid)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(
+            status_code=401,
+            detail="User no longer exists. Please log in again."
+        )
 
     return {
         **serialize_user(user),
@@ -96,6 +101,26 @@ async def create_user_route(current_user=Depends(get_current_user)):
     )
 
     return serialize_user(user)
+
+@app.put("/users/profile")
+async def update_profile(
+    payload: dict,
+    current_user=Depends(get_current_user)
+):
+    name = payload.get("name")
+
+    if not name:
+        raise HTTPException(
+            status_code=400,
+            detail="Name is required"
+        )
+
+    await users_collection.update_one(
+        {"uid": current_user["uid"]},
+        {"$set": {"name": name}}
+    )
+
+    return {"success": True}
 
 @app.get("/dashboard")
 async def get_dashboard(current_user=Depends(get_current_user)):
@@ -379,5 +404,23 @@ async def delete_user_activity(
         )
 
     await delete_activity(uid, payload)
+
+    return {"success": True}
+
+@app.delete("/users/me")
+async def delete_account(current_user=Depends(get_current_user)):
+    uid = current_user["uid"]
+
+    # 1️⃣ Delete Firebase Auth user
+    try:
+        firebase_auth.delete_user(uid)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to delete Firebase auth user"
+        )
+
+    # 2️⃣ Delete MongoDB user
+    await users_collection.delete_one({"uid": uid})
 
     return {"success": True}
