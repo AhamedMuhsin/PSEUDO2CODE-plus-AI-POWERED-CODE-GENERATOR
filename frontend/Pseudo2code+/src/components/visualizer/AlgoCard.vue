@@ -14,7 +14,7 @@
     <p>{{ desc }}</p>
 
     <div class="actions">
-      <button class="primary" @click="$router.push('/visualize/sorting/bubble-sort')">
+      <button class="primary" @click="$router.push(route)">
         Try Now
       </button>
       <button class="info">ⓘ</button>
@@ -28,6 +28,7 @@ defineProps({
   desc: String,
   level: String,
   icon: Object,
+  route: String
 })
 </script>
 

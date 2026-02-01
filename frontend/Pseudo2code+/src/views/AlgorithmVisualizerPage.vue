@@ -7,13 +7,13 @@ import { computed } from "vue"
 import { useRoute } from "vue-router"
 
 import BubbleSortVisualizer from "@/components/visualizer/BubbleSortVisualizer.vue"
+import SelectionSortVisualizer from "@/components/visualizer/SelectionSortVisualizer.vue"
 
 const route = useRoute()
 
 const visualizerMap = {
   "sorting/bubble-sort": BubbleSortVisualizer,
-  // later:
-  // "sorting/selection-sort": SelectionSortVisualizer,
+  "sorting/selection-sort": SelectionSortVisualizer,
 }
 
 const key = computed(() =>

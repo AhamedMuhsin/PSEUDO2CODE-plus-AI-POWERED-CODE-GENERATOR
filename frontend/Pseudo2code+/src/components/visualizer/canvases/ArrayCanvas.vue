@@ -2,10 +2,9 @@
   <div class="bars">
     <div v-for="(value, i) in array" :key="i" class="bar" :class="{
       active: active.includes(i),
-      swap: swap && active.includes(i)
-    }" :style="{
-        height: (value / max) * 100 + '%'
-      }">
+      swap: swap && active.includes(i),
+      sorted: sorted.includes(i)
+    }" :style="{ height: (value / max) * 100 + '%' }">
       {{ value }}
     </div>
   </div>
@@ -16,7 +15,11 @@ defineProps({
   array: Array,
   active: Array,
   swap: Boolean,
-  max: Number
+  max: Number,
+  sorted: {
+    type: Array,
+    default: () => []
+  }
 })
 </script>
 
@@ -48,4 +51,11 @@ defineProps({
 .bar.swap {
   background: #ef4444;
 }
+
+.bar.sorted {
+  background: rgba(255, 255, 255, 0.25);
+  color: #e5e7eb;
+  opacity: 0.6;
+}
+
 </style>

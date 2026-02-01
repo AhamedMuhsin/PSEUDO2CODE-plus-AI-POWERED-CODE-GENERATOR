@@ -19,9 +19,9 @@
 
         <div class="card-grid">
           <AlgoCard title="Bubble Sort" level="Beginner" desc="Compare adjacent elements and swap if needed"
-            :icon="ArrowUpDown" />
+            :icon="ArrowUpDown" route="/visualize/sorting/bubble-sort"/>
           <AlgoCard title="Selection Sort" level="Beginner" desc="Find minimum element and place it at the beginning"
-            :icon="ListOrdered" />
+            :icon="ListOrdered" route="/visualize/sorting/selection-sort"/>
           <AlgoCard title="Insertion Sort" level="Beginner" desc="Build sorted array one element at a time"
             :icon="MoveDown" />
           <AlgoCard title="Merge Sort" level="Intermediate" desc="Divide and conquer sorting algorithm" :icon="Split" />
