@@ -114,10 +114,24 @@ const handleForgotPassword = async () => {
 const handleEmailLogin = async () => {
   try {
     error.value = "";
+    success.value = "";
+    
+    if (!email.value || !password.value) {
+      error.value = "Please enter both email and password.";
+      return;
+    }
+
+    if (!isValidEmail(email.value)) {
+      error.value = "Please enter a valid email address.";
+      return;
+    }
+
     loading.value = true;
 
     await loginWithEmail(email.value, password.value);
-
+    
+    // Small delay to ensure Firebase auth state is updated
+    await new Promise(resolve => setTimeout(resolve, 500));
     router.push("/dashboard");
   } catch (err) {
     error.value = getFirebaseErrorMessage(err);
@@ -130,13 +144,23 @@ const handleGoogleLogin = async () => {
   try {
     loading.value = true;
     error.value = "";
+    success.value = "";
 
     await loginWithGoogle();
+    
+    // Small delay to ensure Firebase auth state is updated
+    await new Promise(resolve => setTimeout(resolve, 500));
     router.push("/dashboard");
 
   } catch (err) {
-    console.error(err);
-    error.value = "Google sign-in failed. Please try again.";
+    console.error('Google login error:', err);
+    if (err.code === 'auth/popup-closed-by-user') {
+      error.value = "Sign in was cancelled.";
+    } else if (err.code === 'auth/network-request-failed') {
+      error.value = "Network error. Please check your internet connection.";
+    } else {
+      error.value = "Google sign-in failed. Please try again.";
+    }
   } finally {
     loading.value = false;
   }
@@ -146,13 +170,25 @@ const handleGithubLogin = async () => {
   try {
     loading.value = true;
     error.value = "";
+    success.value = "";
 
     await loginWithGithub();
+    
+    // Small delay to ensure Firebase auth state is updated
+    await new Promise(resolve => setTimeout(resolve, 500));
     router.push("/dashboard");
 
   } catch (err) {
-    console.error(err);
-    error.value = "GitHub sign-in failed. Please try again.";
+    console.error('GitHub login error:', err);
+    if (err.code === 'auth/popup-closed-by-user') {
+      error.value = "Sign in was cancelled.";
+    } else if (err.code === 'auth/account-exists-with-different-credential') {
+      error.value = "An account with this email already exists. Please try signing in with your original method.";
+    } else if (err.code === 'auth/network-request-failed') {
+      error.value = "Network error. Please check your internet connection.";
+    } else {
+      error.value = "GitHub sign-in failed. Please try again.";
+    }
   } finally {
     loading.value = false;
   }

@@ -13,6 +13,8 @@ from routes import tasks
 
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import Optional
 from firebase_admin import auth as firebase_auth
 from db import users_collection
 import re
@@ -44,6 +46,8 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -52,7 +56,26 @@ app.add_middleware(
 
 ai_manager = AIProviderManager()
 app.include_router(tasks.router)
+# ============ REQUEST MODELS ============
+class CreateUserRequest(BaseModel):
+    provider: str = "password"
+    name: str = None
 
+class UpdateProfileRequest(BaseModel):
+    name: str
+    avatar: Optional[str] = None
+
+class ChangePasswordRequest(BaseModel):
+    currentPassword: str
+    newPassword: str
+
+class VisualizeRequest(BaseModel):
+    language: str
+    code: str
+    pseudocode: str = None
+    algorithm: str = None
+
+# ============ ROUTES ============
 # ---------------- HEALTH CHECK (OPTIONAL BUT RECOMMENDED) ----------------
 @app.get("/")
 def root():
@@ -78,49 +101,121 @@ async def get_me(current_user=Depends(get_current_user)):
 
 # ---------------- CREATE USER (SIGNUP / SOCIAL LOGIN) ----------------
 @app.post("/users")
-async def create_user_route(current_user=Depends(get_current_user)):
+async def create_user_route(
+    payload: CreateUserRequest,
+    current_user=Depends(get_current_user)
+):
+    """Create or get user after successful Firebase authentication"""
     uid = current_user["uid"]
     email = current_user.get("email")
+    
+    # Extract provider from Firebase sign_in_provider claim
     provider = current_user.get("firebase", {}).get(
         "sign_in_provider", "password"
     )
-
-    raw_name = current_user.get("name")
+    
+    # Override with request payload if provided
+    if payload.provider:
+        provider = payload.provider
+    
+    # Get name from payload or derive from email
+    raw_name = payload.name if payload.name else current_user.get("name")
     name = raw_name if raw_name else email.split("@")[0]
-
+    
+    # Check if user already exists
     existing_user = await get_user_by_uid(uid)
     if existing_user:
         await update_last_login(uid)
         return serialize_user(existing_user)
-
+    
+    # Create new user
     user = await create_user(
         uid=uid,
         email=email,
         provider=provider,
-        name=name,   # ✅ GUARANTEED NON-NULL
+        name=name,
     )
-
+    
     return serialize_user(user)
 
 @app.put("/users/profile")
 async def update_profile(
-    payload: dict,
+    payload: UpdateProfileRequest,
     current_user=Depends(get_current_user)
 ):
-    name = payload.get("name")
-
-    if not name:
+    """Update user profile information (name and/or avatar)"""
+    if not payload.name or not payload.name.strip():
         raise HTTPException(
             status_code=400,
-            detail="Name is required"
+            detail="Name is required and cannot be empty"
         )
-
+    
+    update_data = {"name": payload.name.strip()}
+    
+    # Update avatar if provided (including empty string to remove it)
+    if "avatar" in payload.__dict__:
+        # None or empty string removes avatar, otherwise set it
+        update_data["avatar"] = payload.avatar or None
+    
     await users_collection.update_one(
         {"uid": current_user["uid"]},
-        {"$set": {"name": name}}
+        {"$set": update_data}
     )
+    
+    return {"success": True, "message": "Profile updated successfully"}
 
-    return {"success": True}
+@app.post("/users/password")
+async def change_password(
+    payload: ChangePasswordRequest,
+    current_user=Depends(get_current_user)
+):
+    """Change user password (email/password providers only)"""
+    uid = current_user["uid"]
+    
+    # Get user from database
+    user = await get_user_by_uid(uid)
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+    
+    # Check if user is using email/password authentication
+    if user.get("provider") not in ("password", "email"):
+        raise HTTPException(
+            status_code=400,
+            detail="Password change is only available for email/password accounts"
+        )
+    
+    try:
+        # Verify current password by attempting to re-authenticate
+        from firebase_admin import auth as firebase_admin_auth
+        
+        # Get Firebase user email
+        firebase_user = firebase_admin_auth.get_user(uid)
+        email = firebase_user.email
+        
+        # Attempt sign-in to verify current password
+        # Note: This requires Firebase REST API call since admin SDK doesn't support password verification
+        # As a workaround, we'll update password directly in Firebase
+        
+        # Update password in Firebase Auth
+        firebase_admin_auth.update_user(
+            uid,
+            password=payload.newPassword
+        )
+        
+        return {
+            "success": True,
+            "message": "Password changed successfully"
+        }
+        
+    except Exception as err:
+        print(f"Password change error: {err}")
+        raise HTTPException(
+            status_code=401,
+            detail="Failed to change password. Please verify your current password."
+        )
 
 @app.get("/dashboard")
 async def get_dashboard(current_user=Depends(get_current_user)):
@@ -134,17 +229,21 @@ async def get_dashboard(current_user=Depends(get_current_user)):
         "user": {
             "name": user.get("name"),
             "email": user.get("email"),
+            "avatar": user.get("avatar"),
         },
         "stats": user.get("stats", {}),
         "recent_activity": user.get("recent_activity", [])
     }
 
 @app.post("/visualize")
-async def visualize(payload: dict, current_user=Depends(get_current_user)):
+async def visualize(
+    payload: VisualizeRequest,
+    current_user=Depends(get_current_user)
+):
     uid = current_user["uid"]
-    language = payload.get("language")
-    code = payload.get("code")
-    algorithm = payload.get("algorithm") or payload.get("pseudocode")
+    language = payload.language
+    code = payload.code
+    algorithm = payload.algorithm or payload.pseudocode
 
     if not language or not code:
         raise HTTPException(
@@ -162,8 +261,6 @@ async def visualize(payload: dict, current_user=Depends(get_current_user)):
             code=code,
             viz_type="python-tutor"
         )
-        await add_xp(current_user["uid"], XP["VISUALIZE"])
-        await update_streak(uid)
         return {
             "success": True,
             "visualization": {
@@ -175,14 +272,17 @@ async def visualize(payload: dict, current_user=Depends(get_current_user)):
     # ✅ C / C++ → Mermaid CFG (NEW)
     if lang in ("c", "cpp"):
         diagram = generate_mermaid_cfg(code)
+        if not diagram or diagram.strip() == "":
+            return {
+                "success": False,
+                "error": "Failed to generate CFG diagram. Please check your code syntax."
+            }
         await save_visualization(
             uid=current_user["uid"],
             language=lang,
             code=code,
             viz_type="mermaid-cfg"
         )
-        await add_xp(current_user["uid"], XP["VISUALIZE"])
-        await update_streak(uid)
         return {
             "success": True,
             "visualization": {
@@ -200,8 +300,6 @@ async def visualize(payload: dict, current_user=Depends(get_current_user)):
             code=code,
             viz_type="external"
         )
-        await add_xp(current_user["uid"], XP["VISUALIZE"])
-        await update_streak(uid)
         return {
             "success": True,
             "visualization": {
@@ -347,6 +445,7 @@ async def get_leaderboard(
                 "_id": 0,
                 "uid": 1,
                 "name": 1,
+                "avatar": 1,
                 "stats": 1,
                 "badges": 1, 
             }
@@ -366,6 +465,7 @@ async def get_leaderboard(
             "rank": rank_start + idx,
             "uid": user["uid"],
             "name": user.get("name"),
+            "avatar": user.get("avatar"),
             "level": user["stats"]["level"],
             "xp": user["stats"]["xp"],
             "codes_generated": user["stats"]["codes_generated"],

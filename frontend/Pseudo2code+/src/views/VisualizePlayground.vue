@@ -8,6 +8,7 @@ const router = useRouter();
 
 const code = ref("");
 const language = ref("python");
+const isVisualizing = ref(false);
 
 onMounted(() => {
   const savedCode = sessionStorage.getItem("visualize_code");
@@ -21,6 +22,10 @@ onMounted(() => {
 
 const visualize = async () => {
   if (!code.value.trim()) return;
+  
+  // Prevent double submission
+  if (isVisualizing.value) return;
+  isVisualizing.value = true;
 
   try {
     // ✅ THIS IS THE FIX
@@ -36,6 +41,8 @@ const visualize = async () => {
     router.push("/visualize");
   } catch (err) {
     console.error("Visualization failed", err);
+  } finally {
+    isVisualizing.value = false;
   }
 };
 </script>
@@ -59,8 +66,8 @@ const visualize = async () => {
           <option value="cpp">C++</option>
         </select>
 
-        <button class="visualize-btn" @click="visualize">
-          Visualize Code
+        <button class="visualize-btn" @click="visualize" :disabled="isVisualizing">
+          {{ isVisualizing ? "Visualizing..." : "Visualize Code" }}
         </button>
       </div>
 

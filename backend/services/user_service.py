@@ -29,6 +29,7 @@ def serialize_user(user):
         "uid": user["uid"],
         "email": user["email"],
         "name": user.get("name"),
+        "avatar": user.get("avatar"),
         "provider": user.get("provider"),
         "created_at": user.get("created_at"),
         "last_login": user.get("last_login"),
@@ -57,6 +58,7 @@ async def create_user(uid: str, email: str, provider: str, name: str = None):
         "email": email,
         "provider": provider,
         "name": name,
+        "avatar": None,
         "created_at": datetime.utcnow(),
         "last_login": datetime.utcnow(),
         "stats": {
@@ -146,6 +148,23 @@ async def save_visualization(
     code: str,
     viz_type: str
 ):
+    """Save visualization record and update user stats (single atomic operation with deduplication)"""
+    # ✅ CHECK FOR DUPLICATE VISUALIZATION (same code + language within 1 minute)
+    user = await users_collection.find_one({"uid": uid})
+    if user:
+        recent_viz = user.get("visualizations", [])
+        if recent_viz:
+            last_viz = recent_viz[-1]  # Get most recent visualization
+            last_time = last_viz.get("created_at")
+            
+            # If last visualization was less than 1 minute ago with same code and language
+            if (isinstance(last_time, datetime) and 
+                (datetime.utcnow() - last_time).total_seconds() < 60 and
+                last_viz.get("code") == code and 
+                last_viz.get("language") == language):
+                # ✅ DUPLICATE DETECTED - Don't save again, just return existing record
+                return last_viz
+    
     record = {
         "id": str(uuid4()),
         "language": language,
@@ -154,14 +173,20 @@ async def save_visualization(
         "created_at": datetime.utcnow(),
     }
 
-    await users_collection.update_one(
+    # ✅ ATOMIC UPDATE: Save visualization + increment counter (only if not duplicate)
+    result = await users_collection.update_one(
         {"uid": uid},
         {
             "$push": {"visualizations": record},
             "$inc": {"stats.visualizations": 1}
         }
     )
+    
+    # Ensure update was successful
+    if result.modified_count == 0:
+        raise Exception(f"Failed to save visualization for user {uid}")
 
+    # ✅ ADD ACTIVITY SEPARATELY (no duplicate stats)
     await add_activity(
         uid,
         "visualized_code",
@@ -173,13 +198,21 @@ async def save_visualization(
             "viz_id": record["id"]
         }
     )
+    
+    # ✅ MARK TASKS
     await mark_task_completed(uid, "first_visualization")
 
+    # ✅ CHECK FOR BADGE CONDITIONS
     user = await users_collection.find_one({"uid": uid})
-    if user["stats"]["visualizations"] >= 5:
+    if user and user.get("stats", {}).get("visualizations", 0) >= 5:
         await mark_task_completed(uid, "visualize_5_algorithms")
 
+    # ✅ UPDATE STREAK
     await update_streak(uid)
+    
+    # ✅ EVALUATE BADGES
     user = await users_collection.find_one({"uid": uid})
-    await evaluate_badges(user, uid)
+    if user:
+        await evaluate_badges(user, uid)
+    
     return record

@@ -5,7 +5,7 @@
 
       <!-- LEFT COLUMN -->
       <div class="left-column">
-        <ProfileCard v-if="user" :name="user.name" :email="user.email" :level="user.level" :xp="user.xp"
+        <ProfileCard v-if="user" :name="user.name" :email="user.email" :avatar="user.avatar" :level="user.level" :xp="user.xp"
           :nextXp="user.nextXp" :totalXp="user.totalXp" :streak="user.streak"
           :streakActiveToday="user.streak_active_today" />
 
@@ -26,6 +26,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/userStore"
 import { fetchSuggestedTasks } from "@/services/taskService"
 import { Code, Eye, Trophy, LayoutDashboard, ArrowUp } from "lucide-vue-next";
 
@@ -41,6 +42,7 @@ import api from "@/services/api";
 import { logout } from "@/services/authService";
 
 const router = useRouter();
+const userStore = useUserStore();
 
 // STATE
 const user = ref(null);
@@ -66,6 +68,7 @@ onMounted(async () => {
     user.value = {
       name: data.user.name,
       email: data.user.email,
+      avatar: data.user.avatar || "",
       level: data.stats.level,
       xp: data.stats.xp,
       nextXp: data.stats.xp_next_level,
@@ -73,6 +76,9 @@ onMounted(async () => {
       streak: data.stats.streak,
       streak_active_today: data.stats.streak_active_today,
     };
+
+    // Store user in global state
+    userStore.setUser(user.value);
 
     // STATS
     stats.value = data.stats;

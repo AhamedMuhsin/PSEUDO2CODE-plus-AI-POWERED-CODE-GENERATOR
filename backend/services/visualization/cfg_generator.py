@@ -38,6 +38,10 @@ def sanitize_label(text: str) -> str:
     )
 
 def generate_mermaid_cfg(code: str) -> str:
+    """Generate a Mermaid CFG diagram from C/C++ code"""
+    if not code or not code.strip():
+        return "flowchart TD\nStart([Start])\nStart --> Error[Invalid Code]\nError --> End([End])"
+    
     has_for = bool(re.search(r"\bfor\s*\(", code))
     has_while = bool(re.search(r"\bwhile\s*\(", code))
     if_conditions = extract_all_if_conditions(code)
@@ -92,8 +96,6 @@ def generate_mermaid_cfg(code: str) -> str:
             then_node = f"Then{idx}[True]"
             merge_node = f"Merge{idx}((merge))"
 
-            lines += [if_node, then_node, merge_node]
-
             lines.append(f"{prev_node} --> {if_node}")
             lines.append(f"{if_node} -->|true| {then_node}")
             lines.append(f"{then_node} --> {merge_node}")
@@ -109,6 +111,38 @@ def generate_mermaid_cfg(code: str) -> str:
 
         lines.append(f"{prev_node} --> Exit")
 
+    # 🔁 SINGLE LOOP (NO IF)
+    elif has_for or has_while:
+        loop_cond = sanitize_label(
+            extract_for_condition(code)
+            if has_for
+            else extract_while_condition(code)
+        )
+        lines.append(f"Start --> LoopCond{{{loop_cond}}}")
+        lines.append("LoopCond -->|true| LoopBody[Loop Body]")
+        lines.append("LoopBody --> LoopCond")
+        lines.append("LoopCond -->|false| Exit")
+
+    # 🔀 SINGLE IF (NO LOOP)
+    elif if_conditions:
+        safe_cond = sanitize_label(if_conditions[0])
+        if_node = f"Decision{{{safe_cond}}}"
+        then_node = "[True Path]"
+        merge_node = "([Merge])"
+        
+        lines.append(f"Start --> {if_node}")
+        lines.append(f"{if_node} -->|true| Then{then_node}")
+        lines.append(f"Then --> {merge_node}")
+        
+        if has_else:
+            else_node = "[False Path]"
+            lines.append(f"{if_node} -->|false| Else{else_node}")
+            lines.append(f"Else --> {merge_node}")
+        else:
+            lines.append(f"{if_node} -->|false| {merge_node}")
+
+        lines.append(f"{merge_node} --> Exit")
+
     # ➖ SIMPLE FALLBACK
     else:
         lines.append("Start --> Process[Process Logic]")
@@ -121,4 +155,10 @@ def generate_mermaid_cfg(code: str) -> str:
     else:
         lines.append("Exit --> End([End])")
 
-    return "\n".join(lines)
+    diagram = "\n".join(lines)
+    
+    # Validate diagram is not empty
+    if not diagram or len(diagram.split("\n")) < 3:
+        return "flowchart TD\nStart([Start])\nStart --> Process[Process]\nProcess --> End([End])"
+    
+    return diagram

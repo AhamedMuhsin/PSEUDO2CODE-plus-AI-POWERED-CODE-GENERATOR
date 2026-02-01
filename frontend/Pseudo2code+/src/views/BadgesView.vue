@@ -5,7 +5,7 @@
     <div class="page-layout">
       <!-- LEFT SIDEBAR -->
       <aside class="sidebar">
-        <ProfileCard v-if="user" :name="user.name" :email="user.email" :level="user.level" :xp="user.xp"
+        <ProfileCard v-if="user" :name="user.name" :email="user.email" :avatar="user.avatar" :level="user.level" :xp="user.xp"
           :nextXp="user.nextXp" :totalXp="user.totalXp" :streak="user.streak" />
         <NavigationCard />
         <BadgeProgressCard :earned="earnedCount" :locked="lockedCount" />
@@ -52,6 +52,7 @@
 </template>
 
 <script setup>
+import { useUserStore } from "@/stores/userStore"
 import AuthNavbar from "@/components/Navbar/AuthNavbar.vue";
 import ProfileCard from "@/components/dashboard/ProfileCard.vue";
 import NavigationCard from "@/components/dashboard/NavigationCard.vue";
@@ -61,6 +62,7 @@ import { BADGES } from "@/config/badges"
 import { ref, computed, onMounted } from "vue"
 import api from "@/services/api"
 
+const userStore = useUserStore()
 const userBadges = ref([])
 const user = ref(null);
 const earnedCount = computed(() => earnedBadges.value.length)
@@ -83,12 +85,16 @@ onMounted(async () => {
   user.value = {
     name: data.name,
     email: data.email,
+    avatar: data.avatar || "",
     level: data.stats.level,
     xp: data.stats.xp,
     nextXp: data.stats.xp_next_level,
     totalXp: data.stats.xp,
     streak: data.stats.streak,
   };
+
+  // Update global store
+  userStore.setUser(user.value)
 
   userBadges.value = res.data.badges || []
 })

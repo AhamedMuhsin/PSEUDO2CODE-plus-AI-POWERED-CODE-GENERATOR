@@ -21,8 +21,8 @@
 
       <!-- User -->
       <div class="user">
-        <div class="avatar">
-          {{ initials(user.name) }}
+        <div class="avatar" :style="{ backgroundImage: user.avatar ? `url(${user.avatar})` : '' }">
+          {{ !user.avatar ? initials(user.name) : '' }}
         </div>
         <div class="name">
           {{ user.name }}
@@ -218,11 +218,12 @@ const initials = (name = "") =>
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: #6366f1;
+  background: #6366f1 center / cover no-repeat;
   display: grid;
   place-items: center;
   font-weight: 700;
   color: white;
+  flex-shrink: 0;
 }
 
 .name {

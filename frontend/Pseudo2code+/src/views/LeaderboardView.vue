@@ -6,7 +6,7 @@
 
             <!-- LEFT SIDEBAR -->
             <aside class="sidebar">
-                <ProfileCard v-if="user" :name="user.name" :email="user.email" :level="user.level" :xp="user.xp"
+                <ProfileCard v-if="user" :name="user.name" :email="user.email" :avatar="user.avatar" :level="user.level" :xp="user.xp"
                     :nextXp="user.nextXp" :totalXp="user.totalXp" :streak="user.streak" />
                 <NavigationCard />
                 <YourRankCard v-if="currentUid && leaderboard.length" :rank="myRank" :monthlyChange="0"
@@ -59,6 +59,9 @@ import LeaderboardTable from "@/components/leaderboard/LeaderboardTable.vue"
 import YourRankCard from "@/components/leaderboard/YourRankCard.vue"
 import { ref, onMounted, watch, computed } from "vue";
 import api from "@/services/api";
+import { useUserStore } from "@/stores/userStore"
+
+const userStore = useUserStore()
 
 const user = ref(null);
 const currentUid = ref(null)
@@ -84,6 +87,7 @@ onMounted(async () => {
     user.value = {
         name: data.name,
         email: data.email,
+        avatar: data.avatar || "",
         level: data.stats.level,
         xp: data.stats.xp,
         nextXp: data.stats.xp_next_level,
@@ -92,6 +96,7 @@ onMounted(async () => {
     }
 
     currentUid.value = data.uid
+    userStore.setUser(user.value)
 })
 
 const onTabChange = (type) => {

@@ -3,7 +3,7 @@
   <div class="history-page">
     <div class="page-layout">
       <aside class="sidebar">
-        <ProfileCard v-if="user" :name="user.name" :email="user.email" :level="user.level" :xp="user.xp"
+        <ProfileCard v-if="user" :name="user.name" :email="user.email" :avatar="user.avatar" :level="user.level" :xp="user.xp"
           :nextXp="user.nextXp" :totalXp="user.totalXp" :streak="user.streak" />
         <NavigationCard />
       </aside>
@@ -125,6 +125,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
+import { useUserStore } from "@/stores/userStore"
 import { Search } from "lucide-vue-next";
 import { useRoute, useRouter } from "vue-router";
 import api from "@/services/api";
@@ -134,6 +135,7 @@ import NavigationCard from "@/components/dashboard/NavigationCard.vue";
 import { Code, Eye, Trophy, ArrowUp } from "lucide-vue-next";
 import BaseModal from "@/components/common/BaseModal.vue";
 
+const userStore = useUserStore()
 const search = ref("");
 const route = useRoute();
 const router = useRouter();
@@ -158,12 +160,16 @@ onMounted(async () => {
   user.value = {
     name: data.name,
     email: data.email,
+    avatar: data.avatar || "",
     level: data.stats.level,
     xp: data.stats.xp,
     nextXp: data.stats.xp_next_level,
     totalXp: data.stats.xp,
     streak: data.stats.streak,
   };
+
+  // Update global store
+  userStore.setUser(user.value)
 
   activities.value = data.recent_activity || [];
   if (route.query.type) {

@@ -12,6 +12,22 @@ async def add_activity(uid: str, activity_type: str, title: str, meta=None):
         "created_at": datetime.utcnow(),
     }
 
+    # ✅ CHECK FOR DUPLICATE ACTIVITY (same type + code within 1 minute)
+    user = await users_collection.find_one({"uid": uid})
+    if user:
+        recent_activities = user.get("recent_activity", [])
+        if recent_activities:
+            last_activity = recent_activities[0]  # Most recent is at index 0
+            
+            # If last activity was less than 1 minute ago with same type and code
+            if (activity_type in ["visualized_code", "generated_code"] and
+                last_activity.get("type") == activity_type and
+                isinstance(last_activity.get("created_at"), datetime) and
+                (datetime.utcnow() - last_activity.get("created_at")).total_seconds() < 60 and
+                last_activity.get("meta", {}).get("code") == (meta or {}).get("code")):
+                # ✅ DUPLICATE DETECTED - Skip adding duplicate activity
+                return
+
     await users_collection.update_one(
         {"uid": uid},
         {
@@ -24,6 +40,7 @@ async def add_activity(uid: str, activity_type: str, title: str, meta=None):
             }
         }
     )
+
 
 async def delete_activity(uid: str, activity: dict):
     activity_type = activity["type"]

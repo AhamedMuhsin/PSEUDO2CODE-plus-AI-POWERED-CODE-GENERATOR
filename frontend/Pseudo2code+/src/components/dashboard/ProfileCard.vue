@@ -2,7 +2,9 @@
   <div class="profile-card">
     <!-- User Info -->
     <div class="user">
-      <div class="avatar">{{ initials }}</div>
+      <div class="avatar" :style="{ backgroundImage: avatar ? `url(${avatar})` : '' }">
+        {{ !avatar ? initials : '' }}
+      </div>
       <div>
         <h3>{{ name }}</h3>
         <p class="email">{{ email }}</p>
@@ -46,6 +48,7 @@ import { Trophy, Flame } from "lucide-vue-next";
 const props = defineProps({
   name: { type: String, default: "" },
   email: { type: String, default: "" },
+  avatar: { type: String, default: "" },
   level: { type: Number, default: 1 },
   xp: { type: Number, default: 0 },
   nextXp: { type: Number, default: 100 },
@@ -121,12 +124,10 @@ const initials = computed(() => {
   align-items: center;
   justify-content: center;
   font-weight: bold;
-}
-
-.avatar {
-  box-shadow: 0 0 0 2px rgba(96, 165, 250, .3),
-    0 0 20px rgba(96, 165, 250, .25);
-  transition: transform .2s ease;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.3), 0 0 20px rgba(96, 165, 250, 0.25);
+  transition: transform 0.2s ease;
 }
 
 .avatar:hover {

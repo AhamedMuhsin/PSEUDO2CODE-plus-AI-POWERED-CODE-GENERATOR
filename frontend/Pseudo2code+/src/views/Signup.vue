@@ -90,6 +90,27 @@ const success = ref("");
 
 const handleSignup = async () => {
   error.value = "";
+  success.value = "";
+
+  if (!name.value || !name.value.trim()) {
+    error.value = "Please enter your full name.";
+    return;
+  }
+
+  if (!email.value) {
+    error.value = "Please enter your email address.";
+    return;
+  }
+
+  if (!isValidEmail(email.value)) {
+    error.value = "Please enter a valid email address.";
+    return;
+  }
+
+  if (!isValidPassword(password.value)) {
+    error.value = "Password must be at least 6 characters.";
+    return;
+  }
 
   if (password.value !== confirmPassword.value) {
     error.value = "Passwords do not match.";
@@ -101,6 +122,8 @@ const handleSignup = async () => {
 
     await signupWithEmail(email.value, password.value, name.value);
 
+    // Small delay to ensure Firebase auth state is updated
+    await new Promise(resolve => setTimeout(resolve, 500));
     router.push("/dashboard");
   } catch (err) {
     error.value = getFirebaseErrorMessage(err);
@@ -109,15 +132,53 @@ const handleSignup = async () => {
   }
 };
 
-// 🌐 Social logins (no validation needed)
+// 🌐 Social logins with error handling
 const handleGoogle = async () => {
-  await loginWithGoogle();
-  router.push("/dashboard");
+  try {
+    error.value = "";
+    success.value = "";
+    loading.value = true;
+    
+    await loginWithGoogle();
+    
+    // Small delay to ensure Firebase auth state is updated
+    await new Promise(resolve => setTimeout(resolve, 500));
+    router.push("/dashboard");
+  } catch (err) {
+    console.error('Google signup error:', err);
+    if (err.code === 'auth/popup-closed-by-user') {
+      error.value = "Sign up was cancelled.";
+    } else {
+      error.value = "Google sign-up failed. Please try again.";
+    }
+  } finally {
+    loading.value = false;
+  }
 };
 
 const handleGithub = async () => {
-  await loginWithGithub();
-  router.push("/dashboard");
+  try {
+    error.value = "";
+    success.value = "";
+    loading.value = true;
+    
+    await loginWithGithub();
+    
+    // Small delay to ensure Firebase auth state is updated
+    await new Promise(resolve => setTimeout(resolve, 500));
+    router.push("/dashboard");
+  } catch (err) {
+    console.error('GitHub signup error:', err);
+    if (err.code === 'auth/popup-closed-by-user') {
+      error.value = "Sign up was cancelled.";
+    } else if (err.code === 'auth/account-exists-with-different-credential') {
+      error.value = "An account with this email already exists. Please try signing up with your original method.";
+    } else {
+      error.value = "GitHub sign-up failed. Please try again.";
+    }
+  } finally {
+    loading.value = false;
+  }
 };
 </script>
 
