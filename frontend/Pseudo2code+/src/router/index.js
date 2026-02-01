@@ -86,8 +86,9 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: '/visualize/:id',
-    component: () => import('@/views/AlgorithmVisualizer.vue'),
+    path: '/visualize/:category/:algorithm',
+    name: 'AlgorithmVisualizer',
+    component: () => import('@/views/AlgorithmVisualizerPage.vue'),
     meta: { requiresAuth: true },
   },
 ]
