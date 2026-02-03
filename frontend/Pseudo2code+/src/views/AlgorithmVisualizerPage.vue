@@ -8,12 +8,16 @@ import { useRoute } from "vue-router"
 
 import BubbleSortVisualizer from "@/components/visualizer/BubbleSortVisualizer.vue"
 import SelectionSortVisualizer from "@/components/visualizer/SelectionSortVisualizer.vue"
+import InsertionSortVisualizer from "@/components/visualizer/InsertionSortVisualizer.vue"
+import MergeSortVisualizer from "@/components/visualizer/MergeSortVisualizer.vue"
 
 const route = useRoute()
 
 const visualizerMap = {
   "sorting/bubble-sort": BubbleSortVisualizer,
   "sorting/selection-sort": SelectionSortVisualizer,
+  "sorting/insertion-sort": InsertionSortVisualizer,
+  "sorting/merge-sort": MergeSortVisualizer,
 }
 
 const key = computed(() =>

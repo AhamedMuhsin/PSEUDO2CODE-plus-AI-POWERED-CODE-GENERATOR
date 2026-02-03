@@ -3,7 +3,8 @@
     <div v-for="(value, i) in array" :key="i" class="bar" :class="{
       active: active.includes(i),
       swap: swap && active.includes(i),
-      sorted: sorted.includes(i)
+      sorted: sorted.includes(i),
+      range: range && i >= range[0] && i <= range[1]
     }" :style="{ height: (value / max) * 100 + '%' }">
       {{ value }}
     </div>
@@ -19,6 +20,10 @@ defineProps({
   sorted: {
     type: Array,
     default: () => []
+  },
+  range: {
+    type: Array,
+    default: () => null // [l, r]
   }
 })
 </script>
@@ -57,5 +62,8 @@ defineProps({
   color: #e5e7eb;
   opacity: 0.6;
 }
-
+.bar.range {
+  outline: 2px dashed rgba(99, 102, 241, 0.6);
+  outline-offset: -2px;
+}
 </style>

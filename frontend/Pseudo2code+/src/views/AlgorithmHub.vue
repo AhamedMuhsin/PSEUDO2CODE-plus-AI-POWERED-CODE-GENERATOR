@@ -23,8 +23,8 @@
           <AlgoCard title="Selection Sort" level="Beginner" desc="Find minimum element and place it at the beginning"
             :icon="ListOrdered" route="/visualize/sorting/selection-sort"/>
           <AlgoCard title="Insertion Sort" level="Beginner" desc="Build sorted array one element at a time"
-            :icon="MoveDown" />
-          <AlgoCard title="Merge Sort" level="Intermediate" desc="Divide and conquer sorting algorithm" :icon="Split" />
+            :icon="MoveDown" route="/visualize/sorting/insertion-sort"/>
+          <AlgoCard title="Merge Sort" level="Intermediate" desc="Divide and conquer sorting algorithm" :icon="Split" route="/visualize/sorting/merge-sort"/>
           <AlgoCard title="Quick Sort" level="Intermediate" desc="Partition-based sorting with pivot element"
             :icon="Zap" />
           <AlgoCard title="Heap Sort" level="Intermediate" desc="Binary heap-based sorting algorithm" :icon="Layers" />
