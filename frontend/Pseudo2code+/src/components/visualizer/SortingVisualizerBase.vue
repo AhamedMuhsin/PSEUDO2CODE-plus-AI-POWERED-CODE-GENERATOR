@@ -10,6 +10,13 @@
             <header class="visualizer-header">
                 <h1>{{ title }}</h1>
                 <p>{{ description }}</p>
+                <div v-if="meta" class="algo-badges">
+                    <span class="badge">Time: {{ meta.time }}</span>
+                    <span class="badge">Space: {{ meta.space }}</span>
+                    <span class="badge" :class="meta.stable ? 'stable' : 'unstable'">
+                        {{ meta.stable ? 'Stable' : 'Unstable' }}
+                    </span>
+                </div>
             </header>
 
             <!-- ARRAY INPUT -->
@@ -44,7 +51,8 @@
             <!-- CANVAS -->
             <section class="canvas">
                 <ArrayCanvas :array="currentStep.array" :active="currentStep.active" :swap="currentStep.swap"
-                    :sorted="currentStep.sorted || []" :max="maxValue" />
+                    :sorted="currentStep.sorted || []" :range="currentStep.range || null"
+                    :pivot="currentStep.pivot ?? null" :max="maxValue" />
                 <div class="canvas-legend">
                     <div class="legend-item">
                         <span class="dot normal"></span>
@@ -61,6 +69,10 @@
                     <div class="legend-item">
                         <span class="dot sorted"></span>
                         <span>Sorted</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="dot pivot"></span>
+                        <span>Pivot</span>
                     </div>
                 </div>
             </section>
@@ -81,10 +93,11 @@
 import { ref, computed, watch } from 'vue'
 import arrowLeft from "@/assets/arrow-left.svg";
 import { useRouter } from "vue-router";
+import { useRoute } from "vue-router"
 const router = useRouter();
 import PseudoCodePanel from './PseudoCodePanel.vue'
-import { bubbleSortPseudo } from '@/algorithms/sorting/bubbleSortPseudo'
 import ArrayCanvas from './canvases/ArrayCanvas.vue'
+import { sortingMeta } from "@/algorithms/sorting/sortingMeta"
 
 const props = defineProps({
     title: String,
@@ -96,6 +109,9 @@ const props = defineProps({
 const randomArray = () =>
     Array.from({ length: 8 }, () => Math.floor(Math.random() * 99) + 1)
 
+const route = useRoute()
+const algorithmKey = computed(() => route.params.algorithm)
+const meta = computed(() => sortingMeta[algorithmKey.value])
 const baseArray = ref(randomArray())
 const steps = ref(props.generateSteps(baseArray.value))
 const stepIndex = ref(0)
@@ -196,50 +212,57 @@ watch(speed, () => {
 }
 
 .canvas {
-  position: relative;
+    position: relative;
 }
 
 /* Legend container */
 .canvas-legend {
-  position: absolute;
-  top: 15px;
-  right: 10px;
-  display: flex;
-  gap: 14px;
-  padding: 8px 12px;
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 12px;
-  font-size: 0.75rem;
-  color: #e5e7eb;
+    position: absolute;
+    top: 15px;
+    right: 10px;
+    display: flex;
+    gap: 14px;
+    padding: 8px 12px;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: #e5e7eb;
 }
 
 /* Legend item */
 .legend-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 /* Dots */
 .dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 3px;
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
 }
 
 .dot.normal {
-  background: #6366f1;
+    background: #6366f1;
 }
+
 .dot.active {
-  background: #22c55e;
+    background: #22c55e;
 }
+
 .dot.swap {
-  background: #ef4444;
+    background: #ef4444;
 }
+
 .dot.sorted {
-  background: rgba(255,255,255,0.5);
+    background: rgba(255, 255, 255, 0.5);
 }
+.dot.pivot {
+  background: #a855f7; /* purple */
+}
+
 
 /* .back {
     background: transparent;
@@ -332,6 +355,34 @@ watch(speed, () => {
     align-items: center;
     gap: 10px;
     font-size: 0.85rem;
+}
+
+.algo-badges {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #e5e7eb;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.badge.stable {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+    border-color: rgba(34, 197, 94, 0.3);
+}
+
+.badge.unstable {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.3);
 }
 
 /* CANVAS */

@@ -26,8 +26,8 @@
             :icon="MoveDown" route="/visualize/sorting/insertion-sort"/>
           <AlgoCard title="Merge Sort" level="Intermediate" desc="Divide and conquer sorting algorithm" :icon="Split" route="/visualize/sorting/merge-sort"/>
           <AlgoCard title="Quick Sort" level="Intermediate" desc="Partition-based sorting with pivot element"
-            :icon="Zap" />
-          <AlgoCard title="Heap Sort" level="Intermediate" desc="Binary heap-based sorting algorithm" :icon="Layers" />
+            :icon="Zap" route="/visualize/sorting/quick-sort"/>
+          <AlgoCard title="Heap Sort" level="Intermediate" desc="Binary heap-based sorting algorithm" :icon="Layers" route="/visualize/sorting/heap-sort"/>
         </div>
       </section>
 

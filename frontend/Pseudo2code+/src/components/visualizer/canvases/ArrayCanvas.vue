@@ -4,7 +4,8 @@
       active: active.includes(i),
       swap: swap && active.includes(i),
       sorted: sorted.includes(i),
-      range: range && i >= range[0] && i <= range[1]
+      range: range && i >= range[0] && i <= range[1],
+      pivot: pivot === i
     }" :style="{ height: (value / max) * 100 + '%' }">
       {{ value }}
     </div>
@@ -23,7 +24,11 @@ defineProps({
   },
   range: {
     type: Array,
-    default: () => null // [l, r]
+    default: () => null
+  },
+  pivot: {
+    type: Number,
+    default: null
   }
 })
 </script>
@@ -62,6 +67,11 @@ defineProps({
   color: #e5e7eb;
   opacity: 0.6;
 }
+
+.bar.pivot {
+  background: #a855f7; /* purple */
+}
+
 .bar.range {
   outline: 2px dashed rgba(99, 102, 241, 0.6);
   outline-offset: -2px;
