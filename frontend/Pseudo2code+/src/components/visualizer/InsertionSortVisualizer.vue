@@ -2,7 +2,7 @@
     <AuthNavbar />
     <SortingVisualizerBase title="Insertion Sort"
         description="Builds the sorted array one element at a time by inserting elements in the correct position."
-        :generateSteps="generateInsertionSortSteps" :pseudoCode="insertionSortPseudo" />
+        :generateSteps="generateInsertionSortSteps" :pseudoCode="insertionSortPseudo" :algorithmName="'Insertion Sort'"/>
 </template>
 
 <script setup>

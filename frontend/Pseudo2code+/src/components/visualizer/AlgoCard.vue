@@ -17,7 +17,9 @@
       <button class="primary" @click="$router.push(route)">
         Try Now
       </button>
-      <button class="info">ⓘ</button>
+      <button class="info" @click="$emit('show-info', info)">
+        ⓘ
+      </button>
     </div>
   </div>
 </template>
@@ -28,8 +30,11 @@ defineProps({
   desc: String,
   level: String,
   icon: Object,
-  route: String
+  route: String,
+  info: Object,
 })
+
+defineEmits(['show-info'])
 </script>
 
 <style scoped>

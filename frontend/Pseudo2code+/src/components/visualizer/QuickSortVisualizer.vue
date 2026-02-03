@@ -2,8 +2,7 @@
     <AuthNavbar />
     <SortingVisualizerBase title="Quick Sort"
         description="Partition the array using a pivot and recursively sort subarrays."
-        :generateSteps="generateQuickSortSteps" :pseudoCode="quickSortPseudo" />
-
+        :generateSteps="generateQuickSortSteps" :pseudoCode="quickSortPseudo" :algorithmName="'Quick Sort'"/>
 </template>
 <script setup>
 import AuthNavbar from '../Navbar/AuthNavbar.vue';

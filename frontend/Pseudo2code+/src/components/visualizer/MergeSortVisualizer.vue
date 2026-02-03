@@ -1,8 +1,7 @@
 <template>
     <AuthNavbar />
     <SortingVisualizerBase title="Merge Sort" description="Divide the array into halves, sort them, and merge."
-        :generateSteps="generateMergeSortSteps" :pseudoCode="mergeSortPseudo" />
-
+        :generateSteps="generateMergeSortSteps" :pseudoCode="mergeSortPseudo" :algorithmName="'Merge Sort'"/>
 </template>
 <script setup>
 import AuthNavbar from '../Navbar/AuthNavbar.vue';

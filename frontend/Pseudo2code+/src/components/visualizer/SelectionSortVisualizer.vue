@@ -2,7 +2,7 @@
     <AuthNavbar />
     <SortingVisualizerBase title="Selection Sort"
         description="Repeatedly selects the minimum element and places it at the beginning."
-        :generateSteps="generateSelectionSortSteps" :pseudoCode="selectionSortPseudo" />
+        :generateSteps="generateSelectionSortSteps" :pseudoCode="selectionSortPseudo" :algorithmName="'Selection Sort'"/>
 </template>
 
 <script setup>

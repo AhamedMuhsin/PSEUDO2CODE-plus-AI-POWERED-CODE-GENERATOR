@@ -1,7 +1,7 @@
 <template>
     <AuthNavbar />
     <SortingVisualizerBase title="Heap Sort" description="Build a max heap and repeatedly extract the maximum element."
-        :generateSteps="generateHeapSortSteps" :pseudoCode="heapSortPseudo" />
+        :generateSteps="generateHeapSortSteps" :pseudoCode="heapSortPseudo" :algorithmName="'Heap Sort'"/>
 
 </template>
 <script setup>

@@ -128,8 +128,6 @@
           <Play class="icon icon-visualize" />
           Visualize Code
         </button>
-
-
       </section>
 
     </div>
@@ -140,6 +138,7 @@
 import { ref } from "vue";
 import api from "@/services/api";
 import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import AuthNavbar from "@/components/Navbar/AuthNavbar.vue";
 import { generateCode } from "@/services/codeGenerationService";
 import hljs from "highlight.js";
@@ -157,6 +156,7 @@ import {
 
 
 const router = useRouter();
+const route = useRoute();
 
 // State
 const pseudocode = ref("");
@@ -190,6 +190,9 @@ const canVisualize = computed(() => {
 });
 
 onMounted(() => {
+  if (route.query.prompt) {
+    pseudocode.value = route.query.prompt;
+  }
   const storedPseudocode = sessionStorage.getItem("generate_pseudocode");
   const storedCode = sessionStorage.getItem("generate_code");
   const storedLanguage = sessionStorage.getItem("generate_language");

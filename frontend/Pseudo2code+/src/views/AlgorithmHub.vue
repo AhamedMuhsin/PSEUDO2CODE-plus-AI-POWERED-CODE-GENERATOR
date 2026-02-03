@@ -19,15 +19,75 @@
 
         <div class="card-grid">
           <AlgoCard title="Bubble Sort" level="Beginner" desc="Compare adjacent elements and swap if needed"
-            :icon="ArrowUpDown" route="/visualize/sorting/bubble-sort"/>
+            :icon="ArrowUpDown" route="/visualize/sorting/bubble-sort" :info="{
+              name: 'Bubble Sort',
+              best: 'O(n)',
+              average: 'O(n²)',
+              worst: 'O(n²)',
+              space: 'O(1)',
+              stable: true,
+              inPlace: true,
+              description: 'Repeatedly compares adjacent elements and swaps them if they are in the wrong order.'
+            }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Selection Sort" level="Beginner" desc="Find minimum element and place it at the beginning"
-            :icon="ListOrdered" route="/visualize/sorting/selection-sort"/>
+            :icon="ListOrdered" route="/visualize/sorting/selection-sort" :info="{
+              name: 'Selection Sort',
+              best: 'O(n²)',
+              average: 'O(n²)',
+              worst: 'O(n²)',
+              space: 'O(1)',
+              stable: false,
+              inPlace: true,
+              description: 'Repeatedly selects the minimum element from the unsorted part and places it at the beginning.'
+            }" @show-info="selectedInfo = $event" />
+
           <AlgoCard title="Insertion Sort" level="Beginner" desc="Build sorted array one element at a time"
-            :icon="MoveDown" route="/visualize/sorting/insertion-sort"/>
-          <AlgoCard title="Merge Sort" level="Intermediate" desc="Divide and conquer sorting algorithm" :icon="Split" route="/visualize/sorting/merge-sort"/>
+            :icon="MoveDown" route="/visualize/sorting/insertion-sort" :info="{
+              name: 'Insertion Sort',
+              best: 'O(n)',
+              average: 'O(n²)',
+              worst: 'O(n²)',
+              space: 'O(1)',
+              stable: true,
+              inPlace: true,
+              description: 'Builds the final sorted array one element at a time by inserting elements into their correct position.'
+            }" @show-info="selectedInfo = $event" />
+
+          <AlgoCard title="Merge Sort" level="Intermediate" desc="Divide and conquer sorting algorithm" :icon="Split"
+            route="/visualize/sorting/merge-sort" :info="{
+              name: 'Merge Sort',
+              best: 'O(n log n)',
+              average: 'O(n log n)',
+              worst: 'O(n log n)',
+              space: 'O(n)',
+              stable: true,
+              inPlace: false,
+              description: 'Divides the array into halves, recursively sorts them, and merges the sorted halves.'
+            }" @show-info="selectedInfo = $event" />
+
           <AlgoCard title="Quick Sort" level="Intermediate" desc="Partition-based sorting with pivot element"
-            :icon="Zap" route="/visualize/sorting/quick-sort"/>
-          <AlgoCard title="Heap Sort" level="Intermediate" desc="Binary heap-based sorting algorithm" :icon="Layers" route="/visualize/sorting/heap-sort"/>
+            :icon="Zap" route="/visualize/sorting/quick-sort" :info="{
+              name: 'Quick Sort',
+              best: 'O(n log n)',
+              average: 'O(n log n)',
+              worst: 'O(n²)',
+              space: 'O(log n)',
+              stable: false,
+              inPlace: true,
+              description: 'Selects a pivot element and partitions the array so that smaller elements are on one side and larger on the other.'
+            }" @show-info="selectedInfo = $event" />
+
+          <AlgoCard title="Heap Sort" level="Intermediate" desc="Binary heap-based sorting algorithm" :icon="Layers"
+            route="/visualize/sorting/heap-sort" :info="{
+              name: 'Heap Sort',
+              best: 'O(n log n)',
+              average: 'O(n log n)',
+              worst: 'O(n log n)',
+              space: 'O(1)',
+              stable: false,
+              inPlace: true,
+              description: 'Builds a max heap and repeatedly extracts the maximum element to produce a sorted array.'
+            }" @show-info="selectedInfo = $event" />
         </div>
       </section>
 
@@ -93,13 +153,18 @@
             :icon="Target" />
         </div>
       </section>
+      <Transition name="modal">
+        <AlgorithmInfoModal v-if="selectedInfo" :info="selectedInfo" @close="selectedInfo = null" />
+      </Transition>
     </div>
   </main>
 </template>
 
 <script setup>
+import { ref } from "vue";
 import AuthNavbar from "@/components/Navbar/AuthNavbar.vue";
 import AlgoCard from "@/components/visualizer/AlgoCard.vue"
+import AlgorithmInfoModal from '@/components/visualizer/AlgorithmInfoModal.vue'
 import {
   ArrowUpDown,
   ListOrdered,
@@ -126,6 +191,8 @@ import {
   Workflow,
   Target,
 } from "lucide-vue-next"
+
+const selectedInfo = ref(null)
 </script>
 
 <style scoped>
@@ -173,6 +240,32 @@ import {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
+}
+
+/* Modal enter/leave animation */
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.25s ease;
+}
+
+.modal-enter-from {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.modal-enter-to {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.modal-leave-from {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.modal-leave-to {
+  opacity: 0;
+  transform: scale(0.9);
 }
 
 /* Responsive */

@@ -2,8 +2,7 @@
     <AuthNavbar />
     <SortingVisualizerBase title="Bubble Sort"
         description="Repeatedly compares adjacent elements and swaps them if they are in the wrong order."
-        :generateSteps="generateBubbleSortSteps" :pseudoCode="bubbleSortPseudo" />
-
+        :generateSteps="generateBubbleSortSteps" :pseudoCode="bubbleSortPseudo" :algorithmName="'Bubble Sort'" />
 </template>
 
 <script setup>

@@ -27,6 +27,10 @@
 
                 <input v-model="customInput" placeholder="Custom array (Press Enter) : 5,2,8,1"
                     @keydown.enter="applyCustomArray" />
+                <button class="btn ghost" @click="goToGenerateCode">
+                    Generate Code
+                </button>
+
             </section>
 
             <!-- CONTROLS -->
@@ -103,11 +107,13 @@ const props = defineProps({
     title: String,
     description: String,
     generateSteps: Function,
-    pseudoCode: Array
+    pseudoCode: Array,
+    algorithmName: String,
 })
 
 const randomArray = () =>
     Array.from({ length: 8 }, () => Math.floor(Math.random() * 99) + 1)
+
 
 const route = useRoute()
 const algorithmKey = computed(() => route.params.algorithm)
@@ -187,6 +193,17 @@ watch(speed, () => {
         play()
     }
 })
+
+function goToGenerateCode() {
+  const prompt = `Write a program for the ${props.algorithmName} algorithm. 
+Take a random input array.`
+
+  router.push({
+    path: '/generate-code',
+    query: { prompt }
+  })
+}
+
 </script>
 
 <style scoped>
@@ -259,8 +276,10 @@ watch(speed, () => {
 .dot.sorted {
     background: rgba(255, 255, 255, 0.5);
 }
+
 .dot.pivot {
-  background: #a855f7; /* purple */
+    background: #a855f7;
+    /* purple */
 }
 
 
