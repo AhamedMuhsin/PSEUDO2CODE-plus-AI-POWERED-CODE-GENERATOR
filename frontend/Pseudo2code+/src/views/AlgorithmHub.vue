@@ -100,7 +100,7 @@
 
         <div class="card-grid">
           <AlgoCard title="Array Operations" level="Beginner" desc="Insert, delete, and search in arrays"
-            :icon="Rows" />
+            :icon="Rows" route="/array-operations" />
           <AlgoCard title="Stack" level="Beginner" desc="LIFO data structure operations" :icon="Layers3" />
           <AlgoCard title="Queue" level="Beginner" desc="FIFO data structure operations" :icon="AlignLeft" />
           <AlgoCard title="Linked List" level="Intermediate" desc="Node-based linear data structure" :icon="Link" />

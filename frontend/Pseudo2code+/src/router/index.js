@@ -91,6 +91,11 @@ const routes = [
     component: () => import('@/views/AlgorithmVisualizerPage.vue'),
     meta: { requiresAuth: true },
   },
+  {
+    path: '/array-operations',
+    component: () => import('@/views/ArrayOperationsHub.vue'),
+    meta: { requiresAuth: true },
+  },
 ]
 
 const router = createRouter({
