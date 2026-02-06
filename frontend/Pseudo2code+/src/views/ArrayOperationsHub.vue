@@ -18,6 +18,9 @@
         :title="currentOperation.label"
         :description="currentOperation.description"
         :generateSteps="currentOperation.generator"
+        :pseudocode="currentOperation.pseudocode"
+        :algorithmName="currentOperation.algorithmName"
+        :info="currentOperation.info"
       />
     </div>
   </main>
@@ -36,6 +39,7 @@ const currentOperation = computed(() =>
   arrayOperations[selectedOp.value]
 )
 </script>
+
 <style scoped>
 .visualizer-page {
   background: radial-gradient(circle at top, #0f172a, #020617);

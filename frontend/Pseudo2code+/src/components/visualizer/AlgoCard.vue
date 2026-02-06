@@ -107,13 +107,31 @@ p {
   padding: 8px 14px;
   border-radius: 10px;
   border: none;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.primary:hover {
+  background: #4f46e5;
+  transform: translateY(-1px);
 }
 
 .info {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: white;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: #a78bfa;
   border-radius: 10px;
   padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  min-width: 40px;
+  text-align: center;
+}
+
+.info:hover {
+  background: rgba(99, 102, 241, 0.25);
+  border-color: rgba(99, 102, 241, 0.5);
+  transform: translateY(-1px);
 }
 </style>

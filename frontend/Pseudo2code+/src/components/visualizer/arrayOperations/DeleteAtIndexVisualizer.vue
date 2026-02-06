@@ -1,14 +1,18 @@
 <template>
-  <ArrayOperationBase
+  <ArrayOperationsVisualizerBase
     title="Delete at Index"
     description="Removes an element at a specific index and shifts elements."
-    :generateSteps="steps"
+    :generateSteps="generateSteps"
+    :pseudocode="deleteAtIndexPseudo"
   />
 </template>
 
 <script setup>
-import ArrayOperationBase from "@/components/array-ops/ArrayOperationBase.vue"
-import { generateDeleteAtIndexSteps } from "@/algorithms/array/deleteAtIndexSteps"
+import ArrayOperationsVisualizerBase from "@/components/visualizer/ArrayOperationsVisualizerBase.vue"
+import { generateDeleteAtIndexSteps } from "@/algorithms/arrayOperations/deleteAtIndexSteps"
+import { deleteAtIndexPseudo } from "@/algorithms/arrayOperations/pseudocode/deleteAtIndexPseudo"
 
-const steps = (arr) => generateDeleteAtIndexSteps(arr, 2)
+function generateSteps(arr, params) {
+  return generateDeleteAtIndexSteps(arr, params.index)
+}
 </script>

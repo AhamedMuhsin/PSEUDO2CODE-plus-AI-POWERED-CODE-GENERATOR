@@ -1,17 +1,20 @@
 <template>
-  <ArrayOperationBase
+  <ArrayOperationsVisualizerBase
     title="Binary Search"
     description="Searches a sorted array by repeatedly dividing the search interval in half."
-    :generateSteps="steps"
+    :generateSteps="generateSteps"
+    :needsTarget="true"
+    :pseudocode="binarySearchPseudo"
   />
 </template>
 
 <script setup>
-import ArrayOperationBase from "@/components/array-ops/ArrayOperationBase.vue"
-import { generateBinarySearchSteps } from "@/algorithms/array/binarySearchSteps"
+import ArrayOperationsVisualizerBase from "@/components/visualizer/ArrayOperationsVisualizerBase.vue"
+import { generateBinarySearchSteps } from "@/algorithms/arrayOperations/binarySearchSteps"
+import { binarySearchPseudo } from "@/algorithms/arrayOperations/pseudocode/binarySearchPseudo"
 
-const steps = (arr) => {
+function generateSteps(arr, target) {
   const sorted = [...arr].sort((a, b) => a - b)
-  return generateBinarySearchSteps(sorted, 8)
+  return generateBinarySearchSteps(sorted, target)
 }
 </script>

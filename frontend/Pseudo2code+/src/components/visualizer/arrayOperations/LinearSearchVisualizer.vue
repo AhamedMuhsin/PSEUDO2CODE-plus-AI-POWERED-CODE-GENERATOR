@@ -4,12 +4,14 @@
     description="Searches for a value by checking each element one by one."
     :generateSteps="generateSteps"
     :needsTarget="true"
+    :pseudocode="linearSearchPseudo"
   />
 </template>
 
 <script setup>
 import ArrayOperationsVisualizerBase from "@/components/visualizer/ArrayOperationsVisualizerBase.vue"
 import { generateLinearSearchSteps } from "@/algorithms/arrayOperations/linearSearchSteps"
+import { linearSearchPseudo } from "@/algorithms/arrayOperations/pseudocode/linearSearchPseudo"
 
 function generateSteps(arr, target) {
   return generateLinearSearchSteps(arr, target)

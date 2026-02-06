@@ -100,7 +100,16 @@
 
         <div class="card-grid">
           <AlgoCard title="Array Operations" level="Beginner" desc="Insert, delete, and search in arrays"
-            :icon="Rows" route="/array-operations" />
+            :icon="Rows" route="/array-operations" :info="{
+              name: 'Array Operations',
+              best: 'O(1) - O(log n)',
+              average: 'O(n)',
+              worst: 'O(n)',
+              space: 'O(1)',
+              stable: 'Varies',
+              inPlace: true,
+              description: 'Master fundamental array operations including traversal, searching, insertion, deletion, and updates. Each operation has different time complexities depending on the implementation.'
+            }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Stack" level="Beginner" desc="LIFO data structure operations" :icon="Layers3" />
           <AlgoCard title="Queue" level="Beginner" desc="FIFO data structure operations" :icon="AlignLeft" />
           <AlgoCard title="Linked List" level="Intermediate" desc="Node-based linear data structure" :icon="Link" />

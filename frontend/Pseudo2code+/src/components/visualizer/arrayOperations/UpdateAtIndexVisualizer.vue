@@ -1,14 +1,18 @@
 <template>
-  <ArrayOperationBase
+  <ArrayOperationsVisualizerBase
     title="Update Element"
     description="Updates the value at a specific index in the array."
-    :generateSteps="steps"
+    :generateSteps="generateSteps"
+    :pseudocode="updateAtIndexPseudo"
   />
 </template>
 
 <script setup>
-import ArrayOperationBase from "@/components/array-ops/ArrayOperationBase.vue"
-import { generateUpdateAtIndexSteps } from "@/algorithms/array/updateAtIndexSteps"
+import ArrayOperationsVisualizerBase from "@/components/visualizer/ArrayOperationsVisualizerBase.vue"
+import { generateUpdateAtIndexSteps } from "@/algorithms/arrayOperations/updateAtIndexSteps"
+import { updateAtIndexPseudo } from "@/algorithms/arrayOperations/pseudocode/updateAtIndexPseudo"
 
-const steps = (arr) => generateUpdateAtIndexSteps(arr, 2, 99)
+function generateSteps(arr, params) {
+  return generateUpdateAtIndexSteps(arr, params.index, params.value)
+}
 </script>

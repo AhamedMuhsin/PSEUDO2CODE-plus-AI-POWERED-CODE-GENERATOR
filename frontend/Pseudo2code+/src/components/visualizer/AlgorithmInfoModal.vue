@@ -1,44 +1,44 @@
 <template>
     <div class="overlay" @click.self="$emit('close')">
         <div class="modal">
-            <h2>{{ info.name }}</h2>
+            <div class="modal-header">
+                <h2>{{ info.name || 'Algorithm Info' }}</h2>
+                <button class="close-btn" @click="$emit('close')">×</button>
+            </div>
 
             <div class="grid">
-                <div class="badge-row">
+                <div v-if="info.best" class="badge-row">
                     <span class="label">Best</span>
                     <span class="badge green">{{ info.best }}</span>
                 </div>
 
-                <div class="badge-row">
+                <div v-if="info.average" class="badge-row">
                     <span class="label">Average</span>
                     <span class="badge yellow">{{ info.average }}</span>
                 </div>
 
-                <div class="badge-row">
+                <div v-if="info.worst" class="badge-row">
                     <span class="label">Worst</span>
                     <span class="badge red">{{ info.worst }}</span>
                 </div>
 
-                <div class="badge-row">
+                <div v-if="info.space" class="badge-row">
                     <span class="label">Space</span>
                     <span class="badge blue">{{ info.space }}</span>
                 </div>
 
-                <div class="badge-row">
+                <div v-if="info.stable !== undefined" class="badge-row">
                     <span class="label">Stable</span>
                     <span class="badge">{{ info.stable ? 'Yes' : 'No' }}</span>
                 </div>
 
-                <div class="badge-row">
+                <div v-if="info.inPlace !== undefined" class="badge-row">
                     <span class="label">In-place</span>
                     <span class="badge">{{ info.inPlace ? 'Yes' : 'No' }}</span>
                 </div>
             </div>
 
-
-            <p class="desc">{{ info.description }}</p>
-
-            <button class="close" @click="$emit('close')">Close</button>
+            <p v-if="info.description" class="desc">{{ info.description }}</p>
         </div>
     </div>
 </template>
@@ -76,12 +76,36 @@ defineProps({ info: Object })
     margin-bottom: 20px;
 }
 
-.close {
-    background: #6366f1;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 10px;
-    color: white;
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    padding: 0;
+}
+
+.close-btn {
+    background: rgba(99, 102, 241, 0.2);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    color: #a78bfa;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+    background: rgba(99, 102, 241, 0.35);
 }
 .badge-row {
   display: flex;

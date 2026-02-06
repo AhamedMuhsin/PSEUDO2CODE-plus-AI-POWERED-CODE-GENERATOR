@@ -114,7 +114,6 @@ const props = defineProps({
 const randomArray = () =>
     Array.from({ length: 8 }, () => Math.floor(Math.random() * 99) + 1)
 
-
 const route = useRoute()
 const algorithmKey = computed(() => route.params.algorithm)
 const meta = computed(() => sortingMeta[algorithmKey.value])

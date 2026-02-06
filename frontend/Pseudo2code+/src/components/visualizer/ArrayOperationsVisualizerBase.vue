@@ -1,9 +1,23 @@
 <template>
   <div class="array-op-visualizer">
+    <div class="back" @click="router.push('/algorithm-hub')">
+      <img :src="arrowLeft" class="arrow" />
+      Back
+    </div>
     <!-- HEADER -->
     <header class="header">
-      <h1>{{ title }}</h1>
+      <div class="header-top">
+        <h1>{{ title }}</h1>
+        <button v-if="info" class="info-btn" @click="showInfo = true">ⓘ</button>
+      </div>
       <p>{{ description }}</p>
+      <div v-if="info" class="algo-badges">
+        <span class="badge">Time: {{ info.time }}</span>
+        <span class="badge">Space: {{ info.space }}</span>
+        <span class="badge" :class="info.stable ? 'stable' : 'unstable'">
+          {{ info.stable ? 'Stable' : 'Unstable' }}
+        </span>
+      </div>
     </header>
 
     <!-- ARRAY INPUT -->
@@ -14,6 +28,10 @@
 
       <input v-model="customInput" placeholder="Custom array (Press Enter): 5,2,8,1"
         @keydown.enter="applyCustomArray" />
+      
+      <button class="btn ghost" @click="goToGenerateCode">
+        Generate Code
+      </button>
     </section>
 
     <OperationControls :type="operationType" :mode="operationMode" v-model="operationParams" />
@@ -43,24 +61,39 @@
 
     </section>
 
+    <section class="pseudo-code">
+      <PseudoCodePanel v-if="pseudocode" :code="pseudocode" :activeLine="currentStep.activeLine" />
+    </section>
     <!-- EXPLANATION -->
     <section class="explanation">
       <h3>Step Explanation</h3>
       <p>{{ currentStep.explanation }}</p>
     </section>
+
+    <!-- INFO MODAL -->
+    <AlgorithmInfoModal v-if="showInfo && info" :info="info" @close="showInfo = false" />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, watch } from "vue"
 import OperationControls from "@/components/visualizer/OperationControls.vue"
+import arrowLeft from "@/assets/arrow-left.svg";
 import ArrayOperationCanvas from "./canvases/ArrayOperationCanvas.vue"
+import { useRoute } from "vue-router"
+import { useRouter } from "vue-router"
+import PseudoCodePanel from "@/components/visualizer/PseudoCodePanel.vue"
+import AlgorithmInfoModal from "@/components/visualizer/AlgorithmInfoModal.vue"
 
 const props = defineProps({
   title: String,
   description: String,
-  generateSteps: Function
+  generateSteps: Function,
+  pseudocode: Array,
+  algorithmName: String,
+  info: Object
 })
+
 
 const operationMode = computed(() => {
   const t = props.title.toLowerCase()
@@ -87,13 +120,16 @@ const operationType = computed(() => {
   return null
 })
 
-const baseArray = ref([5, 2, 8, 1])
+const router = useRouter()
+const route = useRoute()
+const baseArray = ref([5, 2, 8, 1, 9, 3])
 const customInput = ref("")
 const steps = ref(
   props.generateSteps(baseArray.value, operationParams.value)
 )
 const stepIndex = ref(0)
 const playing = ref(false)
+const showInfo = ref(false)
 const currentStep = computed(() =>
   steps.value[stepIndex.value] || {
     array: [],
@@ -101,6 +137,7 @@ const currentStep = computed(() =>
     foundIndex: null,
     removedIndex: null,
     insertedIndex: null,
+    activeLine: 0,
     explanation: ""
   }
 )
@@ -182,6 +219,16 @@ function applyCustomArray() {
   baseArray.value = arr
   reset()
 }
+
+function goToGenerateCode() {
+  const prompt = `Write a program for the ${props.algorithmName || props.title} operation. 
+Take a random input array and demonstrate the operation.`
+
+  router.push({
+    path: '/generate-code',
+    query: { prompt }
+  })
+}
 </script>
 
 <style scoped>
@@ -192,6 +239,20 @@ function applyCustomArray() {
 .container {
   max-width: 900px;
   margin: 0 auto;
+}
+
+.back {
+  position: absolute;
+  top: 92px;
+  left: 32px;
+  display: flex;
+  gap: 8px;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.arrow {
+  width: 18px;
 }
 
 .header {
@@ -225,6 +286,13 @@ function applyCustomArray() {
 
 .controls .danger {
   background: #ef4444;
+}
+
+.pseudo-code {
+  margin-bottom: 24px;
+  background: rgba(15, 23, 42, 0.85);
+  padding: 20px;
+  border-radius: 16px;
 }
 
 .step {
@@ -271,15 +339,94 @@ function applyCustomArray() {
   background: linear-gradient(135deg, #6366f1, #8b5cf6);
   color: white;
   border: none;
-  padding: 10px 16px;
+  padding: 8px 16px;
   border-radius: 10px;
-  font-weight: 600;
   cursor: pointer;
-  transition: all 0.25s ease;
+  font-weight: 500;
+}
+
+.btn.ghost {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.btn.ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .random-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(99, 102, 241, 0.45);
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.header-top h1 {
+  margin: 0;
+  font-size: 2rem;
+  background: linear-gradient(135deg, #a78bfa, #818cf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.info-btn {
+  background: rgba(99, 102, 241, 0.2);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  color: #a78bfa;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+}
+
+.info-btn:hover {
+  background: rgba(99, 102, 241, 0.35);
+  border-color: rgba(167, 139, 250, 0.6);
+  transform: scale(1.05);
+}
+
+.algo-badges {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: #cbd5f5;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.badge.stable {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #86efac;
+}
+
+.badge.unstable {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
 }
 </style>

@@ -1,14 +1,18 @@
 <template>
-  <ArrayOperationBase
+  <ArrayOperationsVisualizerBase
     title="Insert at End"
     description="Adds a new element at the end of the array."
-    :generateSteps="steps"
+    :generateSteps="generateSteps"
+    :pseudocode="insertAtEndPseudo"
   />
 </template>
 
 <script setup>
-import ArrayOperationBase from "@/components/array-ops/ArrayOperationBase.vue"
-import { generateInsertAtEndSteps } from "@/algorithms/array/insertAtEndSteps"
+import ArrayOperationsVisualizerBase from "@/components/visualizer/ArrayOperationsVisualizerBase.vue"
+import { generateInsertAtEndSteps } from "@/algorithms/arrayOperations/insertAtEndSteps"
+import { insertAtEndPseudo } from "@/algorithms/arrayOperations/pseudocode/insertAtEndPseudo"
 
-const steps = (arr) => generateInsertAtEndSteps(arr, 10)
+function generateSteps(arr, params) {
+  return generateInsertAtEndSteps(arr, params.value)
+}
 </script>

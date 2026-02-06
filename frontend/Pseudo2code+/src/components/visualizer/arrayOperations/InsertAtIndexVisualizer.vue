@@ -1,14 +1,18 @@
 <template>
-  <ArrayOperationBase
+  <ArrayOperationsVisualizerBase
     title="Insert at Index"
     description="Inserts a new element at a specific index by shifting elements."
-    :generateSteps="steps"
+    :generateSteps="generateSteps"
+    :pseudocode="insertAtIndexPseudo"
   />
 </template>
 
 <script setup>
-import ArrayOperationBase from "@/components/array-ops/ArrayOperationBase.vue"
-import { generateInsertAtIndexSteps } from "@/algorithms/array/insertAtIndexSteps"
+import ArrayOperationsVisualizerBase from "@/components/visualizer/ArrayOperationsVisualizerBase.vue"
+import { generateInsertAtIndexSteps } from "@/algorithms/arrayOperations/insertAtIndexSteps"
+import { insertAtIndexPseudo } from "@/algorithms/arrayOperations/pseudocode/insertAtIndexPseudo"
 
-const steps = (arr) => generateInsertAtIndexSteps(arr, 10, 2)
+function generateSteps(arr, params) {
+  return generateInsertAtIndexSteps(arr, params.value, params.index)
+}
 </script>

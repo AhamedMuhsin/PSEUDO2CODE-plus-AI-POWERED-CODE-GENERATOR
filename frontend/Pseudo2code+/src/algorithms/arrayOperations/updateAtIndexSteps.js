@@ -5,6 +5,7 @@ export function generateUpdateAtIndexSteps(arr, index, newValue) {
     return [{
       array: [],
       activeIndex: null,
+      activeLine: 0,
       explanation: "⚠️ Cannot update an empty array"
     }]
   }
@@ -13,6 +14,7 @@ export function generateUpdateAtIndexSteps(arr, index, newValue) {
     return [{
       array: [...arr],
       activeIndex: null,
+      activeLine: 0,
       explanation: "⚠️ Please provide an index to update"
     }]
   }
@@ -21,6 +23,7 @@ export function generateUpdateAtIndexSteps(arr, index, newValue) {
     return [{
       array: [...arr],
       activeIndex: null,
+      activeLine: 0,
       explanation: `⚠️ Index ${index} is out of bounds`
     }]
   }
@@ -29,35 +32,41 @@ export function generateUpdateAtIndexSteps(arr, index, newValue) {
     return [{
       array: [...arr],
       activeIndex: index,
+      activeLine: 0,
       explanation: "⚠️ Please provide a new value to update"
     }]
   }
 
   const steps = []
   const a = [...arr]
+  const oldValue = a[index]
 
-  // Step 1: Highlight target index
+  // oldValue = array[index]
   steps.push({
     array: [...a],
     activeIndex: index,
-    explanation: `Select index ${index} for update`
+    activeLine: 0,
+    explanation: `Select index ${index} to update (current value = ${oldValue})`
   })
 
-  // Step 2: Show current value
-  steps.push({
-    array: [...a],
-    activeIndex: index,
-    explanation: `Current value at index ${index} is ${a[index]}`
-  })
-
-  // Step 3: Update value
+  // array[index] = newValue
   a[index] = newValue
 
   steps.push({
     array: [...a],
     activeIndex: index,
     insertedIndex: index,
-    explanation: `Update value at index ${index} to ${newValue}`
+    activeLine: 1,
+    explanation: `Update value at index ${index} from ${oldValue} to ${newValue}`
+  })
+
+  // return oldValue
+  steps.push({
+    array: [...a],
+    activeIndex: index,
+    insertedIndex: index,
+    activeLine: 2,
+    explanation: `✅ Successfully updated index ${index}. Old value: ${oldValue}`
   })
 
   return steps

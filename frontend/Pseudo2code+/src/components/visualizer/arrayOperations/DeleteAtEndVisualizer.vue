@@ -1,14 +1,18 @@
 <template>
-  <ArrayOperationBase
+  <ArrayOperationsVisualizerBase
     title="Delete at End"
     description="Removes the last element from the array."
-    :generateSteps="steps"
+    :generateSteps="generateSteps"
+    :pseudocode="deleteAtEndPseudo"
   />
 </template>
 
 <script setup>
-import ArrayOperationBase from "@/components/array-ops/ArrayOperationBase.vue"
-import { generateDeleteAtEndSteps } from "@/algorithms/array/deleteAtEndSteps"
+import ArrayOperationsVisualizerBase from "@/components/visualizer/ArrayOperationsVisualizerBase.vue"
+import { generateDeleteAtEndSteps } from "@/algorithms/arrayOperations/deleteAtEndSteps"
+import { deleteAtEndPseudo } from "@/algorithms/arrayOperations/pseudocode/deleteAtEndPseudo"
 
-const steps = (arr) => generateDeleteAtEndSteps(arr)
+function generateSteps(arr) {
+  return generateDeleteAtEndSteps(arr)
+}
 </script>
