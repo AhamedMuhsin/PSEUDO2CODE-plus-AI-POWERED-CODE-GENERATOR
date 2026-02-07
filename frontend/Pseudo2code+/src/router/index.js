@@ -101,6 +101,11 @@ const routes = [
     component: () => import('@/views/StackOperationsHub.vue'),
     meta: { requiresAuth: true },
   },
+  {
+    path: '/queue-operations',
+    component: () => import('@/views/QueueOperationsHub.vue'),
+    meta: { requiresAuth: true },
+  },
 ]
 
 const router = createRouter({

@@ -1,5 +1,5 @@
 <template>
-  <div class="stack-op-visualizer">
+  <div class="queue-op-visualizer">
     <!-- BACK BUTTON & HEADER -->
     <div class="top-section">
       <button class="back-btn" @click="router.push('/algorithm-hub')">
@@ -10,15 +10,15 @@
 
     <!-- PAGE HEADER -->
     <header class="page-header">
-      <h1>Stack Operations</h1>
-      <p>Visualize LIFO data structure operations step by step</p>
+      <h1>Queue Operations</h1>
+      <p>Visualize FIFO data structure operations step by step</p>
     </header>
 
     <!-- OPERATION SELECTOR -->
     <section class="operation-selector-section">
-      <StackOperationSelector
+      <QueueOperationSelector
         v-model="selectedOp"
-        :operations="stackOperations"
+        :operations="queueOperations"
       />
     </section>
 
@@ -42,20 +42,20 @@
         </span>
       </div>
 
-      <!-- CONTROLS ROW 1: Stack Input -->
+      <!-- CONTROLS ROW 1: Queue Input -->
       <div class="input-row">
         <button class="btn random-btn" @click="generateRandom">
-          🎲 Random Stack
+          🎲 Random Queue
         </button>
 
         <input 
           v-model="customInput" 
           placeholder="Enter values: 5,2,8,1"
-          @keydown.enter="applyCustomStack" 
-          class="stack-input" 
+          @keydown.enter="applyCustomQueue" 
+          class="queue-input" 
         />
 
-        <button class="btn ghost" @click="applyCustomStack" v-if="customInput">
+        <button class="btn ghost" @click="applyCustomQueue" v-if="customInput">
           Apply
         </button>
 
@@ -64,19 +64,16 @@
         </button>
       </div>
 
-      <!-- CONTROLS ROW 2: Value Input (for PUSH only) -->
+      <!-- CONTROLS ROW 2: Value Input (for ENQUEUE only) -->
       <div v-if="operationType === 'value'" class="input-row">
-        <label>Value to Push:</label>
+        <label>Value to Enqueue:</label>
         <input 
           v-model.number="operationParams.value" 
           type="number" 
           placeholder="Enter a number"
           class="param-input"
-          @keydown.enter="applyPushValue"
+          @keydown.enter="play"
         />
-        <button class="btn ghost" @click="applyPushValue" v-if="operationParams.value !== null && operationParams.value !== ''">
-          Apply Push
-        </button>
       </div>
 
       <!-- CONTROLS ROW 3: Play Controls -->
@@ -112,11 +109,11 @@
     <section class="visualization-area">
       <!-- LEFT: CANVAS -->
       <div class="canvas-section">
-        <h3>Stack Visualization</h3>
-        <StackOperationCanvas 
-          :stack="currentStep.stack" 
+        <h3>Queue Visualization</h3>
+        <QueueOperationCanvas 
+          :queue="currentStep.queue" 
           :highlight="currentStep.highlight"
-          :topIndex="currentStep.topIndex" 
+          :frontIndex="currentStep.frontIndex" 
         />
       </div>
 
@@ -149,14 +146,14 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue"
-import arrowLeft from "@/assets/arrow-left.svg";
-import StackOperationCanvas from "./canvases/StackOperationCanvas.vue"
+import { ref, computed, watch, onMounted } from "vue"
+import arrowLeft from "@/assets/arrow-left.svg"
+import QueueOperationCanvas from "./canvases/QueueOperationCanvas.vue"
 import { useRouter } from "vue-router"
 import PseudoCodePanel from "@/components/visualizer/PseudoCodePanel.vue"
 import AlgorithmInfoModal from "@/components/visualizer/AlgorithmInfoModal.vue"
-import StackOperationSelector from "@/components/visualizer/StackOperationSelector.vue"
-import { stackOperations } from "@/algorithms/stackOperations/stackOperationsMap"
+import QueueOperationSelector from "@/components/visualizer/QueueOperationSelector.vue"
+import { queueOperations } from "@/algorithms/queueOperations/queueOperationsMap"
 
 const props = defineProps({
   title: String,
@@ -167,129 +164,138 @@ const props = defineProps({
   info: Object
 })
 
-const selectedOp = ref("push")
+const selectedOp = ref("enqueue")
 
 const operationMode = computed(() => {
-  const t = props.title.toLowerCase()
-  if (t.includes("push")) return "push"
+  const t = props.title?.toLowerCase() || ""
+  if (t.includes("enqueue")) return "enqueue"
   return null
 })
 
 const operationParams = ref({
-  value: 15
+  value: null
 })
 
 const operationType = computed(() => {
-  if (selectedOp.value === "push") return "value"
+  if (selectedOp.value === "enqueue") return "value"
   return null
 })
 
 const router = useRouter()
-const baseStack = ref([7, 3, 9, 5, 1])
+const baseQueue = ref([7, 3, 9, 5, 1])
 const customInput = ref("")
 const stepIndex = ref(0)
 const playing = ref(false)
 const showInfo = ref(false)
 
 const currentOperation = computed(() =>
-  stackOperations[selectedOp.value]
+  queueOperations[selectedOp.value]
 )
-
-const generateAndUpdateSteps = () => {
-  const op = stackOperations[selectedOp.value]
-  if (op?.generateSteps) {
-    steps.value = op.generateSteps(baseStack.value, operationParams.value)
-  }
-}
 
 const steps = ref([])
 
+const initializeSteps = () => {
+  const op = queueOperations[selectedOp.value]
+  if (op?.generateSteps) {
+    steps.value = op.generateSteps(baseQueue.value, operationParams.value)
+    stepIndex.value = 0
+  }
+}
+
+// Initialize steps on mount
+onMounted(() => {
+  initializeSteps()
+})
+
 const currentStep = computed(() =>
   steps.value[stepIndex.value] || {
-    stack: [],
+    queue: [],
     highlight: [],
-    topIndex: -1,
+    frontIndex: 0,
     activeLine: 0,
     explanation: ""
   }
 )
 
-let timer = null
-
-watch(selectedOp, () => {
-  generateAndUpdateSteps()
-  reset()
-})
-
-watch(
-  baseStack,
-  () => {
-    generateAndUpdateSteps()
-    reset()
-  },
-  { deep: true }
-)
-
-// Initialize steps on mount
-generateAndUpdateSteps()
-
-function applyPushValue() {
-  if (operationParams.value.value !== null && operationParams.value.value !== "") {
-    generateAndUpdateSteps()
-    reset()
-  }
-}
-
-watch(baseStack, () => reset())
-
 const isPlayable = computed(() => {
   if (operationType.value === "value") {
-    return operationParams.value.value !== null
+    return operationParams.value.value !== null && operationParams.value.value !== ""
   }
   return true
 })
 
-function play() {
-  if (playing.value) return
-  playing.value = true
-  timer = setInterval(() => {
-    if (stepIndex.value < steps.value.length - 1) stepIndex.value++
-    else pause()
-  }, 800)
-}
+let timer = null
 
-function pause() {
-  playing.value = false
-  clearInterval(timer)
+watch(selectedOp, () => {
+  operationParams.value.value = null
+  initializeSteps()
+})
+
+watch(
+  () => operationParams.value.value,
+  () => {
+    if (operationType.value === "value") {
+      initializeSteps()
+    }
+  }
+)
+
+watch(baseQueue, () => {
+  initializeSteps()
+}, { deep: true })
+
+function play() {
+  if (stepIndex.value === steps.value.length - 1) {
+    reset()
+  }
+
+  playing.value = !playing.value
+
+  if (playing.value) {
+    timer = setInterval(() => {
+      if (stepIndex.value < steps.value.length - 1) {
+        stepIndex.value++
+      } else {
+        playing.value = false
+        clearInterval(timer)
+      }
+    }, 800)
+  } else {
+    clearInterval(timer)
+  }
 }
 
 function next() {
-  pause()
-  if (stepIndex.value < steps.value.length - 1) stepIndex.value++
+  if (stepIndex.value < steps.value.length - 1) {
+    stepIndex.value++
+  }
 }
 
 function prev() {
-  pause()
-  if (stepIndex.value > 0) stepIndex.value--
+  if (stepIndex.value > 0) {
+    stepIndex.value--
+  }
 }
 
 function reset() {
-  pause()
-  steps.value = currentOperation.value.generator(baseStack.value, operationParams.value)
+  playing.value = false
+  clearInterval(timer)
   stepIndex.value = 0
 }
 
 function generateRandom() {
-  const size = Math.floor(Math.random() * 5) + 2
-  const arr = []
-  for (let i = 0; i < size; i++) {
-    arr.push(Math.floor(Math.random() * 10) + 1)
+  const randomQueue = Array.from({ length: Math.floor(Math.random() * 4) + 2 }, () =>
+    Math.floor(Math.random() * 100)
+  )
+  baseQueue.value = randomQueue
+  const op = queueOperations[selectedOp.value]
+  if (op?.generateSteps) {
+    steps.value = op.generateSteps(baseQueue.value, operationParams.value)
   }
-  baseStack.value = arr
+  reset()
 }
 
-function applyCustomStack() {
-  if (!customInput.value) return
+function applyCustomQueue() {
   try {
     const values = customInput.value
       .split(",")
@@ -297,8 +303,13 @@ function applyCustomStack() {
       .filter((v) => !isNaN(v))
 
     if (values.length > 0) {
-      baseStack.value = values
+      baseQueue.value = values
       customInput.value = ""
+      const op = queueOperations[selectedOp.value]
+      if (op?.generateSteps) {
+        steps.value = op.generateSteps(baseQueue.value, operationParams.value)
+      }
+      reset()
     }
   } catch (e) {
     console.error("Invalid input", e)
@@ -306,18 +317,16 @@ function applyCustomStack() {
 }
 
 function goToGenerateCode() {
-  const prompt = `Write a program for the  ${props.algorithmName || props.title} operation. 
-Take a random input stack and demonstrate the operation.`
-
+  const prompt = `Generate code to perform ${currentOperation.value.algorithmName} operation on a queue data structure. Include implementation details and example usage.`
   router.push({
-    path: '/generate-code',
+    name: "GenerateCode",
     query: { prompt }
   })
 }
 </script>
 
 <style scoped>
-.stack-op-visualizer {
+.queue-op-visualizer {
   background: radial-gradient(circle at top, #0f172a, #020617);
   min-height: 100vh;
   display: flex;
@@ -488,7 +497,7 @@ Take a random input stack and demonstrate the operation.`
   white-space: nowrap;
 }
 
-.stack-input {
+.queue-input {
   padding: 10px 14px;
   border-radius: 10px;
   background: rgba(2, 6, 23, 0.6);
@@ -500,7 +509,7 @@ Take a random input stack and demonstrate the operation.`
   min-width: 150px;
 }
 
-.stack-input:focus {
+.queue-input:focus {
   outline: none;
   border-color: #6366f1;
   background: rgba(2, 6, 23, 0.8);
@@ -702,13 +711,13 @@ Take a random input stack and demonstrate the operation.`
     grid-template-columns: 1fr;
   }
 
-  .stack-op-visualizer {
+  .queue-op-visualizer {
     padding: 16px;
   }
 }
 
 @media (max-width: 768px) {
-  .stack-op-visualizer {
+  .queue-op-visualizer {
     padding: 12px;
   }
 
@@ -756,7 +765,7 @@ Take a random input stack and demonstrate the operation.`
 }
 
 @media (max-width: 480px) {
-  .stack-op-visualizer {
+  .queue-op-visualizer {
     padding: 8px;
   }
 
@@ -783,7 +792,7 @@ Take a random input stack and demonstrate the operation.`
   }
 
   .control-btn,
-  .stack-input,
+  .queue-input,
   .param-input {
     font-size: 0.8rem;
     padding: 8px 10px;
