@@ -96,6 +96,11 @@ const routes = [
     component: () => import('@/views/ArrayOperationsHub.vue'),
     meta: { requiresAuth: true },
   },
+  {
+    path: '/stack-operations',
+    component: () => import('@/views/StackOperationsHub.vue'),
+    meta: { requiresAuth: true },
+  },
 ]
 
 const router = createRouter({

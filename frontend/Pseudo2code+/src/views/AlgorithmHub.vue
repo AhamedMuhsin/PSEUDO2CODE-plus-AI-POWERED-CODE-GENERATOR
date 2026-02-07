@@ -110,7 +110,16 @@
               inPlace: true,
               description: 'Master fundamental array operations including traversal, searching, insertion, deletion, and updates. Each operation has different time complexities depending on the implementation.'
             }" @show-info="selectedInfo = $event" />
-          <AlgoCard title="Stack" level="Beginner" desc="LIFO data structure operations" :icon="Layers3" />
+          <AlgoCard title="Stack" level="Beginner" desc="LIFO data structure operations" :icon="Layers3" route="/stack-operations" :info="{
+              name: 'Stack',
+              best: 'O(1)',
+              average: 'O(1)',
+              worst: 'O(1)',
+              space: 'O(n)',
+              stable: 'N/A',
+              inPlace: true,
+              description: 'A Last-In-First-Out (LIFO) data structure where elements are added and removed from the same end called the top. All operations (push, pop, peek) have constant time complexity.'
+            }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Queue" level="Beginner" desc="FIFO data structure operations" :icon="AlignLeft" />
           <AlgoCard title="Linked List" level="Intermediate" desc="Node-based linear data structure" :icon="Link" />
           <AlgoCard title="Binary Tree" level="Intermediate" desc="Hierarchical tree data structure"
