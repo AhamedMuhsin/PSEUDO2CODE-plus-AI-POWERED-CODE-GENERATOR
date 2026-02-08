@@ -106,6 +106,16 @@ const routes = [
     component: () => import('@/views/QueueOperationsHub.vue'),
     meta: { requiresAuth: true },
   },
+  {
+    path: '/linkedlist-operations',
+    component: () => import('@/views/LinkedListOperationsHub.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/linkedlist-operations',
+    component: () => import('@/views/LinkedListOperationsHub.vue'),
+    meta: { requiresAuth: true },
+  },
 ]
 
 const router = createRouter({

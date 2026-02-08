@@ -130,7 +130,16 @@
               inPlace: true,
               description: 'A First-In-First-Out (FIFO) data structure where elements are added at the back (rear) and removed from the front. All operations (enqueue, dequeue, peek) have constant time complexity.'
             }" @show-info="selectedInfo = $event" />
-          <AlgoCard title="Linked List" level="Intermediate" desc="Node-based linear data structure" :icon="Link" />
+          <AlgoCard title="Linked List" level="Intermediate" desc="Node-based linear data structure" :icon="Link" route="/linkedlist-operations" :info="{
+              name: 'Linked List',
+              best: 'O(1) - O(n)',
+              average: 'O(n)',
+              worst: 'O(n)',
+              space: 'O(n)',
+              stable: 'N/A',
+              inPlace: true,
+              description: 'A node-based linear data structure where elements are stored in nodes linked via pointers. Common operations include insert, delete, search, and traverse with varying time complexities.'
+            }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Binary Tree" level="Intermediate" desc="Hierarchical tree data structure"
             :icon="GitBranch" />
           <AlgoCard title="Graph" level="Intermediate" desc="Vertices and edges data structure" :icon="Network" />

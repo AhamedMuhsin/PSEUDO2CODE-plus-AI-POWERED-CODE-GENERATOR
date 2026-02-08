@@ -1,5 +1,5 @@
 <template>
-  <div class="stack-op-visualizer">
+  <div class="linkedlist-op-visualizer">
     <!-- BACK BUTTON & HEADER -->
     <div class="top-section">
       <button class="back-btn" @click="router.push('/algorithm-hub')">
@@ -10,15 +10,15 @@
 
     <!-- PAGE HEADER -->
     <header class="page-header">
-      <h1>Stack Operations</h1>
-      <p>Visualize LIFO data structure operations step by step</p>
+      <h1>LinkedList Operations</h1>
+      <p>Visualize linked list data structure operations step by step</p>
     </header>
 
     <!-- OPERATION SELECTOR -->
     <section class="operation-selector-section">
-      <StackOperationSelector
+      <LinkedListOperationSelector
         v-model="selectedOp"
-        :operations="stackOperations"
+        :operations="linkedListOperations"
       />
     </section>
 
@@ -42,20 +42,20 @@
         </span>
       </div>
 
-      <!-- CONTROLS ROW 1: Stack Input -->
+      <!-- CONTROLS ROW 1: List Input -->
       <div class="input-row">
         <button class="btn random-btn" @click="generateRandom">
-          🎲 Random Stack
+          🎲 Random List
         </button>
 
         <input 
           v-model="customInput" 
-          placeholder="Enter values: 5,2,8,1"
-          @keydown.enter="applyCustomStack" 
-          class="stack-input" 
+          placeholder="Enter values: 10,20,30,40,50"
+          @keydown.enter="applyCustomList" 
+          class="list-input" 
         />
 
-        <button class="btn ghost" @click="applyCustomStack" v-if="customInput">
+        <button class="btn ghost" @click="applyCustomList" v-if="customInput">
           Apply
         </button>
 
@@ -64,18 +64,55 @@
         </button>
       </div>
 
-      <!-- CONTROLS ROW 2: Value Input (for PUSH only) -->
-      <div v-if="operationType === 'value'" class="input-row">
-        <label>Value to Push:</label>
+      <!-- CONTROLS ROW 2: Operation Parameters -->
+      <div v-if="operationType === 'position-value'" class="input-row">
+        <label>Position:</label>
         <input 
-          v-model.number="pushValue" 
+          v-model.number="insertPosition" 
           type="number" 
-          placeholder="Enter a number"
+          placeholder="0"
+          min="0"
           class="param-input"
-          @keydown.enter="applyPushValue"
         />
-        <button class="btn ghost" @click="applyPushValue" v-if="pushValue !== null && pushValue !== ''">
-          Apply Push
+        <label>Value:</label>
+        <input 
+          v-model.number="insertValue" 
+          type="number" 
+          placeholder="Enter value"
+          class="param-input"
+          @keydown.enter="applyInsert"
+        />
+        <button class="btn ghost" @click="applyInsert" v-if="insertPosition !== null && insertValue !== null">
+          Apply Insert
+        </button>
+      </div>
+
+      <div v-else-if="operationType === 'position'" class="input-row">
+        <label>Position:</label>
+        <input 
+          v-model.number="deletePosition" 
+          type="number" 
+          placeholder="0"
+          min="0"
+          class="param-input"
+          @keydown.enter="applyDelete"
+        />
+        <button class="btn ghost" @click="applyDelete" v-if="deletePosition !== null">
+          Apply Delete
+        </button>
+      </div>
+
+      <div v-else-if="operationType === 'value'" class="input-row">
+        <label>Search Value:</label>
+        <input 
+          v-model.number="searchValue" 
+          type="number" 
+          placeholder="Enter value"
+          class="param-input"
+          @keydown.enter="applySearch"
+        />
+        <button class="btn ghost" @click="applySearch" v-if="searchValue !== null">
+          Apply Search
         </button>
       </div>
 
@@ -113,13 +150,13 @@
       <!-- LEFT: CANVAS -->
       <div class="canvas-section">
         <div class="canvas-header">
-          <h3>Stack Visualization</h3>
-          <span class="stack-info">Size: {{ currentStep.stack.length }}/{{ stackCapacity }}</span>
+          <h3>LinkedList Visualization</h3>
+          <span class="list-info">Nodes: {{ currentStep.list.length }}</span>
         </div>
-        <StackOperationCanvas 
-          :stack="currentStep.stack" 
+        <LinkedListOperationCanvas 
+          :list="currentStep.list" 
           :highlight="currentStep.highlight"
-          :topIndex="currentStep.topIndex" 
+          :currentIndex="currentStep.currentIndex" 
         />
       </div>
 
@@ -153,56 +190,60 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from "vue"
-import arrowLeft from "@/assets/arrow-left.svg";
-import StackOperationCanvas from "./canvases/StackOperationCanvas.vue"
+import arrowLeft from "@/assets/arrow-left.svg"
+import LinkedListOperationCanvas from "./canvases/LinkedListOperationCanvas.vue"
 import { useRouter } from "vue-router"
 import PseudoCodePanel from "@/components/visualizer/PseudoCodePanel.vue"
 import AlgorithmInfoModal from "@/components/visualizer/AlgorithmInfoModal.vue"
-import StackOperationSelector from "@/components/visualizer/StackOperationSelector.vue"
-import { stackOperations } from "@/algorithms/stackOperations/stackOperationsMap"
+import LinkedListOperationSelector from "@/components/visualizer/LinkedListOperationSelector.vue"
+import { linkedListOperations } from "@/algorithms/linkedListOperations/linkedListOperationsMap"
 
 const props = defineProps({
   title: String,
   description: String,
-  generateSteps: Function,
-  pseudocode: Array,
   algorithmName: String,
   info: Object
 })
 
-const selectedOp = ref("push")
-
-const operationMode = computed(() => {
-  const t = props.title.toLowerCase()
-  if (t.includes("push")) return "push"
-  return null
-})
-
-const pushValue = ref(15)  // Value for push operation
-
-const operationType = computed(() => {
-  if (selectedOp.value === "push") return "value"
-  return null
-})
+const selectedOp = ref("traverse")
 
 const router = useRouter()
-// Initialize with a dummy stack of maximum size 5
-const baseStack = ref([7, 3, 9, 5, 1])
-const stackCapacity = ref(5)
+// Initialize with a dummy linked list
+const baseList = ref([1, 2, 3, 4, 5])
 const customInput = ref("")
 const stepIndex = ref(0)
 const playing = ref(false)
 const showInfo = ref(false)
 
+// Operation parameters
+const insertPosition = ref(0)
+const insertValue = ref(10)
+const deletePosition = ref(0)
+const searchValue = ref(3)
+
 const currentOperation = computed(() =>
-  stackOperations[selectedOp.value]
+  linkedListOperations[selectedOp.value]
 )
 
+const operationType = computed(() => {
+  if (selectedOp.value === "insert") return "position-value"
+  if (selectedOp.value === "delete") return "position"
+  if (selectedOp.value === "search") return "value"
+  return null
+})
+
 const generateAndUpdateSteps = () => {
-  const op = stackOperations[selectedOp.value]
+  const op = linkedListOperations[selectedOp.value]
   if (op?.generator) {
-    const params = selectedOp.value === "push" ? { value: pushValue.value } : {}
-    steps.value = op.generator(baseStack.value, params)
+    let params = {}
+    if (selectedOp.value === "insert") {
+      params = { position: insertPosition.value, value: insertValue.value }
+    } else if (selectedOp.value === "delete") {
+      params = { position: deletePosition.value }
+    } else if (selectedOp.value === "search") {
+      params = { value: searchValue.value }
+    }
+    steps.value = op.generator(baseList.value, params)
   }
 }
 
@@ -210,16 +251,15 @@ const steps = ref([])
 
 const currentStep = computed(() =>
   steps.value[stepIndex.value] || {
-    stack: baseStack.value,
+    list: baseList.value,
     highlight: [],
-    topIndex: baseStack.value.length - 1,
+    currentIndex: -1,
     activeLine: 0,
-    explanation: "Ready to perform stack operation on the initial stack."
+    explanation: "Ready to perform a linked list operation."
   }
 )
 
 onMounted(() => {
-  // Generate initial steps for the selected operation
   generateAndUpdateSteps()
 })
 
@@ -230,15 +270,8 @@ watch(selectedOp, () => {
   reset()
 })
 
-watch(pushValue, () => {
-  if (selectedOp.value === "push") {
-    generateAndUpdateSteps()
-    reset()
-  }
-})
-
 watch(
-  baseStack,
+  baseList,
   () => {
     generateAndUpdateSteps()
     reset()
@@ -246,18 +279,43 @@ watch(
   { deep: true }
 )
 
-function applyPushValue() {
-  if (pushValue.value !== null && pushValue.value !== "") {
+watch([insertPosition, insertValue, deletePosition, searchValue], () => {
+  generateAndUpdateSteps()
+  reset()
+})
+
+function applyInsert() {
+  if (insertPosition.value !== null && insertValue.value !== null) {
     generateAndUpdateSteps()
     reset()
   }
 }
 
-watch(baseStack, () => reset())
+function applyDelete() {
+  if (deletePosition.value !== null) {
+    generateAndUpdateSteps()
+    reset()
+  }
+}
+
+function applySearch() {
+  if (searchValue.value !== null) {
+    generateAndUpdateSteps()
+    reset()
+  }
+}
+
+watch(baseList, () => reset())
 
 const isPlayable = computed(() => {
+  if (operationType.value === "position-value") {
+    return insertPosition.value !== null && insertValue.value !== null
+  }
+  if (operationType.value === "position") {
+    return deletePosition.value !== null
+  }
   if (operationType.value === "value") {
-    return pushValue.value !== null && pushValue.value !== ""
+    return searchValue.value !== null
   }
   return true
 })
@@ -293,25 +351,24 @@ function reset() {
 }
 
 function generateRandom() {
-  const size = Math.floor(Math.random() * 5) + 2
+  const size = Math.floor(Math.random() * 4) + 3
   const arr = []
   for (let i = 0; i < size; i++) {
-    arr.push(Math.floor(Math.random() * 10) + 1)
+    arr.push(Math.floor(Math.random() * 20) + 1)
   }
-  baseStack.value = arr
+  baseList.value = arr
 }
 
-function applyCustomStack() {
+function applyCustomList() {
   if (!customInput.value) return
   try {
     const values = customInput.value
       .split(",")
       .map((v) => parseInt(v.trim()))
       .filter((v) => !isNaN(v))
-      .slice(0, stackCapacity.value)  // Limit to max capacity
 
     if (values.length > 0) {
-      baseStack.value = values
+      baseList.value = values
       customInput.value = ""
     }
   } catch (e) {
@@ -320,8 +377,8 @@ function applyCustomStack() {
 }
 
 function goToGenerateCode() {
-  const prompt = `Write a program for the  ${props.algorithmName || props.title} operation. 
-Take a random input stack and demonstrate the operation.`
+  const prompt = `Write a program for the ${props.algorithmName || props.title} operation on a linked list. 
+Take a random input linked list and demonstrate the operation.`
 
   router.push({
     path: '/generate-code',
@@ -331,7 +388,7 @@ Take a random input stack and demonstrate the operation.`
 </script>
 
 <style scoped>
-.stack-op-visualizer {
+.linkedlist-op-visualizer {
   background: radial-gradient(circle at top, #0f172a, #020617);
   min-height: 100vh;
   display: flex;
@@ -502,7 +559,7 @@ Take a random input stack and demonstrate the operation.`
   white-space: nowrap;
 }
 
-.stack-input {
+.list-input {
   padding: 10px 14px;
   border-radius: 10px;
   background: rgba(2, 6, 23, 0.6);
@@ -514,7 +571,7 @@ Take a random input stack and demonstrate the operation.`
   min-width: 150px;
 }
 
-.stack-input:focus {
+.list-input:focus {
   outline: none;
   border-color: #6366f1;
   background: rgba(2, 6, 23, 0.8);
@@ -565,7 +622,7 @@ Take a random input stack and demonstrate the operation.`
   font-size: 0.9rem;
   transition: all 0.2s ease;
   flex: 1;
-  min-width: 150px;
+  min-width: 100px;
 }
 
 .param-input:focus {
@@ -652,6 +709,13 @@ Take a random input stack and demonstrate the operation.`
   gap: 16px;
 }
 
+.canvas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
 .canvas-section h3 {
   color: #cbd5f5;
   font-size: 0.95rem;
@@ -661,14 +725,7 @@ Take a random input stack and demonstrate the operation.`
   letter-spacing: 0.5px;
 }
 
-.canvas-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.stack-info {
+.list-info {
   background: rgba(99, 102, 241, 0.2);
   border: 1px solid rgba(99, 102, 241, 0.4);
   color: #a78bfa;
@@ -734,13 +791,13 @@ Take a random input stack and demonstrate the operation.`
     grid-template-columns: 1fr;
   }
 
-  .stack-op-visualizer {
+  .linkedlist-op-visualizer {
     padding: 16px;
   }
 }
 
 @media (max-width: 768px) {
-  .stack-op-visualizer {
+  .linkedlist-op-visualizer {
     padding: 12px;
   }
 
@@ -788,7 +845,7 @@ Take a random input stack and demonstrate the operation.`
 }
 
 @media (max-width: 480px) {
-  .stack-op-visualizer {
+  .linkedlist-op-visualizer {
     padding: 8px;
   }
 
@@ -815,7 +872,7 @@ Take a random input stack and demonstrate the operation.`
   }
 
   .control-btn,
-  .stack-input,
+  .list-input,
   .param-input {
     font-size: 0.8rem;
     padding: 8px 10px;
