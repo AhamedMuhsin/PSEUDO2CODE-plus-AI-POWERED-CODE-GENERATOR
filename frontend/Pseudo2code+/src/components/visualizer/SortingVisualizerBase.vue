@@ -2,56 +2,68 @@
     <main class="visualizer-page">
         <div class="container">
             <!-- BACK -->
-            <div class="back" @click="router.push('/algorithm-hub')">
-                <img :src="arrowLeft" class="arrow" />
-                Back
+            <div class="top-section">
+                <button class="back-btn" @click="router.push('/algorithm-hub')">
+                    <img :src="arrowLeft" class="arrow" />
+                    Back
+                </button>
             </div>
             <!-- HEADER -->
-            <header class="visualizer-header">
-                <h1>{{ title }}</h1>
-                <p>{{ description }}</p>
-                <div v-if="meta" class="algo-badges">
-                    <span class="badge">Time: {{ meta.time }}</span>
-                    <span class="badge">Space: {{ meta.space }}</span>
-                    <span class="badge" :class="meta.stable ? 'stable' : 'unstable'">
-                        {{ meta.stable ? 'Stable' : 'Unstable' }}
-                    </span>
+            <section class="operation-details">
+                <div class="operation-header">
+                    <header class="page-header">
+                        <div class="operation-title-group">
+                            <h1>{{ title }}</h1>
+                            <button v-if="meta" class="info-btn" @click="showInfo = true">ⓘ</button>
+                        </div>
+                        <p class="operation-desc">{{ description }}</p>
+                        <div v-if="meta" class="algo-badges">
+                            <span class="badge">Best: {{ meta.best }}</span>
+                            <span class="badge">Avg: {{ meta.average }}</span>
+                            <span class="badge">Worst: {{ meta.worst }}</span>
+                            <span class="badge">Space: {{ meta.space }}</span>
+
+                            <span class="badge" :class="meta.stable ? 'stable' : 'unstable'">
+                                {{ meta.stable ? 'Stable' : 'Unstable' }}
+                            </span>
+                        </div>
+                    </header>
+
+                    <!-- ARRAY INPUT -->
+                    <section class="array-input">
+                        <button class="btn ghost" @click="generateRandom">
+                            Random Array
+                        </button>
+
+                        <input v-model="customInput" placeholder="Custom array (Press Enter) : 5,2,8,1"
+                            @keydown.enter="applyCustomArray" />
+                        <button class="btn ghost" @click="goToGenerateCode">
+                            Generate Code
+                        </button>
+
+                    </section>
+
+                    <!-- CONTROLS -->
+                    <section class="controls">
+                        <button class="btn ghost" @click="prev" :disabled="stepIndex === 0">Prev</button>
+                        <button class="btn primary" @click="playing ? pause() : play()">
+                            {{ playing ? 'Pause' : 'Play' }}
+                        </button>
+                        <button class="btn ghost" @click="next" :disabled="stepIndex === steps.length - 1">Next</button>
+                        <button class="btn danger" @click="reset">Reset</button>
+
+                        <div class="step-counter">
+                            Step {{ currentStepNumber }} / {{ totalSteps }}
+                        </div>
+
+                        <div class="speed">
+                            <label>Speed</label>
+                            <input type="range" min="1" max="5" step="1" v-model="speedLevel" />
+                            <span>{{ ['Slow', 'Normal', 'Fast', 'Very Fast', 'Ultra'][speedLevel - 1] }}</span>
+                        </div>
+                    </section>
                 </div>
-            </header>
-
-            <!-- ARRAY INPUT -->
-            <section class="array-input">
-                <button class="btn ghost" @click="generateRandom">
-                    Random Array
-                </button>
-
-                <input v-model="customInput" placeholder="Custom array (Press Enter) : 5,2,8,1"
-                    @keydown.enter="applyCustomArray" />
-                <button class="btn ghost" @click="goToGenerateCode">
-                    Generate Code
-                </button>
-
             </section>
-
-            <!-- CONTROLS -->
-            <section class="controls">
-                <button class="btn ghost" @click="prev" :disabled="stepIndex === 0">Prev</button>
-                <button class="btn primary" @click="playing ? pause() : play()">
-                    {{ playing ? 'Pause' : 'Play' }}
-                </button>
-                <button class="btn ghost" @click="next" :disabled="stepIndex === steps.length - 1">Next</button>
-                <button class="btn danger" @click="reset">Reset</button>
-
-                <div class="step-counter">
-                    Step {{ currentStepNumber }} / {{ totalSteps }}
-                </div>
-
-                <div class="speed">
-                    <label>Speed</label>
-                    <input type="range" min="200" max="1200" step="200" v-model="speed" />
-                </div>
-            </section>
-
             <!-- CANVAS -->
             <section class="canvas">
                 <ArrayCanvas :array="currentStep.array" :active="currentStep.active" :swap="currentStep.swap"
@@ -91,6 +103,7 @@
             </section>
         </div>
     </main>
+    <AlgorithmInfoModal v-if="showInfo && meta" :info="meta" @close="showInfo = false" />
 </template>
 
 <script setup>
@@ -99,9 +112,9 @@ import arrowLeft from "@/assets/arrow-left.svg";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router"
 const router = useRouter();
+import AlgorithmInfoModal from "@/components/visualizer/AlgorithmInfoModal.vue"
 import PseudoCodePanel from './PseudoCodePanel.vue'
 import ArrayCanvas from './canvases/ArrayCanvas.vue'
-import { sortingMeta } from "@/algorithms/sorting/sortingMeta"
 
 const props = defineProps({
     title: String,
@@ -109,6 +122,7 @@ const props = defineProps({
     generateSteps: Function,
     pseudoCode: Array,
     algorithmName: String,
+    currentOperation: Object,
 })
 
 const randomArray = () =>
@@ -116,14 +130,15 @@ const randomArray = () =>
 
 const route = useRoute()
 const algorithmKey = computed(() => route.params.algorithm)
-const meta = computed(() => sortingMeta[algorithmKey.value])
 const baseArray = ref(randomArray())
+const meta = computed(() => props.currentOperation || null)
 const steps = ref(props.generateSteps(baseArray.value))
 const stepIndex = ref(0)
 const totalSteps = computed(() => steps.value.length)
 const currentStepNumber = computed(() => stepIndex.value + 1)
 const playing = ref(false)
-const speed = ref(800)
+const showInfo = ref(false)
+const speedLevel = ref(3)
 const customInput = ref('')
 const currentStep = computed(() =>
     steps.value[stepIndex.value] || { array: [], active: [], swap: false, explanation: '' }
@@ -134,15 +149,30 @@ const maxValue = computed(() =>
         : 1
 )
 
+const speedDelay = computed(() => {
+    const map = {
+        1: 1200,
+        2: 900,
+        3: 700,
+        4: 400,
+        5: 200
+    }
+    return map[speedLevel.value]
+})
+
 let timer = null
 
 function play() {
     if (playing.value) return
     playing.value = true
     timer = setInterval(() => {
-        if (stepIndex.value < steps.value.length - 1) stepIndex.value++
-        else pause()
-    }, speed.value)
+        if (stepIndex.value < steps.value.length - 1) {
+            stepIndex.value++
+        } else {
+            pause()
+        }
+    }, speedDelay.value)
+
 }
 
 function pause() {
@@ -186,7 +216,7 @@ function applyCustomArray() {
     stepIndex.value = 0
 }
 
-watch(speed, () => {
+watch(speedLevel, () => {
     if (playing.value) {
         pause()
         play()
@@ -194,13 +224,13 @@ watch(speed, () => {
 })
 
 function goToGenerateCode() {
-  const prompt = `Write a program for the ${props.algorithmName} algorithm. 
+    const prompt = `Write a program for the ${props.algorithmName} algorithm. 
 Take a random input array.`
 
-  router.push({
-    path: '/generate-code',
-    query: { prompt }
-  })
+    router.push({
+        path: '/generate-code',
+        query: { prompt }
+    })
 }
 
 </script>
@@ -218,15 +248,6 @@ Take a random input array.`
 }
 
 /* HEADER */
-.visualizer-header {
-    display: flex;
-    gap: 8px;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 32px;
-    max-width: 720px;
-}
-
 .canvas {
     position: relative;
 }
@@ -294,9 +315,26 @@ Take a random input array.`
     margin-bottom: 24px;
 }
 
-.visualizer-header h1 {
-    font-size: 2rem;
-    margin-bottom: 6px;
+/* PAGE HEADER */
+.page-header {
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    color: white;
+    font-size: 2.2rem;
+    margin: 0 0 8px 0;
+    background: linear-gradient(135deg, #a78bfa, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.page-header p {
+    color: #94a3b8;
+    font-size: 1rem;
+    margin: 0;
+    font-weight: 400;
 }
 
 .array-input {
@@ -313,12 +351,6 @@ Take a random input array.`
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.15);
     color: white;
-}
-
-.visualizer-header p {
-    color: #94a3b8;
-    font-size: 0.95rem;
-    line-height: 1.5;
 }
 
 /* CONTROLS */
@@ -431,6 +463,64 @@ Take a random input array.`
     padding-bottom: 6px;
 }
 
+.operation-details {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.operation-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.operation-title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.info-btn {
+    background: rgba(99, 102, 241, 0.2);
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    color: #a78bfa;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.info-btn:hover {
+    background: rgba(99, 102, 241, 0.35);
+    border-color: rgba(167, 139, 250, 0.6);
+    transform: scale(1.05);
+}
+
+.operation-details h2 {
+    color: #cbd5f5;
+    font-size: 1.5rem;
+    margin: 0;
+    font-weight: 600;
+}
+.operation-desc {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
 /* EXPLANATION */
 .explanation {
     background: rgba(15, 23, 42, 0.85);
@@ -447,18 +537,34 @@ Take a random input array.`
     color: #94a3b8;
 }
 
-.back {
-    position: absolute;
-    top: 92px;
-    left: 32px;
+.top-section {
+    margin-bottom: 16px;
+}
+
+.back-btn {
     display: flex;
+    align-items: center;
     gap: 8px;
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    color: #a78bfa;
+    padding: 8px 12px;
+    border-radius: 10px;
     cursor: pointer;
-    opacity: 0.8;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.back-btn:hover {
+    background: rgba(99, 102, 241, 0.25);
+    border-color: rgba(99, 102, 241, 0.5);
+    transform: translateX(-2px);
 }
 
 .arrow {
     width: 18px;
+    height: 18px;
 }
 
 /* RESPONSIVE */

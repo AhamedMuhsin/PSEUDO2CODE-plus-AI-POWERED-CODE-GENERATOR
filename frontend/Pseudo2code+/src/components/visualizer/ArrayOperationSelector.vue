@@ -1,6 +1,6 @@
 <template>
   <div class="selector">
-    <label>Operation </label>
+    <label>Select Operation : </label>
     <select v-model="model">
       <option
         v-for="(op, key) in operations"

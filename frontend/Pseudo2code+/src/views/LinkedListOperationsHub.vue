@@ -2,18 +2,14 @@
   <AuthNavbar />
   <main class="visualizer-page">
     <div class="container">
-      <LinkedListOperationsVisualizerBase
-        :title="'LinkedList Operations'"
-        :description="'Visualize linked list operations'"
-        :algorithmName="'LinkedList Operation'"
-      />
+      <AdvancedLinkedListVisualizerBase />
     </div>
   </main>
 </template>
 
 <script setup>
 import AuthNavbar from "@/components/Navbar/AuthNavbar.vue"
-import LinkedListOperationsVisualizerBase from "@/components/visualizer/LinkedListOperationsVisualizerBase.vue"
+import AdvancedLinkedListVisualizerBase from "@/components/visualizer/AdvancedLinkedListVisualizerBase.vue"
 </script>
 
 <style scoped>

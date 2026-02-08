@@ -200,6 +200,7 @@
 import { ref } from "vue";
 import AuthNavbar from "@/components/Navbar/AuthNavbar.vue";
 import AlgoCard from "@/components/visualizer/AlgoCard.vue"
+import { sortingMeta } from "@/algorithms/sorting/sortingMeta"
 import AlgorithmInfoModal from '@/components/visualizer/AlgorithmInfoModal.vue'
 import {
   ArrowUpDown,

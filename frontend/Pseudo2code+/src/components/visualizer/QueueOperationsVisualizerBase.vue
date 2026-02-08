@@ -72,8 +72,11 @@
           type="number" 
           placeholder="Enter a number"
           class="param-input"
-          @keydown.enter="play"
+          @keydown.enter="applyEnqueue"
         />
+        <button class="btn ghost" @click="applyEnqueue" :disabled="!operationParams.value && operationParams.value !== 0">
+          ▶ Run
+        </button>
       </div>
 
       <!-- CONTROLS ROW 3: Play Controls -->
@@ -262,6 +265,13 @@ function play() {
     }, 800)
   } else {
     clearInterval(timer)
+  }
+}
+
+function applyEnqueue() {
+  if (operationParams.value.value !== null && operationParams.value.value !== "") {
+    initializeSteps()
+    play()
   }
 }
 

@@ -1,58 +1,56 @@
 <template>
   <div class="array-op-visualizer">
-    <div class="back" @click="router.push('/algorithm-hub')">
-      <img :src="arrowLeft" class="arrow" />
-      Back
-    </div>
     <!-- HEADER -->
-    <header class="header">
-      <div class="header-top">
-        <h1>{{ title }}</h1>
-        <button v-if="info" class="info-btn" @click="showInfo = true">ⓘ</button>
+    <section class="operation-details">
+
+      <div class="operation-header">
+        <div class="operation-title-group">
+          <h1>{{ title }}</h1>
+          <button v-if="info" class="info-btn" @click="showInfo = true">ⓘ</button>
+        </div>
+        <p class="operation-desc">{{ description }}</p>
       </div>
-      <p>{{ description }}</p>
-      <div v-if="info" class="algo-badges">
-        <span class="badge">Time: {{ info.time }}</span>
-        <span class="badge">Space: {{ info.space }}</span>
+      <div v-if="info" class="complexity-badges">
+        <span class="badge">⏱️ Time: {{ info.time }}</span>
+        <span class="badge">💾 Space: {{ info.space }}</span>
         <span class="badge" :class="info.stable ? 'stable' : 'unstable'">
-          {{ info.stable ? 'Stable' : 'Unstable' }}
+          {{ info.stable ? '✓ Stable' : '✗ Unstable' }}
         </span>
       </div>
-    </header>
 
-    <!-- ARRAY INPUT -->
-    <section class="array-input">
-      <button class="btn random-btn" @click="generateRandom">
-        Random Array
-      </button>
+      <!-- ARRAY INPUT -->
+      <section class="array-input">
+        <button class="btn random-btn" @click="generateRandom">
+          Random Array
+        </button>
 
-      <input v-model="customInput" placeholder="Custom array (Press Enter): 5,2,8,1"
-        @keydown.enter="applyCustomArray" />
-      
-      <button class="btn ghost" @click="goToGenerateCode">
-        Generate Code
-      </button>
+        <input v-model="customInput" placeholder="Custom array (Press Enter): 5,2,8,1"
+          @keydown.enter="applyCustomArray" />
+
+        <button class="btn ghost" @click="goToGenerateCode">
+          Generate Code
+        </button>
+      </section>
+
+      <OperationControls :type="operationType" :mode="operationMode" v-model="operationParams" />
+
+      <!-- CONTROLS -->
+      <section class="controls">
+        <button @click="prev" :disabled="stepIndex === 0">Prev</button>
+        <button @click="play" :disabled="!isPlayable">
+          {{ playing ? "Pause" : "Play" }}
+        </button>
+
+        <button @click="next" :disabled="stepIndex === steps.length - 1">
+          Next
+        </button>
+        <button class="danger" @click="reset">Reset</button>
+
+        <span class="step">
+          Step {{ stepIndex + 1 }} / {{ steps.length }}
+        </span>
+      </section>
     </section>
-
-    <OperationControls :type="operationType" :mode="operationMode" v-model="operationParams" />
-
-    <!-- CONTROLS -->
-    <section class="controls">
-      <button @click="prev" :disabled="stepIndex === 0">Prev</button>
-      <button @click="play" :disabled="!isPlayable">
-        {{ playing ? "Pause" : "Play" }}
-      </button>
-
-      <button @click="next" :disabled="stepIndex === steps.length - 1">
-        Next
-      </button>
-      <button class="danger" @click="reset">Reset</button>
-
-      <span class="step">
-        Step {{ stepIndex + 1 }} / {{ steps.length }}
-      </span>
-    </section>
-
     <!-- CANVAS -->
     <section class="canvas">
       <ArrayOperationCanvas :array="currentStep.array" :activeIndex="currentStep.activeIndex"
@@ -78,7 +76,6 @@
 <script setup>
 import { ref, computed, watch } from "vue"
 import OperationControls from "@/components/visualizer/OperationControls.vue"
-import arrowLeft from "@/assets/arrow-left.svg";
 import ArrayOperationCanvas from "./canvases/ArrayOperationCanvas.vue"
 import { useRoute } from "vue-router"
 import { useRouter } from "vue-router"
@@ -241,22 +238,94 @@ Take a random input array and demonstrate the operation.`
   margin: 0 auto;
 }
 
-.back {
-  position: absolute;
-  top: 92px;
-  left: 32px;
-  display: flex;
-  gap: 8px;
-  cursor: pointer;
-  opacity: 0.8;
-}
-
-.arrow {
-  width: 18px;
-}
-
 .header {
   margin-bottom: 24px;
+}
+
+.operation-details {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.operation-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.operation-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.operation-details h2 {
+  color: #cbd5f5;
+  font-size: 1.5rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.info-btn {
+  background: rgba(99, 102, 241, 0.2);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  color: #a78bfa;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.info-btn:hover {
+  background: rgba(99, 102, 241, 0.35);
+  border-color: rgba(167, 139, 250, 0.6);
+  transform: scale(1.05);
+}
+
+.operation-desc {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  margin: 0;
+  line-height: 1.5;
+}
+.complexity-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: #cbd5f5;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.badge.stable {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #86efac;
+}
+
+.badge.unstable {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
 }
 
 .header p {
@@ -399,34 +468,5 @@ Take a random input array and demonstrate the operation.`
   background: rgba(99, 102, 241, 0.35);
   border-color: rgba(167, 139, 250, 0.6);
   transform: scale(1.05);
-}
-
-.algo-badges {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.badge {
-  background: rgba(99, 102, 241, 0.15);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: #cbd5f5;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.badge.stable {
-  background: rgba(34, 197, 94, 0.15);
-  border-color: rgba(34, 197, 94, 0.3);
-  color: #86efac;
-}
-
-.badge.unstable {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.3);
-  color: #fca5a5;
 }
 </style>

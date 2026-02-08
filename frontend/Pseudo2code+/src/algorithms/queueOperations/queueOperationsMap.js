@@ -17,7 +17,7 @@ export const queueOperations = {
     description: "Add element to back of queue",
     generateSteps: enqueueSteps,
     pseudocode: enqueuePseudocode,
-    ...queueOperationsMeta.enqueue
+    info: queueOperationsMeta.enqueue
   },
   dequeue: {
     key: "dequeue",
@@ -25,7 +25,7 @@ export const queueOperations = {
     description: "Remove element from front of queue",
     generateSteps: dequeueSteps,
     pseudocode: dequeuePseudocode,
-    ...queueOperationsMeta.dequeue
+    info: queueOperationsMeta.dequeue
   },
   peek: {
     key: "peek",
@@ -33,7 +33,7 @@ export const queueOperations = {
     description: "View front element without removing",
     generateSteps: peekSteps,
     pseudocode: peekPseudocode,
-    ...queueOperationsMeta.peek
+    info: queueOperationsMeta.peek
   },
   isEmpty: {
     key: "isEmpty",
@@ -41,7 +41,7 @@ export const queueOperations = {
     description: "Check if queue is empty",
     generateSteps: isEmptySteps,
     pseudocode: isEmptyPseudocode,
-    ...queueOperationsMeta.isEmpty
+    info: queueOperationsMeta.isEmpty
   },
   size: {
     key: "size",
@@ -49,6 +49,6 @@ export const queueOperations = {
     description: "Get queue size",
     generateSteps: sizeSteps,
     pseudocode: sizePseudocode,
-    ...queueOperationsMeta.size
+    info: queueOperationsMeta.size
   }
 }
