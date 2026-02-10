@@ -112,8 +112,8 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: '/linkedlist-operations',
-    component: () => import('@/views/LinkedListOperationsHub.vue'),
+    path: '/binary-tree-operations',
+    component: () => import('@/views/BinaryTreeOperationsHub.vue'),
     meta: { requiresAuth: true },
   },
 ]

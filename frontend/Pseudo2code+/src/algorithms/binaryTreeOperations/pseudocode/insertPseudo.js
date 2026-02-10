@@ -1,0 +1,23 @@
+export const insertPseudo = [
+  "PROCEDURE INSERT(value)",
+  "  IF tree is empty THEN",
+  "    Create root node",
+  "    RETURN",
+  "  END IF",
+  "",
+  "  queue ← [root]",
+  "  WHILE queue not empty DO",
+  "    node ← dequeue()",
+  "    IF node.left is empty THEN",
+  "      node.left ← new Node(value)",
+  "      RETURN",
+  "    END IF",
+  "    IF node.right is empty THEN",
+  "      node.right ← new Node(value)",
+  "      RETURN",
+  "    END IF",
+  "    enqueue(node.left)",
+  "    enqueue(node.right)",
+  "  END WHILE",
+  "END PROCEDURE"
+]

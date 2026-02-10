@@ -141,7 +141,16 @@
               description: 'A node-based linear data structure where elements are stored in nodes linked via pointers. Common operations include insert, delete, search, and traverse with varying time complexities.'
             }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Binary Tree" level="Intermediate" desc="Hierarchical tree data structure"
-            :icon="GitBranch" />
+            :icon="GitBranch" route="/binary-tree-operations" :info="{
+              name: 'Binary Tree',
+              best: 'O(log n) - O(n)',
+              average: 'O(n)',
+              worst: 'O(n)',
+              space: 'O(n)',
+              stable: 'N/A',
+              inPlace: false,
+              description: 'A hierarchical tree data structure where each node has at most two children (left and right). Supports various operations including insert, search, delete, and multiple traversal methods.'
+            }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Graph" level="Intermediate" desc="Vertices and edges data structure" :icon="Network" />
         </div>
       </section>

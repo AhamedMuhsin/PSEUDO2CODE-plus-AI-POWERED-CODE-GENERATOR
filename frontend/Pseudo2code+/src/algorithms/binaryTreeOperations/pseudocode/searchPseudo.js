@@ -1,0 +1,22 @@
+export const searchPseudo = [
+  "PROCEDURE SEARCH(value)",
+  "  IF tree is empty THEN",
+  "    RETURN Not Found",
+  "  END IF",
+  "",
+  "  queue ← [root]",
+  "  WHILE queue not empty DO",
+  "    node ← dequeue()",
+  "    IF node.value = value THEN",
+  "      RETURN Found",
+  "    END IF",
+  "    IF node.left exists THEN",
+  "      enqueue(node.left)",
+  "    END IF",
+  "    IF node.right exists THEN",
+  "      enqueue(node.right)",
+  "    END IF",
+  "  END WHILE",
+  "  RETURN Not Found",
+  "END PROCEDURE"
+]
