@@ -116,6 +116,17 @@ const routes = [
     component: () => import('@/views/BinaryTreeOperationsHub.vue'),
     meta: { requiresAuth: true },
   },
+  {
+    path: '/graph-operations',
+    component: () => import('@/views/GraphOperationsHub.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/ai-problems/:problem',
+    name: 'AIProblem',
+    component: () => import('@/views/AIProblemsHub.vue'),
+    meta: { requiresAuth: true },
+  },
 ]
 
 const router = createRouter({

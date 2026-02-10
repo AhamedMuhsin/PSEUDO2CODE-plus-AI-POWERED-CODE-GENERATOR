@@ -151,7 +151,16 @@
               inPlace: false,
               description: 'A hierarchical tree data structure where each node has at most two children (left and right). Supports various operations including insert, search, delete, and multiple traversal methods.'
             }" @show-info="selectedInfo = $event" />
-          <AlgoCard title="Graph" level="Intermediate" desc="Vertices and edges data structure" :icon="Network" />
+          <AlgoCard title="Graph" level="Intermediate" desc="Vertices and edges data structure" :icon="Network" route="/graph-operations" :info="{
+              name: 'Graph',
+              best: 'O(V + E)',
+              average: 'O(V + E)',
+              worst: 'O(V + E)',
+              space: 'O(V + E)',
+              stable: 'N/A',
+              inPlace: false,
+              description: 'A graph is a non-linear data structure consisting of vertices (nodes) and edges. Supports traversal algorithms (BFS, DFS), shortest path algorithms (Dijkstra), and cycle detection.'
+            }" @show-info="selectedInfo = $event" />
         </div>
       </section>
 
@@ -176,26 +185,146 @@
         </div>
       </section>
 
-      <!-- AI ALGORITHMS -->
+      <!-- AI & SEARCH PROBLEMS -->
       <section class="algo-section">
-        <h2>AI Algorithms</h2>
+        <h2>AI & Search Problems</h2>
         <p class="section-desc">
-          Learn fundamental machine learning and AI algorithms
+          Solve classic AI problems using search and optimization algorithms
         </p>
 
         <div class="card-grid">
-          <AlgoCard title="K-Means Clustering" level="Intermediate" desc="Partition data into K clusters"
-            :icon="ScatterChart" />
-          <AlgoCard title="Linear Regression" level="Beginner" desc="Find best-fit line for data points"
-            :icon="TrendingUp" />
-          <AlgoCard title="Gradient Descent" level="Intermediate" desc="Optimization algorithm for machine learning"
-            :icon="TrendingDown" />
-          <AlgoCard title="Perceptron" level="Intermediate" desc="Simple neural network for classification"
-            :icon="Brain" />
-          <AlgoCard title="Decision Tree" level="Intermediate" desc="Tree-based classification algorithm"
-            :icon="Workflow" />
-          <AlgoCard title="K-Nearest Neighbors" level="Beginner" desc="Classification based on nearest data points"
-            :icon="Target" />
+          <AlgoCard title="N-Queens Problem" level="Intermediate" desc="Place N queens on chessboard with no conflicts"
+            :icon="Grid3x3" route="/ai-problems/nqueens" :info="{
+              name: 'N-Queens Problem',
+              best: 'O(N!)',
+              average: 'O(N!)',
+              worst: 'O(N!)',
+              space: 'O(N²)',
+              stable: 'N/A',
+              inPlace: false,
+              description: 'Classic backtracking problem. Place N queens on an N×N chessboard so that no two queens threaten each other. Uses constraint satisfaction and backtracking.'
+            }" @show-info="selectedInfo = $event" />
+          <AlgoCard title="Tower of Hanoi" level="Intermediate" desc="Move disks between rods following rules"
+            :icon="Layers3" route="/ai-problems/hanoi" :info="{
+              name: 'Tower of Hanoi',
+              best: 'O(2^N)',
+              average: 'O(2^N)',
+              worst: 'O(2^N)',
+              space: 'O(N)',
+              stable: 'N/A',
+              inPlace: false,
+              description: 'Classic recursive puzzle. Move all disks from source to destination rod using an auxiliary rod. Only smaller disks can be placed on larger ones. Minimum moves: 2^N - 1.'
+            }" @show-info="selectedInfo = $event" />
+          <AlgoCard title="Water Jug Problem" level="Intermediate" desc="Measure exact amount using two jugs"
+            :icon="Droplet" route="/ai-problems/waterjug" :info="{
+              name: 'Water Jug Problem',
+              best: 'O(M × N)',
+              average: 'O(M × N)',
+              worst: 'O(M × N)',
+              space: 'O(M × N)',
+              stable: 'N/A',
+              inPlace: false,
+              description: 'State-space search problem. Given two jugs of different capacities, find sequence of operations (fill, empty, pour) to measure exact target amount. Uses BFS to find shortest solution.'
+            }" @show-info="selectedInfo = $event" />
+          <AlgoCard title="MinMax Algorithm" level="Intermediate" desc="Optimal strategy for two-player games"
+            :icon="Brain" route="/ai-problems/minimax" :info="{
+              name: 'MinMax Algorithm',
+              best: 'O(b^d)',
+              average: 'O(b^d)',
+              worst: 'O(b^d)',
+              space: 'O(d)',
+              stable: 'N/A',
+              inPlace: false,
+              description: 'Game theory algorithm for perfect play in two-player zero-sum games. Maximizing player seeks highest score, minimizing player seeks lowest. Used in chess, tic-tac-toe, etc.'
+            }" @show-info="selectedInfo = $event" />
+          <AlgoCard title="Missionaries & Cannibals" level="Intermediate" desc="River crossing puzzle with constraints"
+            :icon="Users" route="/ai-problems/missionaries" :info="{
+              name: 'Missionaries and Cannibals',
+              best: 'O(N²)',
+              average: 'O(N²)',
+              worst: 'O(N²)',
+              space: 'O(N²)',
+              stable: 'N/A',
+              inPlace: false,
+              description: 'Classic river crossing puzzle. Transport 3 missionaries and 3 cannibals across river safely. Boat holds 2 people. Cannibals cannot outnumber missionaries on either side.'
+            }" @show-info="selectedInfo = $event" />
+          <AlgoCard title="8-Puzzle Problem" level="Intermediate" desc="Sliding tile puzzle using A* search"
+            :icon="LayoutGrid" route="/ai-problems/puzzle" :info="{
+              name: '8-Puzzle Problem',
+              best: 'O(b^d)',
+              average: 'O(b^d)',
+              worst: 'O(b^d)',
+              space: 'O(b^d)',
+              stable: 'N/A',
+              inPlace: false,
+              description: 'Sliding tile puzzle solved using A* search with Manhattan distance heuristic. Arrange tiles in correct order by sliding them into empty space. Classic AI search problem.'
+            }" @show-info="selectedInfo = $event" />
+          <AlgoCard title="Vacuum Cleaner Agent" level="Beginner" desc="Simple reflex agent in grid world"
+            :icon="Sparkles" route="/ai-problems/vacuum" :info="{
+              name: 'Vacuum Cleaner Agent',
+              best: 'O(N²)',
+              average: 'O(N²)',
+              worst: 'O(N²)',
+              space: 'O(N²)',
+              stable: 'N/A',
+              inPlace: true,
+              description: 'First AI agent concept. Simple reflex agent that perceives environment and acts. Demonstrates agent types: simple reflex vs. model-based. Core AI fundamental.'
+            }" @show-info="selectedInfo = $event" />
+          <AlgoCard title="Alpha-Beta Pruning" level="Intermediate" desc="Optimized minimax with branch pruning"
+            :icon="Scissors" route="/ai-problems/alphabeta" :info="{
+              name: 'Alpha-Beta Pruning',
+              best: 'O(b^(d/2))',
+              average: 'O(b^(3d/4))',
+              worst: 'O(b^d)',
+              space: 'O(d)',
+              stable: 'N/A',
+              inPlace: false,
+              description: 'Optimization of minimax algorithm. Prunes branches that cannot affect final decision. Significantly reduces nodes evaluated in game trees. Essential for game AI.'
+            }" @show-info="selectedInfo = $event" />
+          <AlgoCard title="Hill Climbing" level="Intermediate" desc="Local search optimization algorithm"
+            :icon="TrendingUp" route="/ai-problems/hillclimbing" :info="{
+              name: 'Hill Climbing',
+              best: 'O(∞)',
+              average: 'Varies',
+              worst: 'O(∞)',
+              space: 'O(1)',
+              stable: 'N/A',
+              inPlace: true,
+              description: 'Greedy local search that always moves to best neighbor. Fast but can get stuck in local maxima. No backtracking. Good for quick approximate solutions.'
+            }" @show-info="selectedInfo = $event" />
+          <AlgoCard title="Simulated Annealing" level="Intermediate" desc="Probabilistic optimization with cooling"
+            :icon="Flame" route="/ai-problems/annealing" :info="{
+              name: 'Simulated Annealing',
+              best: 'O(∞)',
+              average: 'Probabilistic',
+              worst: 'O(∞)',
+              space: 'O(1)',
+              stable: 'N/A',
+              inPlace: true,
+              description: 'Probabilistic hill climbing inspired by metallurgy. Accepts worse solutions with decreasing probability (temperature). Can escape local maxima. Used in optimization.'
+            }" @show-info="selectedInfo = $event" />
+          <AlgoCard title="Map Coloring CSP" level="Intermediate" desc="Constraint satisfaction with backtracking"
+            :icon="Palette" route="/ai-problems/mapcoloring" :info="{
+              name: 'Map Coloring',
+              best: 'O(d^n)',
+              average: 'O(d^n)',
+              worst: 'O(d^n)',
+              space: 'O(n)',
+              stable: 'N/A',
+              inPlace: false,
+              description: 'Classic CSP problem. Color map regions so no adjacent regions share same color. Demonstrates constraint satisfaction, backtracking, and constraint propagation.'
+            }" @show-info="selectedInfo = $event" />
+          <AlgoCard title="Genetic Algorithm" level="Intermediate" desc="Evolutionary optimization algorithm"
+            :icon="Dna" route="/ai-problems/genetic" :info="{
+              name: 'Genetic Algorithm',
+              best: 'O(g × p × f)',
+              average: 'O(g × p × f)',
+              worst: 'O(g × p × f)',
+              space: 'O(p)',
+              stable: 'N/A',
+              inPlace: false,
+              description: 'Evolutionary algorithm mimicking natural selection. Population evolves through selection, crossover, and mutation. Excellent for complex optimization in large search spaces.'
+            }" @show-info="selectedInfo = $event" />
         </div>
       </section>
       <Transition name="modal">
@@ -230,12 +359,17 @@ import {
   Navigation,
   TreePine,
   Merge,
-  ScatterChart,
-  TrendingUp,
-  TrendingDown,
+  Grid3x3,
+  Droplet,
   Brain,
-  Workflow,
-  Target,
+  Users,
+  LayoutGrid,
+  Sparkles,
+  Scissors,
+  TrendingUp,
+  Flame,
+  Palette,
+  Dna,
 } from "lucide-vue-next"
 
 const selectedInfo = ref(null)
