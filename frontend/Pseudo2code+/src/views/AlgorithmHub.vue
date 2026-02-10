@@ -172,7 +172,17 @@
         </p>
 
         <div class="card-grid">
-          <AlgoCard title="Breadth-First Search" level="Beginner" desc="Level-by-level graph traversal" :icon="Route" />
+          <AlgoCard title="Breadth-First Search" level="Beginner" desc="Level-by-level graph traversal" :icon="Route"
+            route="/visualize/graph/bfs" :info="{
+              name: 'Breadth-First Search',
+              best: 'O(V + E)',
+              average: 'O(V + E)',
+              worst: 'O(V + E)',
+              space: 'O(V)',
+              stable: 'N/A',
+              inPlace: false,
+              description: 'BFS explores graph level by level using a queue. It visits all neighbors of a node before moving to the next level. Essential for shortest path in unweighted graphs, level-order traversal, and finding connected components.'
+            }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Depth-First Search" level="Beginner" desc="Explore as far as possible along each branch"
             :icon="CornerDownRight" />
           <AlgoCard title="Dijkstra's Algorithm" level="Intermediate" desc="Shortest path in weighted graphs"

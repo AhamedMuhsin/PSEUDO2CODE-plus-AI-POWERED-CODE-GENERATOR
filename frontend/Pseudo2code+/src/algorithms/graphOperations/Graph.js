@@ -4,6 +4,19 @@
  */
 export class Graph {
   constructor(isDirected = false, isWeighted = false) {
+    // Support cloning from another Graph instance
+    if (isDirected instanceof Graph) {
+      const source = isDirected
+      this.isDirected = source.isDirected
+      this.isWeighted = source.isWeighted
+      this.nodes = [...source.nodes]
+      this.edges = source.edges.map(e => ({ ...e }))
+      this.adjacencyList = new Map()
+      for (const [key, value] of source.adjacencyList) {
+        this.adjacencyList.set(key, value.map(v => ({ ...v })))
+      }
+      return
+    }
     this.adjacencyList = new Map()
     this.isDirected = isDirected
     this.isWeighted = isWeighted
@@ -26,8 +39,8 @@ export class Graph {
 
     this.adjacencyList.get(from).push({ node: to, weight })
 
-    // If undirected, add reverse edge
-    if (!this.isDirected) {
+    // If undirected, add reverse edge (skip for self-loops to avoid duplicate)
+    if (!this.isDirected && from !== to) {
       this.adjacencyList.get(to).push({ node: from, weight })
     }
 

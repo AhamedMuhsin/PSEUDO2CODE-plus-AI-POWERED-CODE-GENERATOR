@@ -12,6 +12,7 @@ import InsertionSortVisualizer from "@/components/visualizer/InsertionSortVisual
 import MergeSortVisualizer from "@/components/visualizer/MergeSortVisualizer.vue"
 import QuickSortVisualizer from "@/components/visualizer/QuickSortVisualizer.vue"
 import HeapSortVisualizer from "@/components/visualizer/HeapSortVisualizer.vue"
+import BFSVisualizer from "@/components/visualizer/BFSVisualizer.vue"
 
 const route = useRoute()
 
@@ -22,6 +23,7 @@ const visualizerMap = {
   "sorting/merge-sort": MergeSortVisualizer,
   "sorting/quick-sort": QuickSortVisualizer,
   "sorting/heap-sort": HeapSortVisualizer,
+  "graph/bfs": BFSVisualizer,
 }
 
 const key = computed(() =>
