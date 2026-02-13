@@ -19,6 +19,8 @@ const props = defineProps({
   activeNode: String,
   highlightedEdges: Array,
   queueState: Array,
+  stackState: Array,
+  distances: { type: Object, default: null },
   isDirected: { type: Boolean, default: false }
 })
 
@@ -180,6 +182,7 @@ const drawVisualization = () => {
     const isVisited = props.visitedNodes?.includes(node)
     const isActive = props.activeNode === node
     const isInQueue = props.queueState?.includes(node)
+    const isInStack = props.stackState?.includes(node)
 
     // Node circle
     if (isActive) {
@@ -190,6 +193,8 @@ const drawVisualization = () => {
       ctx.fillStyle = '#6366f1'
     } else if (isInQueue) {
       ctx.fillStyle = '#fbbf24'
+    } else if (isInStack) {
+      ctx.fillStyle = '#a78bfa'
     } else {
       ctx.fillStyle = '#64748b'
     }
@@ -210,43 +215,79 @@ const drawVisualization = () => {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillText(node, pos.x, pos.y)
+
+    // Distance label (for Dijkstra)
+    if (props.distances && props.distances[node] !== undefined) {
+      const distVal = props.distances[node]
+      const distText = distVal === Infinity ? '∞' : String(distVal)
+      
+      // Draw distance badge below node
+      const badgeY = pos.y + NODE_RADIUS + 14
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.85)'
+      const badgeW = Math.max(ctx.measureText(`d=${distText}`).width + 12, 32)
+      const badgeH = 20
+      const badgeX = pos.x - badgeW / 2
+      ctx.beginPath()
+      ctx.roundRect(badgeX, badgeY - badgeH / 2, badgeW, badgeH, 4)
+      ctx.fill()
+      ctx.strokeStyle = isActive ? '#22c55e' : isVisited ? '#6366f1' : '#475569'
+      ctx.lineWidth = 1
+      ctx.stroke()
+      
+      ctx.fillStyle = distVal === Infinity ? '#94a3b8' : '#fde68a'
+      ctx.font = 'bold 11px Arial'
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillText(`d=${distText}`, pos.x, badgeY)
+    }
   })
 
-  // Queue visualization
-  if (props.queueState && props.queueState.length > 0) {
-    const queueY = height - 60
+  // Data structure visualization (Queue or Stack)
+  const dsState = (props.queueState && props.queueState.length > 0) ? props.queueState
+    : (props.stackState && props.stackState.length > 0) ? props.stackState
+    : null
+  const dsLabel = (props.queueState && props.queueState.length > 0) ? 'Queue'
+    : (props.stackState && props.stackState.length > 0) ? 'Stack'
+    : null
+
+  if (dsState && dsLabel) {
+    const dsY = height - 60
     ctx.fillStyle = '#e0e7ff'
     ctx.font = '14px Arial'
     ctx.textAlign = 'left'
-    ctx.fillText('Queue:', 20, queueY)
+    ctx.fillText(`${dsLabel}:`, 20, dsY)
 
-    props.queueState.forEach((node, idx) => {
+    const dsColor = dsLabel === 'Stack' ? '#a78bfa' : '#fbbf24'
+
+    dsState.forEach((node, idx) => {
       const x = 80 + idx * 50
       
-      ctx.fillStyle = '#fbbf24'
-      ctx.fillRect(x, queueY - 15, 40, 30)
+      ctx.fillStyle = dsColor
+      ctx.fillRect(x, dsY - 15, 40, 30)
       
       ctx.strokeStyle = '#1e293b'
       ctx.lineWidth = 2
-      ctx.strokeRect(x, queueY - 15, 40, 30)
+      ctx.strokeRect(x, dsY - 15, 40, 30)
 
       ctx.fillStyle = '#000000'
       ctx.font = 'bold 14px Arial'
       ctx.textAlign = 'center'
-      ctx.fillText(node, x + 20, queueY)
+      ctx.fillText(node, x + 20, dsY)
     })
 
-    // Arrow for first element
-    if (props.queueState.length > 0) {
-      ctx.fillStyle = '#e0e7ff'
-      ctx.font = '12px Arial'
-      ctx.textAlign = 'center'
-      ctx.fillText('Front', 100, queueY - 25)
+    // Label for first element
+    ctx.fillStyle = '#e0e7ff'
+    ctx.font = '12px Arial'
+    ctx.textAlign = 'center'
+    if (dsLabel === 'Queue') {
+      ctx.fillText('Front', 100, dsY - 25)
+    } else {
+      ctx.fillText('Top', 100, dsY - 25)
     }
   }
 }
 
-watch(() => [props.nodes, props.edges, props.visitedNodes, props.activeNode, props.highlightedEdges, props.queueState, props.isDirected], 
+watch(() => [props.nodes, props.edges, props.visitedNodes, props.activeNode, props.highlightedEdges, props.queueState, props.stackState, props.distances, props.isDirected], 
   drawVisualization, 
   { deep: true }
 )

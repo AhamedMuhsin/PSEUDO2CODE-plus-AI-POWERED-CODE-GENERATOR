@@ -140,6 +140,33 @@
             {{ node }}: {{ dist === Infinity ? '∞' : dist }}
           </span>
         </div>
+        <div v-if="currentStep.gScore" class="distances-display">
+          <strong>g-Score (actual cost):</strong>
+          <span v-for="(score, node) in currentStep.gScore" :key="node" class="distance-item">
+            {{ node }}: {{ score === Infinity ? '∞' : score }}
+          </span>
+        </div>
+        <div v-if="currentStep.fScore" class="distances-display">
+          <strong>f-Score (g + h):</strong>
+          <span v-for="(score, node) in currentStep.fScore" :key="node" class="distance-item">
+            {{ node }}: {{ score === Infinity ? '∞' : typeof score === 'number' ? score.toFixed(2) : score }}
+          </span>
+        </div>
+        <div v-if="currentStep.heuristic" class="distances-display">
+          <strong>Heuristic (h):</strong>
+          <span v-for="(h, node) in currentStep.heuristic" :key="node" class="distance-item">
+            {{ node }}: {{ h }}
+          </span>
+        </div>
+        <div v-if="currentStep.openSet && currentStep.openSet.length > 0" class="queue-display">
+          <strong>Open Set:</strong> [{{ currentStep.openSet.join(", ") }}]
+        </div>
+        <div v-if="currentStep.closedSet && currentStep.closedSet.length > 0" class="queue-display">
+          <strong>Closed Set:</strong> [{{ currentStep.closedSet.join(", ") }}]
+        </div>
+        <div v-if="currentStep.path && currentStep.path.length > 0" class="path-display">
+          <strong>🎯 Path Found:</strong> {{ currentStep.path.join(" → ") }}
+        </div>
         <div v-if="currentStep.queueState && currentStep.queueState.length > 0" class="queue-display">
           <strong>Queue:</strong> [{{ currentStep.queueState.join(", ") }}]
         </div>
@@ -234,13 +261,15 @@ const loadSampleGraph = () => {
   const nodes = ["A", "B", "C", "D", "E", "F"]
   nodes.forEach(n => currentGraph.addNode(n))
 
-  // Add edges for a connected graph
-  currentGraph.addEdge("A", "B", 1)
-  currentGraph.addEdge("A", "C", 1)
-  currentGraph.addEdge("B", "D", 1)
+  // Add edges for a connected graph with varying weights
+  // This creates a scenario where A* can show its advantage over Dijkstra
+  currentGraph.addEdge("A", "B", 4)
+  currentGraph.addEdge("A", "C", 2)
+  currentGraph.addEdge("B", "D", 5)
   currentGraph.addEdge("C", "D", 1)
-  currentGraph.addEdge("C", "E", 1)
-  currentGraph.addEdge("D", "F", 1)
+  currentGraph.addEdge("C", "E", 10)
+  currentGraph.addEdge("D", "E", 3)
+  currentGraph.addEdge("D", "F", 2)
   currentGraph.addEdge("E", "F", 1)
 
   initializeSteps()
@@ -252,13 +281,14 @@ const generateRandomGraph = () => {
   const nodes = Array.from({ length: nodeCount }, (_, i) => String.fromCharCode(65 + i))
   nodes.forEach(n => currentGraph.addNode(n))
 
-  // Add random edges
+  // Add random edges with random weights
   for (let i = 0; i < nodes.length; i++) {
     const connectTo = Math.floor(Math.random() * Math.min(3, nodes.length - 1)) + 1
     for (let j = 0; j < connectTo; j++) {
       const targetIdx = Math.floor(Math.random() * nodes.length)
       if (nodes[i] !== nodes[targetIdx]) {
-        currentGraph.addEdge(nodes[i], nodes[targetIdx], 1)
+        const weight = Math.floor(Math.random() * 10) + 1 // Random weight 1-10
+        currentGraph.addEdge(nodes[i], nodes[targetIdx], weight)
       }
     }
   }
@@ -665,7 +695,8 @@ const goToGenerateCode = () => {
 }
 
 .queue-display,
-.stack-display {
+.stack-display,
+.path-display {
   margin-top: 12px;
   padding: 12px;
   background: rgba(15, 23, 42, 0.4);
@@ -674,8 +705,17 @@ const goToGenerateCode = () => {
   color: #a78bfa;
 }
 
+.path-display {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #86efac;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
 .queue-display strong,
-.stack-display strong {
+.stack-display strong,
+.path-display strong {
   color: #e0e7ff;
 }
 

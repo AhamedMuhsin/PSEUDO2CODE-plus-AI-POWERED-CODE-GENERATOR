@@ -28,5 +28,11 @@ export const graphOperationsMeta = {
     space: "O(V)",
     stable: true,
     description: "Greedy algorithm for shortest paths in weighted graphs with non-negative weights. Updates distances iteratively."
+  },
+  astar: {
+    time: "O((V+E)logV) average, O(b^d) worst case",
+    space: "O(V)",
+    stable: true,
+    description: "Informed search algorithm combining Dijkstra with heuristic guidance. Uses f(n) = g(n) + h(n) where g is actual cost and h is estimated cost to goal. Guarantees optimal path if heuristic is admissible."
   }
 }

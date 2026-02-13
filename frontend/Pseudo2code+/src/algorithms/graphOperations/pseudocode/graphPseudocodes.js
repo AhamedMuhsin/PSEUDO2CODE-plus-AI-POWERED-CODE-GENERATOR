@@ -91,3 +91,56 @@ export const dijkstraPseudo = [
   "  ",
   "  return distances"
 ]
+
+export const astarPseudo = [
+  "A*(graph, start, goal)",
+  "  openSet ← {start}",
+  "  closedSet ← empty set",
+  "  gScore ← {all: ∞, start: 0}",
+  "  fScore ← {all: ∞, start: h(start)}",
+  "  ",
+  "  while openSet not empty:",
+  "    current ← node in openSet with lowest fScore",
+  "    if current == goal:",
+  "      return reconstruct_path()",
+  "    ",
+  "    openSet.remove(current)",
+  "    closedSet.add(current)",
+  "    ",
+  "    for each neighbor of current:",
+  "      if neighbor in closedSet:",
+  "        continue",
+  "      ",
+  "      tentativeG ← gScore[current] + weight",
+  "      if neighbor not in openSet:",
+  "        openSet.add(neighbor)",
+  "      else if tentativeG >= gScore[neighbor]:",
+  "        continue",
+  "      ",
+  "      gScore[neighbor] ← tentativeG",
+  "      fScore[neighbor] ← tentativeG + h(neighbor)",
+  "      previous[neighbor] ← current",
+  "  ",
+  "  return failure (no path found)"
+]
+
+export const primPseudo = [
+  "PRIM_MST(graph, startNode)",
+  "  key ← {all nodes: ∞}",
+  "  parent ← {all nodes: null}",
+  "  inMST ← empty set",
+  "  key[startNode] ← 0",
+  "  ",
+  "  while not all nodes in MST:",
+  "    u ← node not in MST with minimum key",
+  "    inMST.add(u)",
+  "    if parent[u] ≠ null:",
+  "      add edge (parent[u], u) to MST",
+  "    ",
+  "    for each neighbor v of u:",
+  "      if v not in MST and weight(u,v) < key[v]:",
+  "        key[v] ← weight(u, v)",
+  "        parent[v] ← u",
+  "  ",
+  "  return MST edges and total cost"
+]
