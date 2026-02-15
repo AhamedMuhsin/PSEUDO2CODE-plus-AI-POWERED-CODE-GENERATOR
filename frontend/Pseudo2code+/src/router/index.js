@@ -123,6 +123,24 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/nqueen-visualizer',
+    name: 'NQueenVisualizer',
+    component: () => import('@/views/NQueenVisualizer.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/hanoi-visualizer',
+    name: 'TowerOfHanoiVisualizer',
+    component: () => import('@/views/TowerOfHanoiVisualizer.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/waterjug-visualizer',
+    name: 'WaterJugVisualizer',
+    component: () => import('@/views/WaterJugVisualizer.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/ai-problems/:problem',
     name: 'AIProblem',
     component: () => import('@/views/AIProblemsHub.vue'),

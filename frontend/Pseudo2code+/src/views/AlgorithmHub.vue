@@ -249,7 +249,7 @@
 
         <div class="card-grid">
           <AlgoCard title="N-Queens Problem" level="Intermediate" desc="Place N queens on chessboard with no conflicts"
-            :icon="Grid3x3" route="/ai-problems/nqueens" :info="{
+            :icon="Grid3x3" route="/nqueen-visualizer" :info="{
               name: 'N-Queens Problem',
               best: 'O(N!)',
               average: 'O(N!)',
@@ -260,7 +260,7 @@
               description: 'Classic backtracking problem. Place N queens on an N×N chessboard so that no two queens threaten each other. Uses constraint satisfaction and backtracking.'
             }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Tower of Hanoi" level="Intermediate" desc="Move disks between rods following rules"
-            :icon="Layers3" route="/ai-problems/hanoi" :info="{
+            :icon="Layers3" route="/hanoi-visualizer" :info="{
               name: 'Tower of Hanoi',
               best: 'O(2^N)',
               average: 'O(2^N)',
@@ -271,7 +271,7 @@
               description: 'Classic recursive puzzle. Move all disks from source to destination rod using an auxiliary rod. Only smaller disks can be placed on larger ones. Minimum moves: 2^N - 1.'
             }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Water Jug Problem" level="Intermediate" desc="Measure exact amount using two jugs"
-            :icon="Droplet" route="/ai-problems/waterjug" :info="{
+            :icon="Droplet" route="/waterjug-visualizer" :info="{
               name: 'Water Jug Problem',
               best: 'O(M × N)',
               average: 'O(M × N)',
