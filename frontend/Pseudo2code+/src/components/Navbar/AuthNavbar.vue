@@ -1,57 +1,117 @@
 <template>
-    <nav class="auth-navbar">
+    <nav class="auth-navbar" :class="{ 'nav-scrolled': scrolled }">
         <!-- Left: Logo -->
         <div class="left">
             <img :src="logo" alt="Logo" class="logo" />
         </div>
 
-        <!-- Center: Links -->
+        <!-- Center: Links (Desktop) -->
         <ul class="nav-links">
-            <li>
-                <RouterLink to="/showcase">Showcase</RouterLink>
-            </li>
-            <li>
-                <RouterLink to="/about">About</RouterLink>
-            </li>
-            <li>
-                <RouterLink to="/contact">Contact</RouterLink>
-            </li>
-            <li>
-                <RouterLink to="/dashboard" class="active">
-                    Dashboard
+            <li v-for="link in navLinks" :key="link.to">
+                <RouterLink :to="link.to" :class="{ active: isActive(link.to) }">
+                    {{ link.label }}
                 </RouterLink>
-            </li>
-            <li>
-                <RouterLink to="/profile">Profile</RouterLink>
             </li>
         </ul>
 
-        <!-- Right: Logout -->
+        <!-- Right: Logout (Desktop) -->
         <button class="logout-btn" @click="handleLogout">
             Logout
         </button>
+
+        <!-- Hamburger Button (Mobile) -->
+        <button class="hamburger" :class="{ open: mobileMenuOpen }" @click="toggleMenu" aria-label="Toggle menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+
+        <!-- Mobile Backdrop -->
+        <Transition name="fade">
+            <div v-if="mobileMenuOpen" class="mobile-backdrop" @click="closeMenu"></div>
+        </Transition>
+
+        <!-- Mobile Drawer -->
+        <Transition name="slide">
+            <div v-if="mobileMenuOpen" class="mobile-drawer">
+                <div class="mobile-drawer-header">
+                    <img :src="logo" alt="Logo" class="mobile-logo" />
+                    <span class="mobile-brand">Pseudo2Code+</span>
+                </div>
+
+                <ul class="mobile-links">
+                    <li v-for="(link, i) in navLinks" :key="link.to" :style="{ animationDelay: (i * 0.06) + 's' }">
+                        <RouterLink :to="link.to" :class="{ active: isActive(link.to) }" @click="closeMenu">
+                            <component :is="link.icon" :size="18" class="mobile-link-icon" />
+                            {{ link.label }}
+                        </RouterLink>
+                    </li>
+                </ul>
+
+                <div class="mobile-drawer-footer">
+                    <button class="mobile-logout-btn" @click="handleLogout">
+                        <LogOut :size="18" class="mobile-link-icon" />
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </Transition>
     </nav>
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
-import { logout } from "@/services/authService";
-import logo from "@/assets/logo_f.png";
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { logout } from '@/services/authService'
+import logo from '@/assets/logo_f.png'
+import { Sparkles, Info, Mail, LayoutDashboard, User, LogOut } from 'lucide-vue-next'
 
-const router = useRouter();
+const router = useRouter()
+const route = useRoute()
+const mobileMenuOpen = ref(false)
+const scrolled = ref(false)
+
+const navLinks = [
+    { to: '/showcase', label: 'Showcase', icon: Sparkles },
+    { to: '/about', label: 'About', icon: Info },
+    { to: '/contact', label: 'Contact', icon: Mail },
+    { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { to: '/profile', label: 'Profile', icon: User },
+]
+
+function isActive(path) {
+    return route.path === path || route.path.startsWith(path + '/')
+}
+
+function toggleMenu() {
+    mobileMenuOpen.value = !mobileMenuOpen.value
+    document.body.style.overflow = mobileMenuOpen.value ? 'hidden' : ''
+}
+
+function closeMenu() {
+    mobileMenuOpen.value = false
+    document.body.style.overflow = ''
+}
+
+function handleScroll() {
+    scrolled.value = window.scrollY > 20
+}
 
 const handleLogout = async () => {
-    await logout();
-    router.replace("/login");
-};
+    closeMenu()
+    await logout()
+    router.replace('/login')
+}
+
+onMounted(() => window.addEventListener('scroll', handleScroll))
+onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll)
+    document.body.style.overflow = ''
+})
 </script>
 
 <style scoped>
-* {
-    margin: 0;
-    padding: 0;
-}
-
+/* ════════ NAVBAR BASE ════════ */
 .auth-navbar {
     width: 100%;
     height: 70px;
@@ -63,41 +123,75 @@ const handleLogout = async () => {
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: all 0.3s ease;
 }
 
-/* Left */
+.auth-navbar.nav-scrolled {
+    height: 60px;
+    background: rgba(2, 6, 23, 0.98);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    border-bottom-color: rgba(99, 102, 241, 0.15);
+}
+
+/* ════════ LEFT ════════ */
 .left {
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-shrink: 0;
 }
 
 .logo {
     width: 34px;
+    transition: transform 0.3s ease;
 }
 
-.brand {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #e5e7eb;
+.logo:hover {
+    transform: rotate(-8deg) scale(1.05);
 }
 
-/* Links */
+/* ════════ DESKTOP LINKS ════════ */
 .nav-links {
     display: flex;
     gap: 28px;
     list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .nav-links a {
     color: #94a3b8;
     text-decoration: none;
     font-size: 0.95rem;
-    transition: color 0.2s ease;
+    position: relative;
+    transition: color 0.25s ease;
+    padding: 4px 0;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #6366f1, #818cf8);
+    border-radius: 1px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(-50%);
 }
 
 .nav-links a:hover {
     color: #e5e7eb;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
 }
 
 .nav-links .active {
@@ -105,7 +199,11 @@ const handleLogout = async () => {
     font-weight: 600;
 }
 
-/* Logout */
+.nav-links .active::after {
+    width: 100%;
+}
+
+/* ════════ LOGOUT DESKTOP ════════ */
 .logout-btn {
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -113,12 +211,281 @@ const handleLogout = async () => {
     padding: 6px 16px;
     border-radius: 10px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    font-size: 0.88rem;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
 }
 
 .logout-btn:hover {
     background: #ef4444;
     border-color: #ef4444;
     color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* ════════ HAMBURGER ════════ */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    background: rgba(100, 116, 139, 0.1);
+    border: 1px solid rgba(100, 116, 139, 0.2);
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 8px;
+    transition: all 0.3s ease;
+    z-index: 1002;
+    flex-shrink: 0;
+}
+
+.hamburger:hover {
+    background: rgba(99, 102, 241, 0.15);
+    border-color: rgba(99, 102, 241, 0.3);
+}
+
+.hamburger-line {
+    width: 20px;
+    height: 2px;
+    background: #e2e8f0;
+    border-radius: 2px;
+    transition: all 0.35s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+    transform-origin: center;
+}
+
+.hamburger.open .hamburger-line:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger.open .hamburger-line:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.hamburger.open .hamburger-line:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ════════ MOBILE BACKDROP ════════ */
+.mobile-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 998;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+/* ════════ MOBILE DRAWER ════════ */
+.mobile-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 280px;
+    max-width: 85vw;
+    height: 100dvh;
+    background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+    border-left: 1px solid rgba(99, 102, 241, 0.2);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.5);
+}
+
+.slide-enter-active {
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-leave-active {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 1, 1);
+}
+
+.slide-enter-from,
+.slide-leave-to {
+    transform: translateX(100%);
+}
+
+/* ════════ DRAWER HEADER ════════ */
+.mobile-drawer-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid rgba(100, 116, 139, 0.15);
+}
+
+.mobile-logo {
+    width: 32px;
+}
+
+.mobile-brand {
+    font-size: 1.1rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #818cf8, #6366f1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ════════ MOBILE LINKS ════════ */
+.mobile-links {
+    list-style: none;
+    padding: 12px 12px;
+    margin: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.mobile-links li {
+    animation: slideInLink 0.35s ease forwards;
+    opacity: 0;
+    transform: translateX(20px);
+}
+
+@keyframes slideInLink {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.mobile-links a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.mobile-links a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: #6366f1;
+    border-radius: 0 3px 3px 0;
+    transform: scaleY(0);
+    transition: transform 0.25s ease;
+}
+
+.mobile-links a:hover,
+.mobile-links a:active {
+    background: rgba(99, 102, 241, 0.08);
+    color: #e2e8f0;
+}
+
+.mobile-links a:hover::before {
+    transform: scaleY(1);
+}
+
+.mobile-links a.active {
+    background: rgba(99, 102, 241, 0.12);
+    color: #818cf8;
+    font-weight: 600;
+}
+
+.mobile-links a.active::before {
+    transform: scaleY(1);
+}
+
+.mobile-link-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.mobile-links a:hover .mobile-link-icon,
+.mobile-links a.active .mobile-link-icon {
+    opacity: 1;
+}
+
+/* ════════ DRAWER FOOTER ════════ */
+.mobile-drawer-footer {
+    padding: 12px 12px 28px;
+    border-top: 1px solid rgba(100, 116, 139, 0.15);
+}
+
+.mobile-logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.mobile-logout-btn:hover {
+    background: rgba(239, 68, 68, 0.18);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #ef4444;
+    transform: translateX(-2px);
+}
+
+/* ════════ RESPONSIVE ════════ */
+@media (max-width: 900px) {
+    .auth-navbar {
+        padding: 0 20px;
+    }
+
+    .nav-links,
+    .logout-btn {
+        display: none;
+    }
+
+    .hamburger {
+        display: flex;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-navbar {
+        padding: 0 14px;
+        height: 60px;
+    }
+
+    .logo {
+        width: 30px;
+    }
+
+    .mobile-drawer {
+        width: 100%;
+        max-width: 100vw;
+        border-left: none;
+    }
 }
 </style>
