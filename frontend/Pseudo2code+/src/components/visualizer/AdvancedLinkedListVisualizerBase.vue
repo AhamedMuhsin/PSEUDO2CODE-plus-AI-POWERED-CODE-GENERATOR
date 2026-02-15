@@ -1,172 +1,97 @@
 <template>
-  <div class="linkedlist-visualizer">
-    <!-- BACK BUTTON -->
-    <div class="top-section">
-      <button class="back-btn" @click="router.push('/algorithm-hub')">
-        <img :src="arrowLeft" class="arrow" />
-        Back
-      </button>
+  <main class="visualizer-page">
+    <div class="container-compact">
+      <div class="top-section-compact">
+        <button class="back-btn-compact" @click="router.push('/algorithm-hub')">
+          <img :src="arrowLeft" class="arrow" /> Back
+        </button>
+      </div>
+
+      <header class="page-header-compact">
+        <div class="header-top-row">
+          <div class="operation-title-group-compact">
+            <h1>{{ currentOperation.label || 'LinkedList Visualizer' }}</h1>
+            <button v-if="currentOperation.algorithmName" class="info-btn-compact" @click="showInfo = true"><Info :size="16" /></button>
+          </div>
+          <div class="type-and-op-row">
+            <button v-for="type in linkedListTypes" :key="type.key" @click="selectListType(type.key)"
+              :class="['type-btn-compact', { active: selectedListType === type.key }]">
+              {{ type.label }}
+            </button>
+            <select v-model="selectedOp" class="op-dropdown-compact">
+              <option v-for="(op, key) in currentOperations" :key="key" :value="key">{{ op.label }}</option>
+            </select>
+          </div>
+        </div>
+        <p class="operation-desc-compact">{{ currentOperation.description || 'Step-by-step linked list visualization' }}</p>
+        <div v-if="currentOperation.algorithmName" class="algo-badges-compact">
+          <span class="badge-compact">Best: {{ currentOperation.best }}</span>
+          <span class="badge-compact">Avg: {{ currentOperation.average }}</span>
+          <span class="badge-compact">Worst: {{ currentOperation.worst }}</span>
+          <span class="badge-compact">Space: {{ currentOperation.space }}</span>
+        </div>
+      </header>
+
+      <div class="two-column-layout">
+        <div class="left-column">
+          <section class="input-section-compact">
+            <div class="input-row-compact">
+              <button class="btn-compact ghost" @click="generateRandomList">Random</button>
+              <input v-model="customListInput" placeholder="10,20,30" @keydown.enter="applyCustomList" class="custom-input-compact" />
+              <template v-if="currentOperation.hasParams">
+                <template v-if="currentOperation.paramType === 'value'">
+                  <input v-model.number="inputValue" type="number" placeholder="Value" class="custom-input-compact small" />
+                </template>
+                <template v-else-if="currentOperation.paramType === 'position'">
+                  <input v-model.number="inputPosition" type="number" min="0" :max="baseList.length" placeholder="Pos" class="custom-input-compact small" />
+                </template>
+                <template v-else-if="currentOperation.paramType === 'position-value'">
+                  <input v-model.number="inputPosition" type="number" min="0" :max="baseList.length" placeholder="Pos" class="custom-input-compact small" />
+                  <input v-model.number="inputValue" type="number" placeholder="Val" class="custom-input-compact small" />
+                </template>
+              </template>
+              <button class="btn-compact ghost" @click="generateCode">Code</button>
+            </div>
+          </section>
+
+          <section class="controls-compact">
+            <button class="btn-compact ghost" @click="prev" :disabled="stepIndex === 0">Prev</button>
+            <button class="btn-compact primary" @click="togglePlay" :disabled="steps.length === 0">{{ playing ? 'Pause' : 'Play' }}</button>
+            <button class="btn-compact ghost" @click="next" :disabled="stepIndex === steps.length - 1 || steps.length === 0">Next</button>
+            <button class="btn-compact danger" @click="reset">Reset</button>
+            <div class="step-counter-compact">{{ stepIndex + 1 }}/{{ steps.length }}</div>
+          </section>
+
+          <section class="canvas-compact">
+            <AdvancedLinkedListCanvas :list="currentStep.list" :listType="selectedListType"
+              :activeNodeIndex="currentStep.activeNodeIndex" :targetIndex="currentStep.targetIndex"
+              :highlightNodes="currentStep.highlightNodes || []" />
+          </section>
+        </div>
+
+        <div class="right-column">
+          <section class="pseudo-section-compact">
+            <h3 class="section-title-compact">Pseudocode</h3>
+            <div class="pseudo-scroll">
+              <PseudoCodePanel v-if="currentOperation.pseudocode" :code="currentOperation.pseudocode"
+                :activeLine="currentStep.activePseudoLine" />
+            </div>
+          </section>
+
+          <section class="explanation-compact">
+            <h3>Explanation</h3>
+            <p>{{ currentStep.explanation }}</p>
+            <div class="status-row-compact">
+              <span>Nodes: <strong>{{ currentStep.list.length }}</strong></span>
+              <span>Active: <strong>{{ currentStep.activeNodeIndex >= 0 ? currentStep.activeNodeIndex : '-' }}</strong></span>
+              <span v-if="currentOperation.hasParams">Params: <strong>{{ formatParams() }}</strong></span>
+            </div>
+          </section>
+        </div>
+      </div>
     </div>
-
-    <!-- PAGE HEADER -->
-    <header class="page-header">
-      <h1>LinkedList Visualizer</h1>
-      <p>Master different types of linked lists with step-by-step visualization</p>
-    </header>
-
-    <!-- TYPE SELECTOR (3 buttons) -->
-    <section>
-      <div class="type-buttons">
-        <label class="section-label">List Type:</label>
-        <button v-for="type in linkedListTypes" :key="type.key" @click="selectListType(type.key)"
-          :class="['type-btn', { active: selectedListType === type.key }]">
-          {{ type.label }}
-        </button>
-      </div>
-    </section>
-
-    <!-- OPERATION SELECTOR -->
-    <section>
-      <label class="section-label">Select Operation : </label>
-      <select v-model="selectedOp" class="operation-dropdown">
-        <option v-for="(op, key) in currentOperations" :key="key" :value="key">
-          {{ op.label }}
-        </option>
-      </select>
-    </section>
-
-    <!-- OPERATION DETAILS - ALL IN ONE SECTION -->
-    <section class="operation-details">
-      <!-- OPERATION HEADER -->
-      <div class="operation-header">
-        <div class="operation-title-group">
-          <h2>{{ currentOperation.label }}</h2>
-          <button v-if="currentOperation.algorithmName" class="info-btn" @click="showInfo = true">ⓘ</button>
-        </div>
-        <p class="operation-desc">{{ currentOperation.description }}</p>
-      </div>
-
-      <div v-if="currentOperation.algorithmName" class="complexity-badges">
-        <span class="badge">Best: {{ currentOperation.best }}</span>
-        <span class="badge">Avg: {{ currentOperation.average }}</span>
-        <span class="badge">Worst: {{ currentOperation.worst }}</span>
-        <span class="badge">Space: {{ currentOperation.space }}</span>
-        <span class="badge" :class="currentOperation.stable ? 'stable' : 'unstable'">
-          {{ currentOperation.stable ? '✓ Stable' : '✗ Unstable' }}
-        </span>
-      </div>
-
-      <!-- CONTROLS ROW 1: List Management -->
-      <div class="input-row">
-        <button class="btn random-btn" @click="generateRandomList">
-          🎲 Random List
-        </button>
-
-        <input v-model="customListInput" placeholder="e.g., 10,20,30,40,50" @keydown.enter="applyCustomList"
-          class="list-input" />
-
-        <button v-if="customListInput" class="btn ghost" @click="applyCustomList">
-          ✓ Apply
-        </button>
-
-        <button class="btn ghost" @click="generateCode">
-          💻 Generate Code
-        </button>
-      </div>
-
-      <!-- CONTROLS ROW 2: Operation Parameters (if needed) -->
-      <div v-if="currentOperation.hasParams" class="input-row">
-        <!-- Value Parameter -->
-        <div v-if="currentOperation.paramType === 'value'" class="param-input-group">
-          <label>Value to insert : </label>
-          <input v-model.number="inputValue" type="number" placeholder="Enter value" class="param-input" />
-        </div>
-
-        <!-- Position Parameter -->
-        <div v-else-if="currentOperation.paramType === 'position'" class="param-input-group">
-          <label>Position to insert at : </label>
-          <input v-model.number="inputPosition" type="number" min="0" :max="baseList.length" placeholder="0"
-            class="param-input" />
-        </div>
-
-        <!-- Position + Value Parameters -->
-        <div v-else-if="currentOperation.paramType === 'position-value'" class="param-input-group">
-          <label>Position:</label>
-          <input v-model.number="inputPosition" type="number" min="0" :max="baseList.length" placeholder="0"
-            class="param-input" />
-          <label>Value:</label>
-          <input v-model.number="inputValue" type="number" placeholder="Enter value" class="param-input" />
-        </div>
-      </div>
-
-      <!-- CONTROLS ROW 3: Play Controls -->
-      <div class="controls-row">
-        <button @click="prev" :disabled="stepIndex === 0" class="control-btn">
-          ⬅ Prev
-        </button>
-        <button @click="togglePlay" :disabled="steps.length === 0" class="control-btn primary">
-          {{ playing ? '⏸ Pause' : '▶ Play' }}
-        </button>
-        <button @click="next" :disabled="stepIndex === steps.length - 1 || steps.length === 0" class="control-btn">
-          Next ➡
-        </button>
-        <button class="control-btn danger" @click="reset">
-          🔄 Reset
-        </button>
-        <span class="step-counter">Step {{ stepIndex + 1 }} / {{ steps.length }}</span>
-      </div>
-    </section>
-
-    <!-- CANVAS SECTION -->
-    <section class="canvas-section">
-      <div class="section-header">
-        <h3>Visualization</h3>
-        <span class="info-badge">{{ currentStep.list.length }} Node(s)</span>
-      </div>
-      <div class="canvas-wrapper">
-        <AdvancedLinkedListCanvas :list="currentStep.list" :listType="selectedListType"
-          :activeNodeIndex="currentStep.activeNodeIndex" :targetIndex="currentStep.targetIndex"
-          :highlightNodes="currentStep.highlightNodes || []" />
-      </div>
-    </section>
-
-    <!-- PSEUDOCODE SECTION -->
-    <section class="pseudocode-section">
-      <div class="section-header">
-        <h3>Algorithm Pseudocode</h3>
-      </div>
-      <PseudoCodePanel v-if="currentOperation.pseudocode" :code="currentOperation.pseudocode"
-        :activeLine="currentStep.activePseudoLine" />
-    </section>
-
-    <!-- EXPLANATION SECTION -->
-    <section class="explanation-section">
-      <div class="section-header">
-        <h3>Step Explanation</h3>
-      </div>
-      <div class="explanation-content">
-        <p>{{ currentStep.explanation }}</p>
-        <div class="status-info">
-          <div class="status-item">
-            <span>List Size:</span>
-            <strong>{{ currentStep.list.length }}</strong>
-          </div>
-          <div class="status-item">
-            <span>Active Node:</span>
-            <strong>{{ currentStep.activeNodeIndex >= 0 ? currentStep.activeNodeIndex : 'None' }}</strong>
-          </div>
-          <div v-if="currentOperation.hasParams" class="status-item">
-            <span>Parameters:</span>
-            <strong>{{ formatParams() }}</strong>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <!-- INFO MODAL -->
-  <AlgorithmInfoModal v-if="showInfo && currentOperation.algorithmName" :info="currentOperation"
-    @close="showInfo = false" />
+    <AlgorithmInfoModal v-if="showInfo && currentOperation.algorithmName" :info="currentOperation" @close="showInfo = false" />
+  </main>
 </template>
 
 <script setup>
@@ -176,6 +101,7 @@ import { useRouter } from "vue-router"
 import AdvancedLinkedListCanvas from "./canvases/AdvancedLinkedListCanvas.vue"
 import PseudoCodePanel from "./PseudoCodePanel.vue"
 import AlgorithmInfoModal from "./AlgorithmInfoModal.vue"
+import { Info, Check, X } from 'lucide-vue-next'
 import { linkedListOperationsMap, LINKED_LIST_TYPES } from "@/algorithms/linkedListOperations/operationsRegistry"
 
 const router = useRouter()
@@ -439,633 +365,225 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.linkedlist-visualizer {
+.visualizer-page {
   background: radial-gradient(circle at top, #0f172a, #020617);
-  min-height: 100vh;
-  padding: 24px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  color: #cbd5f5;
+  overflow: hidden;
 }
-
-/* TOP SECTION - BACK BUTTON */
-.top-section {
-  margin-bottom: 8px;
+.container-compact {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 18px;
+  min-height: 0;
+  overflow: hidden;
 }
-
-.back-btn {
+.top-section-compact { margin-bottom: 4px; }
+.back-btn-compact {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
+  gap: 6px;
+  background: rgba(99,102,241,.12);
+  border: 1px solid rgba(99,102,241,.25);
+  color: #a78bfa;
+  padding: 4px 10px;
   border-radius: 8px;
-  background: rgba(99, 102, 241, 0.1);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  color: #cbd5f5;
   cursor: pointer;
+  font-size: .78rem;
   font-weight: 500;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
+  transition: all .2s;
 }
-
-.back-btn:hover {
-  background: rgba(99, 102, 241, 0.2);
-  border-color: rgba(99, 102, 241, 0.4);
-  transform: translateX(-2px);
+.back-btn-compact:hover { background: rgba(99,102,241,.22); }
+.arrow { width: 15px; height: 15px; }
+.page-header-compact { margin-bottom: 6px; }
+.header-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
 }
-
-.arrow {
-  width: 18px;
-  height: 18px;
-}
-
-/* PAGE HEADER */
-.page-header {
-  margin-bottom: 24px;
-}
-
-.page-header h1 {
-  color: white;
-  font-size: 2.2rem;
-  margin: 0 0 8px 0;
+.operation-title-group-compact { display: flex; align-items: center; gap: 8px; }
+.page-header-compact h1 {
+  font-size: 1.1rem;
+  margin: 0;
   background: linear-gradient(135deg, #a78bfa, #818cf8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
-.page-header p {
-  color: #94a3b8;
-  font-size: 1rem;
-  margin: 0;
-  font-weight: 400;
-}
-
-/* SECTION LABEL */
-.section-label {
-  color: #cbd5f5;
-  font-weight: 600;
-  font-size: 0.9rem;
-  display: inline-block;
-  margin-bottom: 10px;
-}
-
-/* TYPE SELECTOR SECTION */
-.type-selector-section {
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(99, 102, 241, 0.15);
-  border-radius: 12px;
-  padding: 16px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.type-buttons {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.type-btn {
-  padding: 10px 18px;
-  border-radius: 8px;
-  background: rgba(99, 102, 241, 0.1);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+.info-btn-compact {
+  background: rgba(99,102,241,.18);
+  border: 1px solid rgba(99,102,241,.35);
   color: #a78bfa;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.type-btn:hover {
-  background: rgba(99, 102, 241, 0.2);
-  border-color: rgba(99, 102, 241, 0.4);
-}
-
-.type-btn.active {
-  background: #6366f1;
-  border-color: #6366f1;
-  color: white;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-}
-
-/* OPERATION SELECTOR SECTION */
-.operation-selector-section {
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(99, 102, 241, 0.15);
-  border-radius: 12px;
-  padding: 16px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.operation-dropdown {
-  padding: 10px 14px;
-  border-radius: 8px;
-  background: rgba(2, 6, 23, 0.6);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  color: #cbd5f5;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 500;
-}
-
-.operation-dropdown:hover,
-.operation-dropdown:focus {
-  border-color: rgba(99, 102, 241, 0.5);
-  background: rgba(2, 6, 23, 0.8);
-  outline: none;
-}
-
-/* OPERATION DETAILS */
-.operation-details {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.operation-header {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.operation-title-group {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.operation-details h2 {
-  color: #cbd5f5;
-  font-size: 1.5rem;
-  margin: 0;
-  font-weight: 600;
-}
-
-.info-btn {
-  background: rgba(99, 102, 241, 0.2);
-  border: 1px solid rgba(99, 102, 241, 0.4);
-  color: #a78bfa;
-  width: 32px;
-  height: 32px;
-  padding: 0;
+  width: 26px; height: 26px;
   border-radius: 50%;
   cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+  padding: 0;
+}
+.info-btn-compact:hover { background: rgba(99,102,241,.32); }
+.type-and-op-row {
   display: flex;
+  gap: 4px;
   align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  transition: all 0.2s ease;
+  flex-wrap: wrap;
 }
-
-.info-btn:hover {
-  background: rgba(99, 102, 241, 0.35);
-  border-color: rgba(167, 139, 250, 0.6);
-  transform: scale(1.05);
-}
-
-.operation-desc {
+.type-btn-compact {
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: .72rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid rgba(99,102,241,.25);
+  background: rgba(99,102,241,.08);
   color: #94a3b8;
-  font-size: 0.95rem;
-  margin: 0;
-  line-height: 1.5;
+  transition: all .2s;
 }
-
-.complexity-badges {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+.type-btn-compact.active {
+  background: rgba(99,102,241,.25);
+  border-color: #6366f1;
+  color: #a78bfa;
 }
-
-.badge {
-  background: rgba(99, 102, 241, 0.15);
-  border: 1px solid rgba(99, 102, 241, 0.3);
+.type-btn-compact:hover { background: rgba(99,102,241,.18); }
+.op-dropdown-compact {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: .74rem;
+  background: rgba(2,6,23,.55);
+  border: 1px solid rgba(99,102,241,.25);
   color: #cbd5f5;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
+  cursor: pointer;
+  max-width: 160px;
+}
+.operation-desc-compact { color: #94a3b8; font-size: .76rem; margin: 2px 0 0; line-height: 1.3; }
+.algo-badges-compact { display: flex; gap: 5px; margin-top: 3px; flex-wrap: wrap; }
+.badge-compact {
+  background: rgba(99,102,241,.12);
+  border: 1px solid rgba(99,102,241,.25);
+  color: #cbd5f5;
+  padding: 1px 7px;
+  border-radius: 12px;
+  font-size: .68rem;
   font-weight: 500;
 }
-
-.badge.stable {
-  background: rgba(34, 197, 94, 0.15);
-  border-color: rgba(34, 197, 94, 0.3);
-  color: #86efac;
+.two-column-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
-
-.badge.unstable {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.3);
-  color: #fca5a5;
-}
-
-/* CONTROLS SECTION - Now part of operation-details */
-.input-row {
+.left-column, .right-column {
   display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+  overflow: hidden;
 }
-
-.input-row label {
-  color: #cbd5f5;
-  font-size: 0.9rem;
-  font-weight: 500;
-  white-space: nowrap;
+.input-section-compact { flex-shrink: 0; }
+.input-row-compact { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+.custom-input-compact {
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: rgba(2,6,23,.55);
+  border: 1px solid rgba(99,102,241,.25);
+  color: #fff;
+  font-size: .78rem;
+  flex: 1;
+  min-width: 70px;
+  transition: border-color .2s;
 }
-
-.btn {
+.custom-input-compact.small { max-width: 65px; min-width: 50px; }
+.custom-input-compact:focus { outline: none; border-color: #6366f1; }
+.controls-compact { display: flex; gap: 6px; align-items: center; flex-shrink: 0; flex-wrap: wrap; }
+.step-counter-compact { margin-left: auto; color: #94a3b8; font-size: .75rem; font-weight: 500; }
+.btn-compact {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 7px;
+  font-size: .76rem;
+  font-weight: 500;
   cursor: pointer;
-  font-weight: 500;
-  font-size: 0.9rem;
-  padding: 10px 14px;
-  border-radius: 10px;
-  transition: all 0.2s ease;
+  transition: all .2s;
   border: none;
   white-space: nowrap;
 }
-
-.random-btn {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: white;
-  border: none;
-}
-
-.random-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.45);
-}
-
-.btn.ghost {
-  background: rgba(99, 102, 241, 0.15);
-  color: #a78bfa;
-  border: 1px solid rgba(99, 102, 241, 0.3);
-}
-
-.btn.ghost:hover {
-  background: rgba(99, 102, 241, 0.25);
-  border-color: rgba(167, 139, 250, 0.5);
-}
-
-.list-input {
+.btn-compact.ghost { background: rgba(99,102,241,.12); border: 1px solid rgba(99,102,241,.25); color: #a78bfa; }
+.btn-compact.ghost:hover { background: rgba(99,102,241,.22); }
+.btn-compact.primary { background: #6366f1; color: #fff; }
+.btn-compact.primary:hover:not(:disabled) { background: #4f46e5; box-shadow: 0 3px 10px rgba(99,102,241,.35); }
+.btn-compact.danger { background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.25); color: #fca5a5; }
+.btn-compact.danger:hover:not(:disabled) { background: rgba(239,68,68,.22); }
+.btn-compact:disabled { opacity: .4; cursor: not-allowed; }
+.canvas-compact {
   flex: 1;
-  min-width: 200px;
-  padding: 10px 14px;
-  border-radius: 8px;
-  background: rgba(2, 6, 23, 0.6);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  color: #cbd5f5;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-}
-
-.list-input:focus {
-  outline: none;
-  border-color: #6366f1;
-  background: rgba(2, 6, 23, 0.8);
-}
-
-/* PARAMETER INPUTS */
-.param-input-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.param-input-group label {
-  color: #cbd5f5;
-  font-size: 0.85rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.param-input-group.multi-param {
-  display: flex;
-  gap: 12px;
-}
-
-.multi-param>div {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.param-input {
-  padding: 10px 14px;
+  min-height: 0;
+  background: rgba(15,23,42,.7);
+  border: 1px solid rgba(99,102,241,.15);
   border-radius: 10px;
-  background: rgba(2, 6, 23, 0.6);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: white;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-  flex: 1;
-  min-width: 150px;
-}
-
-.param-input:focus {
-  outline: none;
-  border-color: #6366f1;
-  background: rgba(2, 6, 23, 0.8);
-}
-
-.controls-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-/* PLAYBACK CONTROLS - Now part of operation-details */
-.control-btn {
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  background: rgba(99, 102, 241, 0.15);
-  color: #a78bfa;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-}
-
-.control-btn:hover:not(:disabled) {
-  background: rgba(99, 102, 241, 0.25);
-  border-color: rgba(167, 139, 250, 0.5);
-  transform: translateY(-1px);
-}
-
-.control-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.control-btn.primary {
-  background: #6366f1;
-  color: white;
-  border: none;
-}
-
-.control-btn.primary:hover:not(:disabled) {
-  background: #4f46e5;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-}
-
-.control-btn.danger {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.3);
-  color: #fca5a5;
-}
-
-.control-btn.danger:hover:not(:disabled) {
-  background: rgba(239, 68, 68, 0.25);
-  border-color: rgba(239, 68, 68, 0.5);
-}
-
-.step-counter {
-  margin-left: auto;
-  color: #94a3b8;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-/* CANVAS SECTION */
-.canvas-section {
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(99, 102, 241, 0.15);
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.section-header h3 {
-  color: #e2e8f0;
-  font-size: 0.9rem;
-  font-weight: 700;
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.info-badge {
-  background: rgba(99, 102, 241, 0.2);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: #a78bfa;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.canvas-wrapper {
-  flex: 1;
-  min-height: 280px;
-  background: rgba(2, 6, 23, 0.3);
-  border-radius: 8px;
-  border: 1px solid rgba(99, 102, 241, 0.1);
-  padding: 16px;
+  padding: 8px;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow-x: auto;
-  overflow-y: hidden;
 }
-
-/* PSEUDOCODE SECTION */
-.pseudocode-section {
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(99, 102, 241, 0.15);
-  border-radius: 12px;
-  padding: 20px;
+.pseudo-section-compact {
+  flex: 1;
+  min-height: 0;
+  background: rgba(15,23,42,.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(99,102,241,.15);
+  border-radius: 10px;
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  overflow: hidden;
 }
-
-.pseudocode-section .section-header h3 {
-  font-size: 0.85rem;
-}
-
-/* EXPLANATION SECTION */
-.explanation-section {
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(99, 102, 241, 0.15);
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.explanation-content {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.explanation-content p {
+.section-title-compact {
   color: #cbd5f5;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  margin: 0;
-}
-
-.status-info {
-  background: rgba(99, 102, 241, 0.1);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  border-radius: 8px;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.status-item {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.85rem;
-}
-
-.status-item span {
-  color: #94a3b8;
-}
-
-.status-item strong {
-  color: #a78bfa;
+  font-size: .75rem;
   font-weight: 600;
+  margin: 0 0 4px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  flex-shrink: 0;
 }
-
-/* RESPONSIVE */
-@media (max-width: 1024px) {
-  .type-buttons {
-    gap: 8px;
-  }
-
-  .controls-row {
-    gap: 8px;
-  }
-
-  .list-input,
-  .param-input {
-    min-width: auto;
-  }
+.pseudo-scroll { flex: 1; min-height: 0; overflow-y: auto; }
+.pseudo-scroll::-webkit-scrollbar { width: 4px; }
+.pseudo-scroll::-webkit-scrollbar-track { background: transparent; }
+.pseudo-scroll::-webkit-scrollbar-thumb { background: rgba(99,102,241,.25); border-radius: 4px; }
+.explanation-compact {
+  flex-shrink: 0;
+  max-height: 110px;
+  background: rgba(15,23,42,.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(99,102,241,.15);
+  border-radius: 10px;
+  padding: 8px 10px;
+  overflow-y: auto;
 }
-
-@media (max-width: 768px) {
-  .linkedlist-visualizer {
-    padding: 16px;
-    gap: 16px;
-  }
-
-  .page-header h1 {
-    font-size: 1.8rem;
-  }
-
-  .type-selector-section,
-  .operation-selector-section {
-    padding: 12px 16px;
-  }
-
-  .type-buttons {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .type-btn {
-    flex: 1;
-    width: 100%;
-  }
-
-  .operation-dropdown {
-    width: 100%;
-  }
-
-  .controls-row {
-    flex-direction: column;
-  }
-
-  .controls-row>* {
-    width: 100%;
-  }
-
-  .list-input {
-    min-width: unset;
-  }
-
-  .param-input-group.multi-param {
-    flex-direction: column;
-  }
-
-  .control-btn {
-    width: 36px;
-    height: 36px;
-    font-size: 0.85rem;
-  }
-
-  .step-counter {
-    margin-left: 0;
-    margin-top: 8px;
-    display: block;
-  }
-}
-
-@media (max-width: 480px) {
-  .linkedlist-visualizer {
-    padding: 12px;
-    gap: 12px;
-  }
-
-  .page-header h1 {
-    font-size: 1.5rem;
-  }
-
-  .btn,
-  .list-input,
-  .param-input {
-    font-size: 0.8rem;
-    padding: 8px 10px;
-  }
-
-  .control-btn {
-    width: 32px;
-    height: 32px;
-    font-size: 0.75rem;
-  }
-
-  .section-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-.operation-title-group {
+.explanation-compact::-webkit-scrollbar { width: 4px; }
+.explanation-compact::-webkit-scrollbar-track { background: transparent; }
+.explanation-compact::-webkit-scrollbar-thumb { background: rgba(99,102,241,.25); border-radius: 4px; }
+.explanation-compact h3 { color: #cbd5f5; font-size: .75rem; font-weight: 600; margin: 0 0 3px; text-transform: uppercase; letter-spacing: .5px; }
+.explanation-compact p { color: #94a3b8; font-size: .78rem; line-height: 1.45; margin: 0 0 4px; }
+.status-row-compact {
   display: flex;
-  align-items: center;
   gap: 12px;
+  font-size: .72rem;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+.status-row-compact strong { color: #a78bfa; }
+@media (max-width: 900px) {
+  .two-column-layout { grid-template-columns: 1fr; }
+  .visualizer-page { height: auto; overflow: auto; }
 }
 </style>

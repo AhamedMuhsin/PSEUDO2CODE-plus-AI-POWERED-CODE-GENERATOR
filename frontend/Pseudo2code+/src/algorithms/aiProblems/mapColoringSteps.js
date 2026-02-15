@@ -2,25 +2,26 @@ export function mapColoringSteps() {
   const steps = []
   
   // Define Australia map (classic CSP example)
-  const regions = ['WA', 'NT', 'SA', 'Q', 'NSW', 'V', 'T']
-  const colors = ['red', 'green', 'blue']
+  const regions = ['WA', 'NT', 'SA', 'QLD', 'NSW', 'VIC', 'TAS']
+  const colors = ['RED', 'GREEN', 'BLUE']
   const assignments = {}
   
   // Adjacency list
   const neighbors = {
     'WA': ['NT', 'SA'],
-    'NT': ['WA', 'SA', 'Q'],
-    'SA': ['WA', 'NT', 'Q', 'NSW', 'V'],
-    'Q': ['NT', 'SA', 'NSW'],
-    'NSW': ['Q', 'SA', 'V'],
-    'V': ['SA', 'NSW'],
-    'T': [] // Tasmania - no neighbors
+    'NT': ['WA', 'SA', 'QLD'],
+    'SA': ['WA', 'NT', 'QLD', 'NSW', 'VIC'],
+    'QLD': ['NT', 'SA', 'NSW'],
+    'NSW': ['QLD', 'SA', 'VIC'],
+    'VIC': ['SA', 'NSW'],
+    'TAS': [] // Tasmania - no neighbors
   }
 
   steps.push({
     assignments: { ...assignments },
+    adjacency: neighbors,
     activePseudoLine: 1,
-    explanation: `Starting Map Coloring CSP. 7 regions, 3 colors (red, green, blue). No adjacent regions can have same color.`,
+    explanation: `Starting Map Coloring CSP. 7 regions, 3 colors (Red, Green, Blue). No adjacent regions can have same color.`,
     currentRegion: null,
     conflicts: [],
     status: 'start'
@@ -44,6 +45,7 @@ export function mapColoringSteps() {
 
     steps.push({
       assignments: { ...assignments },
+      adjacency: neighbors,
       activePseudoLine: 3,
       explanation: `Trying to color region: ${region}`,
       currentRegion: region,
@@ -54,6 +56,7 @@ export function mapColoringSteps() {
     for (const color of colors) {
       steps.push({
         assignments: { ...assignments },
+        adjacency: neighbors,
         activePseudoLine: 5,
         explanation: `Trying color ${color} for ${region}...`,
         currentRegion: region,
@@ -67,6 +70,7 @@ export function mapColoringSteps() {
 
         steps.push({
           assignments: { ...assignments },
+          adjacency: neighbors,
           activePseudoLine: 7,
           explanation: `✓ ${color} is valid for ${region}! No conflicts with neighbors.`,
           currentRegion: region,
@@ -84,6 +88,7 @@ export function mapColoringSteps() {
 
         steps.push({
           assignments: { ...assignments },
+          adjacency: neighbors,
           activePseudoLine: 10,
           explanation: `✗ Backtracking! Removing ${color} from ${region}`,
           currentRegion: region,
@@ -95,6 +100,7 @@ export function mapColoringSteps() {
         
         steps.push({
           assignments: { ...assignments },
+          adjacency: neighbors,
           activePseudoLine: 6,
           explanation: `✗ ${color} conflicts with neighbors: ${conflictingNeighbors.join(', ')}`,
           currentRegion: region,
@@ -112,6 +118,7 @@ export function mapColoringSteps() {
 
   steps.push({
     assignments: { ...assignments },
+    adjacency: neighbors,
     activePseudoLine: 12,
     explanation: `✅ Map coloring complete! All regions colored with no conflicts.`,
     currentRegion: null,

@@ -1,188 +1,109 @@
 <template>
-  <div class="graph-op-visualizer">
-    <!-- BACK BUTTON & HEADER -->
-    <div class="top-section">
-      <button class="back-btn" @click="router.push('/algorithm-hub')">
-        <img :src="arrowLeft" class="arrow" />
-        Back
-      </button>
+  <main class="visualizer-page">
+    <div class="container-compact">
+      <div class="top-section-compact">
+        <button class="back-btn-compact" @click="router.push('/algorithm-hub')">
+          <img :src="arrowLeft" class="arrow" /> Back
+        </button>
+      </div>
+
+      <header class="page-header-compact">
+        <div class="header-top-row">
+          <div class="operation-title-group-compact">
+            <h1>{{ currentOperation.label || 'Graph Operations' }}</h1>
+            <button v-if="currentOperation.info" class="info-btn-compact" @click="showInfo = true"><Info :size="16" /></button>
+          </div>
+          <GraphOperationSelector v-model="selectedOp" class="selector-inline" />
+        </div>
+        <p class="operation-desc-compact">{{ currentOperation.description || 'Visualize graph algorithms' }}</p>
+        <div v-if="currentOperation.info" class="algo-badges-compact">
+          <span class="badge-compact">Time: {{ currentOperation.info.time }}</span>
+          <span class="badge-compact">Space: {{ currentOperation.info.space }}</span>
+        </div>
+      </header>
+
+      <div class="two-column-layout">
+        <div class="left-column">
+          <section class="input-section-compact">
+            <div class="input-row-compact">
+              <button class="btn-compact ghost" @click="generateRandomGraph">Random</button>
+              <button class="btn-compact ghost" @click="loadSampleGraph">Sample</button>
+              <template v-if="operationType === 'twoNodes'">
+                <input v-model="operationParams.from" type="text" placeholder="From" class="custom-input-compact" />
+                <input v-model="operationParams.to" type="text" placeholder="To" class="custom-input-compact" />
+                <button class="btn-compact ghost" @click="executeOperation" v-if="operationParams.from && operationParams.to">Run</button>
+              </template>
+              <button class="btn-compact ghost" @click="goToGenerateCode">Code</button>
+            </div>
+          </section>
+
+          <section class="controls-compact">
+            <button class="btn-compact ghost" @click="prev" :disabled="stepIndex === 0">Prev</button>
+            <button class="btn-compact primary" @click="play" :disabled="!isPlayable">{{ playing ? 'Pause' : 'Play' }}</button>
+            <button class="btn-compact ghost" @click="next" :disabled="stepIndex === steps.length - 1">Next</button>
+            <button class="btn-compact danger" @click="reset">Reset</button>
+            <div class="step-counter-compact">{{ stepIndex + 1 }}/{{ steps.length }}</div>
+          </section>
+
+          <section class="canvas-compact">
+            <GraphOperationCanvas
+              :nodes="currentStep.graph"
+              :edges="currentStep.edges"
+              :visitedNodes="currentStep.visitedNodes"
+              :activeNode="currentStep.activeNode"
+              :highlightedEdges="currentStep.highlightedEdges"
+            />
+          </section>
+        </div>
+
+        <div class="right-column">
+          <section class="pseudo-section-compact">
+            <h3 class="section-title-compact">Pseudocode</h3>
+            <div class="pseudo-scroll">
+              <PseudoCodePanel v-if="currentOperation.pseudocode" :code="currentOperation.pseudocode" :activeLine="currentStep.activePseudoLine" />
+            </div>
+          </section>
+
+          <section class="explanation-compact">
+            <h3>Explanation</h3>
+            <p>{{ currentStep.explanation }}</p>
+            <div v-if="currentStep.distances" class="data-row-compact">
+              <strong>Distances:</strong>
+              <span v-for="(dist, node) in currentStep.distances" :key="node" class="data-tag">{{ node }}: {{ dist === Infinity ? '∞' : dist }}</span>
+            </div>
+            <div v-if="currentStep.gScore" class="data-row-compact">
+              <strong>g-Score:</strong>
+              <span v-for="(score, node) in currentStep.gScore" :key="node" class="data-tag">{{ node }}: {{ score === Infinity ? '∞' : score }}</span>
+            </div>
+            <div v-if="currentStep.fScore" class="data-row-compact">
+              <strong>f-Score:</strong>
+              <span v-for="(score, node) in currentStep.fScore" :key="node" class="data-tag">{{ node }}: {{ score === Infinity ? '∞' : typeof score === 'number' ? score.toFixed(2) : score }}</span>
+            </div>
+            <div v-if="currentStep.heuristic" class="data-row-compact">
+              <strong>Heuristic:</strong>
+              <span v-for="(h, node) in currentStep.heuristic" :key="node" class="data-tag">{{ node }}: {{ h }}</span>
+            </div>
+            <div v-if="currentStep.openSet && currentStep.openSet.length > 0" class="data-row-compact">
+              <strong>Open:</strong> [{{ currentStep.openSet.join(", ") }}]
+            </div>
+            <div v-if="currentStep.closedSet && currentStep.closedSet.length > 0" class="data-row-compact">
+              <strong>Closed:</strong> [{{ currentStep.closedSet.join(", ") }}]
+            </div>
+            <div v-if="currentStep.path && currentStep.path.length > 0" class="data-row-compact path-found">
+              <strong><Target :size="14" /> Path:</strong> {{ currentStep.path.join(" → ") }}
+            </div>
+            <div v-if="currentStep.queueState && currentStep.queueState.length > 0" class="data-row-compact">
+              <strong>Queue:</strong> [{{ currentStep.queueState.join(", ") }}]
+            </div>
+            <div v-if="currentStep.stackState && currentStep.stackState.length > 0" class="data-row-compact">
+              <strong>Stack:</strong> [{{ currentStep.stackState.join(", ") }}]
+            </div>
+          </section>
+        </div>
+      </div>
     </div>
-
-    <!-- PAGE HEADER -->
-    <header class="page-header">
-      <h1>Graph Operations</h1>
-      <p>Visualize graph algorithms step by step</p>
-    </header>
-
-    <!-- OPERATION SELECTOR -->
-    <section class="operation-selector-section">
-      <GraphOperationSelector v-model="selectedOp" />
-    </section>
-
-    <!-- OPERATION DETAILS -->
-    <section class="operation-details">
-      <!-- OPERATION HEADER -->
-      <div class="operation-header">
-        <div class="operation-title-group">
-          <h2>{{ currentOperation.label }}</h2>
-          <button v-if="currentOperation.info" class="info-btn" @click="showInfo = true">ⓘ</button>
-        </div>
-        <p class="operation-desc">{{ currentOperation.description }}</p>
-      </div>
-
-      <!-- COMPLEXITY BADGES -->
-      <div v-if="currentOperation.info" class="complexity-badges">
-        <span class="badge">⏱️ Time: {{ currentOperation.info.time }}</span>
-        <span class="badge">💾 Space: {{ currentOperation.info.space }}</span>
-        <span class="badge" :class="currentOperation.info.stable ? 'stable' : 'unstable'">
-          {{ currentOperation.info.stable ? '✓ Stable' : '✗ Unstable' }}
-        </span>
-      </div>
-
-      <!-- CONTROLS ROW 1: Graph Input -->
-      <div class="input-row">
-        <button class="btn random-btn" @click="generateRandomGraph">
-          🎲 Random Graph
-        </button>
-
-        <button class="btn ghost" @click="loadSampleGraph">
-          📊 Sample Graph
-        </button>
-
-        <button class="btn ghost" @click="goToGenerateCode">
-          💻 Generate Code
-        </button>
-      </div>
-
-      <!-- CONTROLS ROW 2: Parameter Input (for operations with params) -->
-      <div v-if="operationType === 'twoNodes'" class="input-row">
-        <label>From Node:</label>
-        <input 
-          v-model="operationParams.from" 
-          type="text" 
-          placeholder="Node ID (e.g., A)"
-          class="param-input"
-        />
-        <label>To Node:</label>
-        <input 
-          v-model="operationParams.to" 
-          type="text" 
-          placeholder="Node ID (e.g., B)"
-          class="param-input"
-        />
-        <button class="btn ghost" @click="executeOperation" v-if="operationParams.from && operationParams.to">
-          ▶ Run
-        </button>
-      </div>
-
-      <!-- CONTROLS ROW 3: Play Controls -->
-      <div class="controls-row">
-        <button @click="prev" :disabled="stepIndex === 0" class="control-btn">
-          ⬅ Prev
-        </button>
-        <button 
-          @click="play" 
-          :disabled="!isPlayable" 
-          class="control-btn primary"
-        >
-          {{ playing ? '⏸ Pause' : '▶ Play' }}
-        </button>
-        <button 
-          @click="next" 
-          :disabled="stepIndex === steps.length - 1" 
-          class="control-btn"
-        >
-          Next ➡
-        </button>
-        <button class="control-btn danger" @click="reset">
-          🔄 Reset
-        </button>
-
-        <span class="step-counter">
-          Step {{ stepIndex + 1 }} / {{ steps.length }}
-        </span>
-      </div>
-    </section>
-
-    <!-- MAIN VISUALIZATION AREA -->
-    <section class="visualization-area">
-      <!-- LEFT: CANVAS -->
-      <div class="canvas-section">
-        <h3>Graph Visualization</h3>
-        <GraphOperationCanvas 
-          :nodes="currentStep.graph" 
-          :edges="currentStep.edges"
-          :visitedNodes="currentStep.visitedNodes"
-          :activeNode="currentStep.activeNode"
-          :highlightedEdges="currentStep.highlightedEdges"
-        />
-      </div>
-
-      <!-- RIGHT: PSEUDOCODE -->
-      <div class="pseudo-code-section">
-        <h3>Algorithm Pseudocode</h3>
-        <PseudoCodePanel 
-          v-if="currentOperation.pseudocode" 
-          :code="currentOperation.pseudocode" 
-          :activeLine="currentStep.activePseudoLine" 
-        />
-      </div>
-    </section>
-
-    <!-- EXPLANATION SECTION -->
-    <section class="explanation-section">
-      <h3>Step Explanation</h3>
-      <div class="explanation-content">
-        <p>{{ currentStep.explanation }}</p>
-        <div v-if="currentStep.distances" class="distances-display">
-          <strong>Distances:</strong>
-          <span v-for="(dist, node) in currentStep.distances" :key="node" class="distance-item">
-            {{ node }}: {{ dist === Infinity ? '∞' : dist }}
-          </span>
-        </div>
-        <div v-if="currentStep.gScore" class="distances-display">
-          <strong>g-Score (actual cost):</strong>
-          <span v-for="(score, node) in currentStep.gScore" :key="node" class="distance-item">
-            {{ node }}: {{ score === Infinity ? '∞' : score }}
-          </span>
-        </div>
-        <div v-if="currentStep.fScore" class="distances-display">
-          <strong>f-Score (g + h):</strong>
-          <span v-for="(score, node) in currentStep.fScore" :key="node" class="distance-item">
-            {{ node }}: {{ score === Infinity ? '∞' : typeof score === 'number' ? score.toFixed(2) : score }}
-          </span>
-        </div>
-        <div v-if="currentStep.heuristic" class="distances-display">
-          <strong>Heuristic (h):</strong>
-          <span v-for="(h, node) in currentStep.heuristic" :key="node" class="distance-item">
-            {{ node }}: {{ h }}
-          </span>
-        </div>
-        <div v-if="currentStep.openSet && currentStep.openSet.length > 0" class="queue-display">
-          <strong>Open Set:</strong> [{{ currentStep.openSet.join(", ") }}]
-        </div>
-        <div v-if="currentStep.closedSet && currentStep.closedSet.length > 0" class="queue-display">
-          <strong>Closed Set:</strong> [{{ currentStep.closedSet.join(", ") }}]
-        </div>
-        <div v-if="currentStep.path && currentStep.path.length > 0" class="path-display">
-          <strong>🎯 Path Found:</strong> {{ currentStep.path.join(" → ") }}
-        </div>
-        <div v-if="currentStep.queueState && currentStep.queueState.length > 0" class="queue-display">
-          <strong>Queue:</strong> [{{ currentStep.queueState.join(", ") }}]
-        </div>
-        <div v-if="currentStep.stackState && currentStep.stackState.length > 0" class="stack-display">
-          <strong>Stack:</strong> [{{ currentStep.stackState.join(", ") }}]
-        </div>
-      </div>
-    </section>
-
-    <!-- INFO MODAL -->
-    <AlgorithmInfoModal 
-      v-if="showInfo && currentOperation.info" 
-      :info="currentOperation.info" 
-      @close="showInfo = false" 
-    />
-  </div>
+    <AlgorithmInfoModal v-if="showInfo && currentOperation.info" :info="currentOperation.info" @close="showInfo = false" />
+  </main>
 </template>
 
 <script setup>
@@ -195,6 +116,7 @@ import AlgorithmInfoModal from "@/components/visualizer/AlgorithmInfoModal.vue"
 import GraphOperationSelector from "@/components/visualizer/GraphOperationSelector.vue"
 import { graphOperations } from "@/algorithms/graphOperations/graphOperationsMap"
 import { Graph } from "@/algorithms/graphOperations/Graph"
+import { Info, Target, Check, X } from 'lucide-vue-next'
 
 const router = useRouter()
 const selectedOp = ref("bfs")
@@ -360,369 +282,209 @@ const goToGenerateCode = () => {
 </script>
 
 <style scoped>
-.graph-op-visualizer {
+.visualizer-page {
   background: radial-gradient(circle at top, #0f172a, #020617);
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 24px;
+  overflow: hidden;
 }
-
-/* BACK BUTTON & TOP SECTION */
-.top-section {
-  margin-bottom: 16px;
+.container-compact {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 18px;
+  min-height: 0;
+  overflow: hidden;
 }
-
-.back-btn {
+.top-section-compact { margin-bottom: 4px; }
+.back-btn-compact {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(99,102,241,.12);
+  border: 1px solid rgba(99,102,241,.25);
+  color: #a78bfa;
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: .78rem;
+  font-weight: 500;
+  transition: all .2s;
+}
+.back-btn-compact:hover { background: rgba(99,102,241,.22); }
+.arrow { width: 15px; height: 15px; }
+.page-header-compact { margin-bottom: 6px; }
+.header-top-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(99, 102, 241, 0.15);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: #a78bfa;
-  padding: 8px 12px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.9rem;
-  font-weight: 500;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
 }
-
-.back-btn:hover {
-  background: rgba(99, 102, 241, 0.25);
-  border-color: rgba(99, 102, 241, 0.5);
-  transform: translateX(-2px);
-}
-
-.arrow {
-  width: 18px;
-  height: 18px;
-}
-
-/* PAGE HEADER */
-.page-header {
-  margin-bottom: 24px;
-}
-
-.page-header h1 {
-  color: white;
-  font-size: 2.2rem;
-  margin: 0 0 8px 0;
+.operation-title-group-compact { display: flex; align-items: center; gap: 8px; }
+.page-header-compact h1 {
+  font-size: 1.15rem;
+  margin: 0;
   background: linear-gradient(135deg, #a78bfa, #818cf8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
-.page-header p {
-  color: #94a3b8;
-  font-size: 1rem;
-  margin: 0;
-  font-weight: 400;
-}
-
-/* OPERATION SELECTOR SECTION */
-.operation-selector-section {
-  margin-bottom: 24px;
-  display: flex;
-  gap: 16px;
-  align-items: center;
-}
-
-/* OPERATION DETAILS */
-.operation-details {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 24px;
-}
-
-.operation-header {
-  margin-bottom: 16px;
-}
-
-.operation-title-group {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.operation-header h2 {
-  color: #e0e7ff;
-  font-size: 1.4rem;
-  margin: 0;
-}
-
-.info-btn {
-  background: rgba(99, 102, 241, 0.2);
-  border: 1px solid rgba(99, 102, 241, 0.3);
+.info-btn-compact {
+  background: rgba(99,102,241,.18);
+  border: 1px solid rgba(99,102,241,.35);
   color: #a78bfa;
-  width: 28px;
-  height: 28px;
+  width: 26px; height: 26px;
   border-radius: 50%;
   cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.2s ease;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+  padding: 0;
 }
-
-.info-btn:hover {
-  background: rgba(99, 102, 241, 0.4);
-  border-color: rgba(99, 102, 241, 0.6);
-}
-
-.operation-desc {
-  color: #cbd5e1;
-  font-size: 0.95rem;
-  margin: 0;
-}
-
-/* COMPLEXITY BADGES */
-.complexity-badges {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-
-.badge {
-  background: rgba(99, 102, 241, 0.15);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: #c7d2fe;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
+.info-btn-compact:hover { background: rgba(99,102,241,.32); }
+.selector-inline { max-width: 220px; }
+.operation-desc-compact { color: #94a3b8; font-size: .78rem; margin: 2px 0 0; line-height: 1.3; }
+.algo-badges-compact { display: flex; gap: 6px; margin-top: 4px; }
+.badge-compact {
+  background: rgba(99,102,241,.12);
+  border: 1px solid rgba(99,102,241,.25);
+  color: #cbd5f5;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: .72rem;
   font-weight: 500;
 }
-
-.badge.stable {
-  background: rgba(34, 197, 94, 0.15);
-  border-color: rgba(34, 197, 94, 0.3);
-  color: #86efac;
-}
-
-.badge.unstable {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.3);
-  color: #fca5a5;
-}
-
-/* INPUT ROWS */
-.input-row {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-}
-
-.input-row label {
-  color: #cbd5e1;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.param-input {
-  padding: 8px 12px;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: #e0e7ff;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-}
-
-.param-input:focus {
-  outline: none;
-  border-color: rgba(99, 102, 241, 0.6);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-}
-
-/* BUTTONS */
-.btn {
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn.random-btn {
-  background: rgba(168, 85, 247, 0.2);
-  border: 1px solid rgba(168, 85, 247, 0.4);
-  color: #d8b4fe;
-}
-
-.btn.random-btn:hover {
-  background: rgba(168, 85, 247, 0.3);
-  border-color: rgba(168, 85, 247, 0.6);
-}
-
-.btn.ghost {
-  background: rgba(99, 102, 241, 0.15);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: #a78bfa;
-}
-
-.btn.ghost:hover {
-  background: rgba(99, 102, 241, 0.25);
-  border-color: rgba(99, 102, 241, 0.5);
-}
-
-/* CONTROLS ROW */
-.controls-row {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-top: 16px;
-  flex-wrap: wrap;
-}
-
-.control-btn {
-  padding: 10px 16px;
-  background: rgba(99, 102, 241, 0.2);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: #a78bfa;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.control-btn:hover:not(:disabled) {
-  background: rgba(99, 102, 241, 0.3);
-  border-color: rgba(99, 102, 241, 0.5);
-}
-
-.control-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.control-btn.primary {
-  background: rgba(99, 102, 241, 0.3);
-  border-color: rgba(99, 102, 241, 0.5);
-}
-
-.control-btn.danger {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.3);
-  color: #fca5a5;
-}
-
-.control-btn.danger:hover:not(:disabled) {
-  background: rgba(239, 68, 68, 0.3);
-  border-color: rgba(239, 68, 68, 0.5);
-}
-
-.step-counter {
-  color: #94a3b8;
-  font-size: 0.85rem;
-  margin-left: auto;
-}
-
-/* VISUALIZATION AREA */
-.visualization-area {
+.two-column-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-bottom: 24px;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
-
-.canvas-section,
-.pseudo-code-section {
+.left-column, .right-column {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
+  min-height: 0;
+  overflow: hidden;
 }
-
-.canvas-section h3,
-.pseudo-code-section h3 {
-  color: #e0e7ff;
-  font-size: 1.1rem;
-  margin: 0;
-  margin-bottom: 8px;
-}
-
-/* EXPLANATION SECTION */
-.explanation-section {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  border-radius: 12px;
-  padding: 20px;
-}
-
-.explanation-section h3 {
-  color: #e0e7ff;
-  font-size: 1.1rem;
-  margin: 0 0 12px 0;
-}
-
-.explanation-content {
-  color: #cbd5e1;
-  line-height: 1.6;
-  font-size: 0.95rem;
-}
-
-.explanation-content p {
-  margin: 0 0 12px 0;
-}
-
-.distances-display {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-top: 12px;
-  padding: 12px;
-  background: rgba(15, 23, 42, 0.4);
+.input-section-compact { flex-shrink: 0; }
+.input-row-compact { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.custom-input-compact {
+  padding: 5px 10px;
   border-radius: 8px;
+  background: rgba(2,6,23,.55);
+  border: 1px solid rgba(99,102,241,.25);
+  color: #fff;
+  font-size: .78rem;
+  flex: 1;
+  min-width: 50px;
+  max-width: 80px;
+  transition: border-color .2s;
 }
-
-.distances-display strong {
-  color: #e0e7ff;
+.custom-input-compact:focus { outline: none; border-color: #6366f1; }
+.controls-compact { display: flex; gap: 6px; align-items: center; flex-shrink: 0; flex-wrap: wrap; }
+.step-counter-compact { margin-left: auto; color: #94a3b8; font-size: .75rem; font-weight: 500; }
+.btn-compact {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 7px;
+  font-size: .76rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s;
+  border: none;
+  white-space: nowrap;
 }
-
-.distance-item {
-  background: rgba(99, 102, 241, 0.15);
-  padding: 4px 8px;
+.btn-compact.ghost { background: rgba(99,102,241,.12); border: 1px solid rgba(99,102,241,.25); color: #a78bfa; }
+.btn-compact.ghost:hover { background: rgba(99,102,241,.22); }
+.btn-compact.primary { background: #6366f1; color: #fff; }
+.btn-compact.primary:hover:not(:disabled) { background: #4f46e5; box-shadow: 0 3px 10px rgba(99,102,241,.35); }
+.btn-compact.danger { background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.25); color: #fca5a5; }
+.btn-compact.danger:hover:not(:disabled) { background: rgba(239,68,68,.22); }
+.btn-compact:disabled { opacity: .4; cursor: not-allowed; }
+.canvas-compact {
+  flex: 1;
+  min-height: 0;
+  background: rgba(15,23,42,.7);
+  border: 1px solid rgba(99,102,241,.15);
+  border-radius: 10px;
+  padding: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pseudo-section-compact {
+  flex: 1;
+  min-height: 0;
+  background: rgba(15,23,42,.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(99,102,241,.15);
+  border-radius: 10px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.section-title-compact {
+  color: #cbd5f5;
+  font-size: .75rem;
+  font-weight: 600;
+  margin: 0 0 4px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  flex-shrink: 0;
+}
+.pseudo-scroll { flex: 1; min-height: 0; overflow-y: auto; }
+.pseudo-scroll::-webkit-scrollbar { width: 4px; }
+.pseudo-scroll::-webkit-scrollbar-track { background: transparent; }
+.pseudo-scroll::-webkit-scrollbar-thumb { background: rgba(99,102,241,.25); border-radius: 4px; }
+.explanation-compact {
+  flex-shrink: 0;
+  max-height: 140px;
+  background: rgba(15,23,42,.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(99,102,241,.15);
+  border-radius: 10px;
+  padding: 8px 10px;
+  overflow-y: auto;
+}
+.explanation-compact::-webkit-scrollbar { width: 4px; }
+.explanation-compact::-webkit-scrollbar-track { background: transparent; }
+.explanation-compact::-webkit-scrollbar-thumb { background: rgba(99,102,241,.25); border-radius: 4px; }
+.explanation-compact h3 { color: #cbd5f5; font-size: .75rem; font-weight: 600; margin: 0 0 3px; text-transform: uppercase; letter-spacing: .5px; }
+.explanation-compact p { color: #94a3b8; font-size: .78rem; line-height: 1.45; margin: 0 0 4px; }
+.data-row-compact {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: .72rem;
+  color: #a78bfa;
+  margin-top: 3px;
+}
+.data-row-compact strong { color: #cbd5f5; font-size: .72rem; }
+.data-tag {
+  background: rgba(99,102,241,.12);
+  padding: 1px 6px;
   border-radius: 4px;
   font-family: monospace;
-  color: #a78bfa;
+  font-size: .7rem;
 }
-
-.queue-display,
-.stack-display,
-.path-display {
-  margin-top: 12px;
-  padding: 12px;
-  background: rgba(15, 23, 42, 0.4);
-  border-radius: 8px;
-  font-family: monospace;
-  color: #a78bfa;
-}
-
-.path-display {
-  background: rgba(34, 197, 94, 0.15);
-  border: 1px solid rgba(34, 197, 94, 0.3);
+.data-row-compact.path-found {
+  background: rgba(34,197,94,.1);
+  border: 1px solid rgba(34,197,94,.25);
+  border-radius: 6px;
+  padding: 3px 6px;
   color: #86efac;
-  font-size: 1rem;
-  font-weight: 500;
 }
-
-.queue-display strong,
-.stack-display strong,
-.path-display strong {
-  color: #e0e7ff;
-}
-
-/* RESPONSIVE */
-@media (max-width: 1200px) {
-  .visualization-area {
-    grid-template-columns: 1fr;
-  }
+@media (max-width: 900px) {
+  .two-column-layout { grid-template-columns: 1fr; }
+  .visualizer-page { height: auto; overflow: auto; }
 }
 </style>

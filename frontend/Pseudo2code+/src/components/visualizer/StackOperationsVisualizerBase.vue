@@ -1,120 +1,77 @@
 <template>
-  <div class="stack-op-visualizer">
+  <div class="stack-op-visualizer-compact">
     <!-- BACK BUTTON & HEADER -->
-    <div class="top-section">
-      <button class="back-btn" @click="router.push('/algorithm-hub')">
+    <div class="top-section-compact">
+      <button class="back-btn-compact" @click="router.push('/algorithm-hub')">
         <img :src="arrowLeft" class="arrow" />
         Back
       </button>
     </div>
 
-    <!-- PAGE HEADER -->
-    <header class="page-header">
-      <h1>Stack Operations</h1>
-      <p>Visualize LIFO data structure operations step by step</p>
-    </header>
-
-    <!-- OPERATION SELECTOR -->
-    <section class="operation-selector-section">
+    <!-- COMPACT HEADER WITH OPERATION SELECTOR -->
+    <div class="header-compact">
+      <div class="header-left">
+        <h1 class="title-compact">Stack Operations</h1>
+        <p class="desc-compact">LIFO data structure operations</p>
+      </div>
       <StackOperationSelector
         v-model="selectedOp"
         :operations="stackOperations"
+        class="operation-selector-compact"
       />
+    </div>
+
+    <!-- OPERATION DETAILS BAR -->
+    <section class="operation-bar-compact">
+      <div class="operation-info">
+        <h2 class="operation-name">{{ currentOperation.label }}</h2>
+        <button v-if="currentOperation.info" class="info-btn-compact" @click="showInfo = true"><Info :size="16" /></button>
+      </div>
+      <div v-if="currentOperation.info" class="complexity-badges-compact">
+        <span class="badge-tiny">{{ currentOperation.info.time }}</span>
+        <span class="badge-tiny">{{ currentOperation.info.space }}</span>
+      </div>
     </section>
 
-    <!-- OPERATION DETAILS -->
-    <section class="operation-details">
-      <!-- OPERATION HEADER -->
-      <div class="operation-header">
-        <div class="operation-title-group">
-          <h2>{{ currentOperation.label }}</h2>
-          <button v-if="currentOperation.info" class="info-btn" @click="showInfo = true">ⓘ</button>
-        </div>
-        <p class="operation-desc">{{ currentOperation.description }}</p>
-      </div>
-
-      <!-- COMPLEXITY BADGES -->
-      <div v-if="currentOperation.info" class="complexity-badges">
-        <span class="badge">⏱️ Time: {{ currentOperation.info.time }}</span>
-        <span class="badge">💾 Space: {{ currentOperation.info.space }}</span>
-        <span class="badge" :class="currentOperation.info.stable ? 'stable' : 'unstable'">
-          {{ currentOperation.info.stable ? '✓ Stable' : '✗ Unstable' }}
-        </span>
-      </div>
-
-      <!-- CONTROLS ROW 1: Stack Input -->
-      <div class="input-row">
-        <button class="btn random-btn" @click="generateRandom">
-          🎲 Random Stack
-        </button>
-
+    <!-- CONTROLS COMPACT -->
+    <section class="controls-bar-compact">
+      <div class="input-group-compact">
+        <button class="btn-tiny ghost" @click="generateRandom">Random</button>
         <input 
           v-model="customInput" 
-          placeholder="Enter values: 5,2,8,1"
+          placeholder="5,2,8,1"
           @keydown.enter="applyCustomStack" 
-          class="stack-input" 
+          class="input-tiny" 
         />
-
-        <button class="btn ghost" @click="applyCustomStack" v-if="customInput">
-          Apply
-        </button>
-
-        <button class="btn ghost" @click="goToGenerateCode">
-          💻 Generate Code
-        </button>
-      </div>
-
-      <!-- CONTROLS ROW 2: Value Input (for PUSH only) -->
-      <div v-if="operationType === 'value'" class="input-row">
-        <label>Value to Push:</label>
         <input 
+          v-if="operationType === 'value'"
           v-model.number="pushValue" 
           type="number" 
-          placeholder="Enter a number"
-          class="param-input"
+          placeholder="Push value"
+          class="input-tiny"
           @keydown.enter="applyPushValue"
         />
-        <button class="btn ghost" @click="applyPushValue" v-if="pushValue !== null && pushValue !== ''">
-          Apply Push
-        </button>
+        <button class="btn-tiny ghost" @click="goToGenerateCode">Code</button>
       </div>
-
-      <!-- CONTROLS ROW 3: Play Controls -->
-      <div class="controls-row">
-        <button @click="prev" :disabled="stepIndex === 0" class="control-btn">
-          ⬅ Prev
+      
+      <div class="playback-compact">
+        <button @click="prev" :disabled="stepIndex === 0" class="btn-tiny">◄</button>
+        <button @click="play" :disabled="!isPlayable" class="btn-tiny primary">
+          {{ playing ? '⏸' : '▶' }}
         </button>
-        <button 
-          @click="play" 
-          :disabled="!isPlayable" 
-          class="control-btn primary"
-        >
-          {{ playing ? '⏸ Pause' : '▶ Play' }}
-        </button>
-        <button 
-          @click="next" 
-          :disabled="stepIndex === steps.length - 1" 
-          class="control-btn"
-        >
-          Next ➡
-        </button>
-        <button class="control-btn danger" @click="reset">
-          🔄 Reset
-        </button>
-
-        <span class="step-counter">
-          Step {{ stepIndex + 1 }} / {{ steps.length }}
-        </span>
+        <button @click="next" :disabled="stepIndex === steps.length - 1" class="btn-tiny">►</button>
+        <button class="btn-tiny danger" @click="reset">↻</button>
+        <span class="step-display-compact">{{ stepIndex + 1 }}/{{ steps.length }}</span>
       </div>
     </section>
 
-    <!-- MAIN VISUALIZATION AREA -->
-    <section class="visualization-area">
+    <!-- MAIN TWO-COLUMN AREA -->
+    <div class="main-grid-compact">
       <!-- LEFT: CANVAS -->
-      <div class="canvas-section">
-        <div class="canvas-header">
-          <h3>Stack Visualization</h3>
-          <span class="stack-info">Size: {{ currentStep.stack.length }}/{{ stackCapacity }}</span>
+      <div class="canvas-area-compact">
+        <div class="canvas-header-compact">
+          <h3>Visualization</h3>
+          <span class="stack-size">{{ currentStep.stack.length }}/{{ stackCapacity }}</span>
         </div>
         <StackOperationCanvas 
           :stack="currentStep.stack" 
@@ -123,24 +80,25 @@
         />
       </div>
 
-      <!-- RIGHT: PSEUDOCODE -->
-      <div class="pseudo-code-section">
-        <h3>Algorithm Pseudocode</h3>
-        <PseudoCodePanel 
-          v-if="currentOperation.pseudocode" 
-          :code="currentOperation.pseudocode" 
-          :activeLine="currentStep.activeLine" 
-        />
+      <!-- RIGHT: PSEUDO & EXPLANATION -->
+      <div class="info-area-compact">
+        <div class="pseudo-compact">
+          <h3 class="section-title-mini">Pseudocode</h3>
+          <div class="pseudo-scroll-mini">
+            <PseudoCodePanel 
+              v-if="currentOperation.pseudocode" 
+              :code="currentOperation.pseudocode" 
+              :activeLine="currentStep.activeLine" 
+            />
+          </div>
+        </div>
+        
+        <div class="explanation-compact">
+          <h3 class="section-title-mini">Explanation</h3>
+          <p>{{ currentStep.explanation }}</p>
+        </div>
       </div>
-    </section>
-
-    <!-- EXPLANATION SECTION -->
-    <section class="explanation-section">
-      <h3>Step Explanation</h3>
-      <div class="explanation-content">
-        <p>{{ currentStep.explanation }}</p>
-      </div>
-    </section>
+    </div>
 
     <!-- INFO MODAL -->
     <AlgorithmInfoModal 
@@ -160,6 +118,7 @@ import PseudoCodePanel from "@/components/visualizer/PseudoCodePanel.vue"
 import AlgorithmInfoModal from "@/components/visualizer/AlgorithmInfoModal.vue"
 import StackOperationSelector from "@/components/visualizer/StackOperationSelector.vue"
 import { stackOperations } from "@/algorithms/stackOperations/stackOperationsMap"
+import { Info } from 'lucide-vue-next'
 
 const props = defineProps({
   title: String,
@@ -331,494 +290,322 @@ Take a random input stack and demonstrate the operation.`
 </script>
 
 <style scoped>
-.stack-op-visualizer {
+/* ULTRA COMPACT STACK VISUALIZER */
+.stack-op-visualizer-compact {
+  height: 100vh;
   background: radial-gradient(circle at top, #0f172a, #020617);
-  min-height: 100vh;
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  padding: 24px;
+  gap: 8px;
+  overflow: hidden;
 }
 
-/* BACK BUTTON & TOP SECTION */
-.top-section {
-  margin-bottom: 16px;
+.top-section-compact {
+  flex-shrink: 0;
 }
 
-.back-btn {
+.back-btn-compact {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: rgba(99, 102, 241, 0.15);
   border: 1px solid rgba(99, 102, 241, 0.3);
-  color: #a78bfa;
-  padding: 8px 12px;
-  border-radius: 10px;
+  color: #e0e7ff;
+  padding: 5px 10px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.9rem;
-  font-weight: 500;
+  transition: all 0.2s;
+  font-size: 0.8rem;
 }
 
-.back-btn:hover {
+.back-btn-compact:hover {
   background: rgba(99, 102, 241, 0.25);
-  border-color: rgba(99, 102, 241, 0.5);
-  transform: translateX(-2px);
 }
 
 .arrow {
-  width: 18px;
-  height: 18px;
+  width: 14px;
+  height: 14px;
 }
 
-/* PAGE HEADER */
-.page-header {
-  margin-bottom: 24px;
-}
-
-.page-header h1 {
-  color: white;
-  font-size: 2.2rem;
-  margin: 0 0 8px 0;
-  background: linear-gradient(135deg, #a78bfa, #818cf8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.page-header p {
-  color: #94a3b8;
-  font-size: 1rem;
-  margin: 0;
-  font-weight: 400;
-}
-
-/* OPERATION SELECTOR SECTION */
-.operation-selector-section {
-  margin-bottom: 24px;
-  max-width: 400px;
-}
-
-/* OPERATION DETAILS SECTION */
-.operation-details {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.operation-header {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.operation-title-group {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.operation-details h2 {
-  color: #cbd5f5;
-  font-size: 1.5rem;
-  margin: 0;
-  font-weight: 600;
-}
-
-.info-btn {
-  background: rgba(99, 102, 241, 0.2);
-  border: 1px solid rgba(99, 102, 241, 0.4);
-  color: #a78bfa;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-}
-
-.info-btn:hover {
-  background: rgba(99, 102, 241, 0.35);
-  border-color: rgba(167, 139, 250, 0.6);
-  transform: scale(1.05);
-}
-
-.operation-desc {
-  color: #94a3b8;
-  font-size: 0.95rem;
-  margin: 0;
-  line-height: 1.5;
-}
-
-/* COMPLEXITY BADGES */
-.complexity-badges {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.badge {
-  background: rgba(99, 102, 241, 0.15);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: #cbd5f5;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.badge.stable {
-  background: rgba(34, 197, 94, 0.15);
-  border-color: rgba(34, 197, 94, 0.3);
-  color: #86efac;
-}
-
-.badge.unstable {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.3);
-  color: #fca5a5;
-}
-
-/* INPUT ROWS */
-.input-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.input-row label {
-  color: #cbd5f5;
-  font-size: 0.9rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.stack-input {
-  padding: 10px 14px;
-  border-radius: 10px;
-  background: rgba(2, 6, 23, 0.6);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: white;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-  flex: 1;
-  min-width: 150px;
-}
-
-.stack-input:focus {
-  outline: none;
-  border-color: #6366f1;
-  background: rgba(2, 6, 23, 0.8);
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 0.9rem;
-  padding: 10px 14px;
-  border-radius: 10px;
-  transition: all 0.2s ease;
-  border: none;
-  white-space: nowrap;
-}
-
-.random-btn {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: white;
-  border: none;
-}
-
-.random-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.45);
-}
-
-.btn.ghost {
-  background: rgba(99, 102, 241, 0.15);
-  color: #a78bfa;
-  border: 1px solid rgba(99, 102, 241, 0.3);
-}
-
-.btn.ghost:hover {
-  background: rgba(99, 102, 241, 0.25);
-  border-color: rgba(167, 139, 250, 0.5);
-}
-
-.param-input {
-  padding: 10px 14px;
-  border-radius: 10px;
-  background: rgba(2, 6, 23, 0.6);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: white;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-  flex: 1;
-  min-width: 150px;
-}
-
-.param-input:focus {
-  outline: none;
-  border-color: #6366f1;
-  background: rgba(2, 6, 23, 0.8);
-}
-
-/* CONTROLS ROW */
-.controls-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.control-btn {
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  background: rgba(99, 102, 241, 0.15);
-  color: #a78bfa;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-}
-
-.control-btn:hover:not(:disabled) {
-  background: rgba(99, 102, 241, 0.25);
-  border-color: rgba(167, 139, 250, 0.5);
-  transform: translateY(-1px);
-}
-
-.control-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.control-btn.primary {
-  background: #6366f1;
-  color: white;
-  border: none;
-}
-
-.control-btn.primary:hover:not(:disabled) {
-  background: #4f46e5;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-}
-
-.control-btn.danger {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.3);
-  color: #fca5a5;
-}
-
-.control-btn.danger:hover:not(:disabled) {
-  background: rgba(239, 68, 68, 0.25);
-  border-color: rgba(239, 68, 68, 0.5);
-}
-
-.step-counter {
-  margin-left: auto;
-  color: #94a3b8;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-/* VISUALIZATION AREA */
-.visualization-area {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-bottom: 24px;
-}
-
-.canvas-section {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  border-radius: 16px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.canvas-section h3 {
-  color: #cbd5f5;
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.canvas-header {
+.header-compact {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(100, 116, 139, 0.3);
+  border-radius: 10px;
+  padding: 10px 14px;
+  flex-shrink: 0;
 }
 
-.stack-info {
+.header-left {
+  flex: 1;
+}
+
+.title-compact {
+  font-size: 1.3rem;
+  background: linear-gradient(135deg, #818cf8, #c084fc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 4px 0;
+}
+
+.desc-compact {
+  color: #94a3b8;
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+.operation-selector-compact {
+  flex-shrink: 0;
+}
+
+.operation-bar-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(100, 116, 139, 0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+  flex-shrink: 0;
+}
+
+.operation-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.operation-name {
+  color: #e0e7ff;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.info-btn-compact {
   background: rgba(99, 102, 241, 0.2);
   border: 1px solid rgba(99, 102, 241, 0.4);
-  color: #a78bfa;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.pseudo-code-section {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  border-radius: 16px;
-  padding: 24px;
+  color: #a5b4fc;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.75rem;
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  align-items: center;
+  justify-content: center;
 }
 
-.pseudo-code-section h3 {
-  color: #cbd5f5;
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* EXPLANATION SECTION */
-.explanation-section {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  border-radius: 16px;
-  padding: 24px;
-}
-
-.explanation-section h3 {
-  color: #cbd5f5;
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin: 0 0 12px 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.explanation-content {
+.complexity-badges-compact {
   display: flex;
-  flex-direction: column;
+  gap: 6px;
+}
+
+.badge-tiny {
+  padding: 3px 8px;
+  background: rgba(100, 116, 139, 0.2);
+  border: 1px solid rgba(100, 116, 139, 0.3);
+  border-radius: 4px;
+  color: #cbd5e1;
+  font-size: 0.7rem;
+}
+
+.controls-bar-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(100, 116, 139, 0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
   gap: 12px;
+  flex-shrink: 0;
 }
 
-.explanation-content p {
-  color: #94a3b8;
-  font-size: 0.95rem;
-  line-height: 1.6;
+.input-group-compact,
+.playback-compact {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.btn-tiny {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: rgba(100, 116, 139, 0.2);
+  border: 1px solid rgba(100, 116, 139, 0.3);
+  color: #cbd5e1;
+}
+
+.btn-tiny:hover:not(:disabled) {
+  background: rgba(100, 116, 139, 0.3);
+}
+
+.btn-tiny.primary {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+}
+
+.btn-tiny.danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.btn-tiny:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.input-tiny {
+  padding: 5px 8px;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(100, 116, 139, 0.4);
+  color: #e0e7ff;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  min-width: 100px;
+}
+
+.input-tiny:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+.input-tiny::placeholder {
+  color: #64748b;
+  font-size: 0.7rem;
+}
+
+.step-display-compact {
+  padding: 4px 8px;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 4px;
+  color: #e0e7ff;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.main-grid-compact {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.canvas-area-compact,
+.info-area-compact {
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(100, 116, 139, 0.3);
+  border-radius: 10px;
+  padding: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.canvas-header-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+.canvas-header-compact h3 {
+  color: #e0e7ff;
+  font-size: 0.9rem;
   margin: 0;
 }
 
-/* RESPONSIVE */
-@media (max-width: 1024px) {
-  .visualization-area {
-    grid-template-columns: 1fr;
-  }
-
-  .stack-op-visualizer {
-    padding: 16px;
-  }
+.stack-size {
+  color: #94a3b8;
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  background: rgba(100, 116, 139, 0.2);
+  border-radius: 4px;
 }
 
-@media (max-width: 768px) {
-  .stack-op-visualizer {
-    padding: 12px;
-  }
-
-  .page-header h1 {
-    font-size: 1.8rem;
-  }
-
-  .page-header p {
-    font-size: 0.9rem;
-  }
-
-  .operation-details {
-    padding: 16px;
-    gap: 12px;
-  }
-
-  .input-row,
-  .controls-row {
-    flex-direction: column;
-  }
-
-  .input-row > *,
-  .controls-row > * {
-    width: 100%;
-    min-width: unset;
-  }
-
-  .step-counter {
-    margin-left: 0;
-    text-align: center;
-  }
-
-  .visualization-area {
-    grid-template-columns: 1fr;
-  }
-
-  .canvas-section,
-  .pseudo-code-section {
-    padding: 16px;
-  }
-
-  .explanation-section {
-    padding: 16px;
-  }
+.info-area-compact {
+  gap: 8px;
 }
 
-@media (max-width: 480px) {
-  .stack-op-visualizer {
-    padding: 8px;
-  }
+.pseudo-compact {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
 
-  .page-header h1 {
-    font-size: 1.4rem;
-  }
+.explanation-compact {
+  flex-shrink: 0;
+  padding: 10px;
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 8px;
+  max-height: 150px;
+  overflow-y: auto;
+}
 
-  .operation-title-group {
-    flex-wrap: wrap;
-  }
+.section-title-mini {
+  color: #e0e7ff;
+  font-size: 0.85rem;
+  margin: 0 0 6px 0;
+}
 
-  .complexity-badges {
-    flex-direction: column;
-  }
+.pseudo-scroll-mini {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
 
-  .badge {
-    width: 100%;
-    text-align: center;
-  }
+.explanation-compact p {
+  color: #94a3b8;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  margin: 0;
+}
 
-  .input-row,
-  .controls-row {
-    gap: 6px;
-  }
+/* SCROLLBAR */
+.pseudo-scroll-mini::-webkit-scrollbar,
+.explanation-compact::-webkit-scrollbar {
+  width: 4px;
+}
 
-  .control-btn,
-  .stack-input,
-  .param-input {
-    font-size: 0.8rem;
-    padding: 8px 10px;
+.pseudo-scroll-mini::-webkit-scrollbar-track,
+.explanation-compact::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.pseudo-scroll-mini::-webkit-scrollbar-thumb,
+.explanation-compact::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.25);
+  border-radius: 4px;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .main-grid-compact {
+    grid-template-columns: 1fr;
+  }
+  
+  .stack-op-visualizer-compact {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
   }
 }
 </style>

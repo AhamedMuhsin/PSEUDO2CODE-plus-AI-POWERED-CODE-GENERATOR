@@ -1,396 +1,365 @@
 <template>
     <main class="visualizer-page">
-        <div class="container">
+        <div class="container-compact">
             <!-- BACK -->
-            <div class="top-section">
-                <button class="back-btn" @click="router.push('/algorithm-hub')">
+            <div class="top-section-compact">
+                <button class="back-btn-compact" @click="router.push('/algorithm-hub')">
                     <img :src="arrowLeft" class="arrow" />
                     Back
                 </button>
             </div>
-            <!-- HEADER -->
-            <section class="operation-details">
-                <div class="operation-header">
-                    <header class="page-header">
-                        <div class="operation-title-group">
-                            <h1>{{ title }}</h1>
-                            <button v-if="meta" class="info-btn" @click="showInfo = true">ⓘ</button>
-                        </div>
-                        <p class="operation-desc">{{ description }}</p>
-                        <div v-if="meta" class="algo-badges">
-                            <span class="badge">Best: {{ meta.best }}</span>
-                            <span class="badge">Avg: {{ meta.average }}</span>
-                            <span class="badge">Worst: {{ meta.worst }}</span>
-                            <span class="badge">Space: {{ meta.space }}</span>
-                        </div>
-                    </header>
+            
+            <!-- HEADER - Compact -->
+            <header class="page-header-compact">
+                <div class="header-content">
+                    <div class="operation-title-group-compact">
+                        <h1>{{ title }}</h1>
+                        <button v-if="meta" class="info-btn-compact" @click="showInfo = true"><Info :size="16" /></button>
+                    </div>
+                    <p class="operation-desc-compact">{{ description }}</p>
+                    <div v-if="meta" class="algo-badges-compact">
+                        <span class="badge-compact">Best: {{ meta.best }}</span>
+                        <span class="badge-compact">Avg: {{ meta.average }}</span>
+                        <span class="badge-compact">Worst: {{ meta.worst }}</span>
+                        <span class="badge-compact">Space: {{ meta.space }}</span>
+                    </div>
+                </div>
+            </header>
 
+            <!-- TWO COLUMN LAYOUT -->
+            <div class="two-column-layout">
+                <!-- LEFT COLUMN: Controls & Canvas -->
+                <div class="left-column">
                     <!-- GRAPH INPUT -->
-                    <section class="graph-input">
-                        <div class="input-row">
-                            <button class="btn ghost" @click="generateRandomGraph">
+                    <section class="graph-input-compact">
+
+                        <div class="input-row-compact">
+                            <button class="btn-compact ghost" @click="generateRandomGraph">
                                 Random Graph
                             </button>
-                            <button class="btn ghost" @click="showGraphBuilder = !showGraphBuilder">
-                                {{ showGraphBuilder ? 'Hide' : 'Build Graph' }}
+                            <button class="btn-compact ghost" @click="showGraphBuilder = !showGraphBuilder">
+                                {{ showGraphBuilder ? 'Hide' : 'Build' }}
                             </button>
-                            <button class="btn ghost" @click="goToGenerateCode">
-                                Generate Code
+                            <button class="btn-compact ghost" @click="goToGenerateCode">
+                                Code
                             </button>
                         </div>
 
                         <!-- Graph Builder -->
-                        <div v-if="showGraphBuilder" class="graph-builder">
-                            <!-- Graph type toggles -->
-                            <div class="builder-toggles">
-                                <label class="toggle-label">
-                                    <input type="checkbox" v-model="isDirected" @change="rebuildGraph" />
-                                    Directed
-                                </label>
-                                <label class="toggle-label">
-                                    <input type="checkbox" v-model="isWeighted" @change="rebuildGraph" />
-                                    Weighted
-                                </label>
-                            </div>
+                        <div v-if="showGraphBuilder" class="graph-builder-compact">
+                            <!-- Graph builder content with scrollable area -->
+                            <div class="builder-content-scroll">
+                                <div class="builder-toggles-compact">
+                                    <label class="toggle-label-compact">
+                                        <input type="checkbox" v-model="isDirected" @change="rebuildGraph" />
+                                        Directed
+                                    </label>
+                                    <label class="toggle-label-compact">
+                                        <input type="checkbox" v-model="isWeighted" @change="rebuildGraph" />
+                                        Weighted
+                                    </label>
+                                </div>
 
-                            <!-- Add Node -->
-                            <div class="builder-section">
-                                <h4>Add Node</h4>
-                                <input v-model="newNode" placeholder="Node name (e.g., A)" @keydown.enter="addNode" />
-                                <button class="btn-small primary" @click="addNode">Add</button>
-                            </div>
+                                <div class="builder-section-compact">
+                                    <input v-model="newNode" placeholder="Node (A)" @keydown.enter="addNode" class="builder-input-compact" />
+                                    <button class="btn-tiny primary" @click="addNode">+</button>
+                                </div>
 
-                            <!-- Current Nodes -->
-                            <div v-if="graph.nodes.length" class="builder-items">
-                                <h4>Nodes</h4>
-                                <div class="item-chips">
-                                    <span v-for="node in graph.nodes" :key="node" class="chip">
+                                <div v-if="graph.nodes.length" class="item-chips-compact">
+                                    <span v-for="node in graph.nodes" :key="node" class="chip-compact">
                                         {{ node }}
-                                        <button class="chip-remove" @click="removeNode(node)">&times;</button>
+                                        <button class="chip-remove-compact" @click="removeNode(node)">&times;</button>
                                     </span>
                                 </div>
-                            </div>
 
-                            <!-- Add Edge -->
-                            <div class="builder-section">
-                                <h4>Add Edge</h4>
-                                <select v-model="edgeFrom" class="builder-select">
-                                    <option value="" disabled>From</option>
-                                    <option v-for="node in graph.nodes" :key="node" :value="node">{{ node }}</option>
-                                </select>
-                                <select v-model="edgeTo" class="builder-select">
-                                    <option value="" disabled>To</option>
-                                    <option v-for="node in graph.nodes" :key="node" :value="node">{{ node }}</option>
-                                </select>
-                                <input v-if="isWeighted" v-model="edgeWeight" placeholder="Weight" type="number" class="weight-input" />
-                                <button class="btn-small primary" @click="addEdge" :disabled="!edgeFrom || !edgeTo">Add Edge</button>
-                            </div>
+                                <div class="builder-section-compact">
+                                    <select v-model="edgeFrom" class="builder-select-compact">
+                                        <option value="" disabled>From</option>
+                                        <option v-for="node in graph.nodes" :key="node" :value="node">{{ node }}</option>
+                                    </select>
+                                    <select v-model="edgeTo" class="builder-select-compact">
+                                        <option value="" disabled>To</option>
+                                        <option v-for="node in graph.nodes" :key="node" :value="node">{{ node }}</option>
+                                    </select>
+                                    <input v-if="isWeighted" v-model="edgeWeight" placeholder="W" type="number" class="weight-input-compact" />
+                                    <button class="btn-tiny primary" @click="addEdge" :disabled="!edgeFrom || !edgeTo">+</button>
+                                </div>
 
-                            <!-- Current Edges -->
-                            <div v-if="graph.edges.length" class="builder-items">
-                                <h4>Edges</h4>
-                                <div class="item-chips">
-                                    <span v-for="(edge, idx) in graph.edges" :key="idx" class="chip edge-chip">
-                                        {{ edge.from }} {{ graph.isDirected ? '→' : '—' }} {{ edge.to }}
-                                        <span v-if="graph.isWeighted" class="chip-weight">({{ edge.weight }})</span>
-                                        <button class="chip-remove" @click="removeEdge(idx)">&times;</button>
+                                <div v-if="graph.edges.length" class="item-chips-compact">
+                                    <span v-for="(edge, idx) in graph.edges" :key="idx" class="chip-compact edge-chip">
+                                        {{ edge.from }}{{ graph.isDirected ? '→' : '—' }}{{ edge.to }}
+                                        <span v-if="graph.isWeighted" class="chip-weight-compact">({{ edge.weight }})</span>
+                                        <button class="chip-remove-compact" @click="removeEdge(idx)">&times;</button>
                                     </span>
                                 </div>
-                            </div>
 
-                            <!-- Validation message -->
-                            <p v-if="builderMessage" class="builder-message" :class="builderMessageType">{{ builderMessage }}</p>
+                                <p v-if="builderMessage" class="builder-message-compact" :class="builderMessageType">{{ builderMessage }}</p>
 
-                            <div class="builder-section">
-                                <button class="btn-small danger" @click="clearGraph">Clear All</button>
+                                <button class="btn-tiny danger" @click="clearGraph">Clear</button>
                             </div>
                         </div>
 
                         <!-- Start Node Selection -->
-                        <div class="start-node-section">
-                            <label>Start Node:</label>
-                            <select v-model="startNode" class="node-select">
+                        <div class="start-node-section-compact">
+                            <label>Start:</label>
+                            <select v-model="startNode" class="node-select-compact">
                                 <option v-for="node in graph.nodes" :key="node" :value="node">{{ node }}</option>
                             </select>
-                            <label v-if="algorithmName === 'A* Algorithm'">Goal Node:</label>
-                            <select v-if="algorithmName === 'A* Algorithm'" v-model="goalNode" class="node-select">
+                            <label v-if="algorithmName === 'A* Algorithm'">Goal:</label>
+                            <select v-if="algorithmName === 'A* Algorithm'" v-model="goalNode" class="node-select-compact">
                                 <option v-for="node in graph.nodes" :key="node" :value="node">{{ node }}</option>
                             </select>
                         </div>
                     </section>
 
                     <!-- CONTROLS -->
-                    <section class="controls">
-                        <button class="btn ghost" @click="prev" :disabled="stepIndex === 0">Prev</button>
-                        <button class="btn primary" @click="playing ? pause() : play()">
+                    <section class="controls-compact">
+                        <button class="btn-compact ghost" @click="prev" :disabled="stepIndex === 0">Prev</button>
+                        <button class="btn-compact primary" @click="playing ? pause() : play()">
                             {{ playing ? 'Pause' : 'Play' }}
                         </button>
-                        <button class="btn ghost" @click="next" :disabled="stepIndex === steps.length - 1">Next</button>
-                        <button class="btn danger" @click="reset">Reset</button>
+                        <button class="btn-compact ghost" @click="next" :disabled="stepIndex === steps.length - 1">Next</button>
+                        <button class="btn-compact danger" @click="reset">Reset</button>
 
-                        <div class="step-counter">
-                            Step {{ currentStepNumber }} / {{ totalSteps }}
+                        <div class="step-counter-compact">
+                            {{ currentStepNumber }}/{{ totalSteps }}
                         </div>
 
-                        <div class="speed">
+                        <div class="speed-compact">
                             <label>Speed</label>
-                            <input type="range" min="1" max="5" step="1" v-model="speedLevel" />
-                            <span>{{ ['Slow', 'Normal', 'Fast', 'Very Fast', 'Ultra'][speedLevel - 1] }}</span>
+                            <input type="range" min="1" max="5" step="1" v-model="speedLevel" class="speed-slider" />
+                        </div>
+                    </section>
+            
+                    <!-- CANVAS -->
+                    <section class="canvas-compact">
+                        <GraphCanvas 
+                            :nodes="currentStep.graph?.map(n => n.id || n.label || n) || []" 
+                            :edges="currentStep.edges || []"
+                            :visitedNodes="currentStep.visitedNodes || []" 
+                            :activeNode="currentStep.activeNode"
+                            :highlightedEdges="currentStep.highlightedEdges || []" 
+                            :queueState="currentStep.queueState || []"
+                            :stackState="currentStep.stackState || []"
+                            :distances="currentStep.distances || null"
+                            :isDirected="graph.isDirected" />
+                        <div class="canvas-legend-compact">
+                            <div class="legend-item-compact">
+                                <span class="dot normal"></span>
+                                <span>Unvisited</span>
+                            </div>
+                            <div class="legend-item-compact">
+                                <span class="dot" :class="usesStack ? 'stack' : 'queue'"></span>
+                                <span>{{ usesStack ? 'Stack' : 'Queue' }}</span>
+                            </div>
+                            <div class="legend-item-compact">
+                                <span class="dot active"></span>
+                                <span>Processing</span>
+                            </div>
+                            <div class="legend-item-compact">
+                                <span class="dot visited"></span>
+                                <span>Visited</span>
+                            </div>
                         </div>
                     </section>
                 </div>
-            </section>
-            
-            <!-- CANVAS -->
-            <section class="canvas">
-                <GraphCanvas 
-                    :nodes="currentStep.graph?.map(n => n.id || n.label || n) || []" 
-                    :edges="currentStep.edges || []"
-                    :visitedNodes="currentStep.visitedNodes || []" 
-                    :activeNode="currentStep.activeNode"
-                    :highlightedEdges="currentStep.highlightedEdges || []" 
-                    :queueState="currentStep.queueState || []"
-                    :stackState="currentStep.stackState || []"
-                    :distances="currentStep.distances || null"
-                    :isDirected="graph.isDirected" />
-                <div class="canvas-legend">
-                    <div class="legend-item">
-                        <span class="dot normal"></span>
-                        <span>Unvisited</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="dot" :class="usesStack ? 'stack' : 'queue'"></span>
-                        <span>{{ usesStack ? 'In Stack' : 'In Queue' }}</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="dot active"></span>
-                        <span>Processing</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="dot visited"></span>
-                        <span>Visited</span>
-                    </div>
-                </div>
-            </section>
-            
-            <section v-if="showPseudoCode && pseudoCode" class="pseudo-section">
-                <PseudoCodePanel :code="pseudoCode" :activeLine="currentStep.activePseudoLine || 0" />
-            </section>
 
-            <!-- DISTANCE TABLE (Dijkstra) -->
-            <section v-if="currentStep.distances && !currentStep.gScore" class="distance-table-section">
-                <h3>Distance Table</h3>
-                <div class="distance-table-wrapper">
-                    <table class="distance-table">
-                        <thead>
-                            <tr>
-                                <th>Node</th>
-                                <th v-for="node in graph.nodes" :key="node" 
-                                    :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.visitedNodes?.includes(node) }">
-                                    {{ node }}
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="row-label">Distance</td>
-                                <td v-for="node in graph.nodes" :key="node"
-                                    :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.visitedNodes?.includes(node), 'updated-cell': currentStep.isUpdate && currentStep.highlightedEdges?.some(e => e.to === node) }">
-                                    {{ currentStep.distances[node] === Infinity ? '∞' : currentStep.distances[node] }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="row-label">Previous</td>
-                                <td v-for="node in graph.nodes" :key="node"
-                                    :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.visitedNodes?.includes(node) }">
-                                    {{ currentStep.previousNodes?.[node] || '—' }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- EXPLANATION (for A*) -->
-            <section v-if="currentStep.gScore" class="explanation">
-                <h3>Step Explanation</h3>
-                <p>{{ currentStep.explanation }}</p>
-            </section>
-
-            <!-- A* TABLE (g-score, f-score, heuristic) -->
-            <section v-if="currentStep.gScore" class="distance-table-section astar-table-section">
-                <h3>A* Score Table</h3>
-                <div class="distance-table-wrapper">
-                    <table class="distance-table">
-                        <thead>
-                            <tr>
-                                <th>Node</th>
-                                <th v-for="node in graph.nodes" :key="node" 
-                                    :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.visitedNodes?.includes(node) }">
-                                    {{ node }}
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="row-label">g(n) <span class="label-desc">actual cost</span></td>
-                                <td v-for="node in graph.nodes" :key="node"
-                                    :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.visitedNodes?.includes(node), 'updated-cell': currentStep.type === 'update' && currentStep.highlightedEdges?.some(e => e.to === node) }">
-                                    {{ currentStep.gScore[node] === Infinity ? '∞' : currentStep.gScore[node] }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="row-label">h(n) <span class="label-desc">heuristic</span></td>
-                                <td v-for="node in graph.nodes" :key="node"
-                                    :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.visitedNodes?.includes(node) }">
-                                    {{ currentStep.heuristic?.[node] || 0 }}
-                                </td>
-                            </tr>
-                            <tr class="f-score-row">
-                                <td class="row-label">f(n) <span class="label-desc">g + h</span></td>
-                                <td v-for="node in graph.nodes" :key="node"
-                                    :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.visitedNodes?.includes(node), 'updated-cell': currentStep.type === 'update' && currentStep.highlightedEdges?.some(e => e.to === node) }">
-                                    {{ currentStep.fScore[node] === Infinity ? '∞' : currentStep.fScore[node].toFixed(1) }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="row-label">Status</td>
-                                <td v-for="node in graph.nodes" :key="node"
-                                    :class="{ 'active-col': currentStep.activeNode === node }">
-                                    <span v-if="currentStep.closedSet?.includes(node)" class="status-badge closed">Closed</span>
-                                    <span v-else-if="currentStep.openSet?.includes(node)" class="status-badge open">Open</span>
-                                    <span v-else class="status-badge">—</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div v-if="currentStep.path" class="path-display">
-                    <strong>🎯 Optimal Path Found:</strong> {{ currentStep.path.join(' → ') }}
-                </div>
-            </section>
-
-            <!-- EXPLANATION (for Prim's) -->
-            <section v-if="currentStep.key && !currentStep.gScore" class="explanation">
-                <h3>Step Explanation</h3>
-                <p>{{ currentStep.explanation }}</p>
-            </section>
-
-            <!-- PRIM'S MST TABLE -->
-            <section v-if="currentStep.key && !currentStep.gScore" class="distance-table-section prim-table-section">
-                <h3>MST Key Table</h3>
-                <div class="distance-table-wrapper">
-                    <table class="distance-table">
-                        <thead>
-                            <tr>
-                                <th>Node</th>
-                                <th v-for="node in graph.nodes" :key="node"
-                                    :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.inMST?.includes(node) }">
-                                    {{ node }}
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="row-label">Key <span class="label-desc">min edge weight</span></td>
-                                <td v-for="node in graph.nodes" :key="node"
-                                    :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.inMST?.includes(node), 'updated-cell': currentStep.type === 'update' && currentStep.highlightedEdges?.some(e => e.to === node) }">
-                                    {{ currentStep.key[node] === Infinity ? '∞' : currentStep.key[node] }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="row-label">Parent <span class="label-desc">connected via</span></td>
-                                <td v-for="node in graph.nodes" :key="node"
-                                    :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.inMST?.includes(node) }">
-                                    {{ currentStep.parent?.[node] || '—' }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="row-label">In MST</td>
-                                <td v-for="node in graph.nodes" :key="node"
-                                    :class="{ 'active-col': currentStep.activeNode === node }">
-                                    <span v-if="currentStep.inMST?.includes(node)" class="status-badge mst-in">✓</span>
-                                    <span v-else class="status-badge">—</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div v-if="currentStep.mstEdges && currentStep.mstEdges.length > 0" class="mst-summary">
-                    <strong>🌲 MST Edges:</strong>
-                    {{ currentStep.mstEdges.map(e => `${e.from}—${e.to}(${e.weight})`).join(', ') }}
-                    <span class="mst-cost">| Total Cost: {{ currentStep.mstCost }}</span>
-                </div>
-            </section>
-
-            <!-- EXPLANATION (for Kruskal's) -->
-            <section v-if="currentStep.sortedEdges && !currentStep.key && !currentStep.gScore" class="explanation">
-                <h3>Step Explanation</h3>
-                <p>{{ currentStep.explanation }}</p>
-            </section>
-
-            <!-- KRUSKAL'S EDGE PROCESSING TABLE -->
-            <section v-if="currentStep.sortedEdges && !currentStep.key && !currentStep.gScore" class="distance-table-section kruskal-table-section">
-                <h3>Sorted Edges (Processing Order)</h3>
-                <div class="edge-list-wrapper">
-                    <table class="edge-list-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Edge</th>
-                                <th>Weight</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(edge, index) in currentStep.sortedEdges" :key="index"
-                                :class="{ 
-                                    'current-edge': index === currentStep.currentEdgeIndex,
-                                    'processed-edge': index < currentStep.currentEdgeIndex,
-                                    'accepted-edge': currentStep.mstEdges.some(e => (e.from === edge.from && e.to === edge.to) || (e.from === edge.to && e.to === edge.from))
-                                }">
-                                <td>{{ index + 1 }}</td>
-                                <td>{{ edge.from }} — {{ edge.to }}</td>
-                                <td>{{ edge.weight }}</td>
-                                <td>
-                                    <span v-if="index < currentStep.currentEdgeIndex && currentStep.mstEdges.some(e => (e.from === edge.from && e.to === edge.to) || (e.from === edge.to && e.to === edge.from))" 
-                                        class="status-badge accepted">✓ Added</span>
-                                    <span v-else-if="index < currentStep.currentEdgeIndex" 
-                                        class="status-badge skipped">✗ Skipped</span>
-                                    <span v-else-if="index === currentStep.currentEdgeIndex" 
-                                        class="status-badge processing">⚡ Processing</span>
-                                    <span v-else class="status-badge pending">◯ Pending</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Union-Find Parent/Group Info -->
-                <div v-if="currentStep.parent" class="union-find-section">
-                    <h4>Union-Find Groups (Which nodes are connected?)</h4>
-                    <div class="parent-grid">
-                        <div v-for="node in graph.nodes" :key="node" class="parent-item">
-                            <span class="node-label">{{ node }}</span>
-                            <span class="parent-arrow">→</span>
-                            <span class="parent-value">{{ currentStep.parent[node] }}</span>
+                <!-- RIGHT COLUMN: Pseudo Code & Explanation -->
+                <div class="right-column">
+                    <section v-if="showPseudoCode && pseudoCode" class="pseudo-section-compact">
+                        <h3 class="section-title-compact">Pseudocode</h3>
+                        <div class="pseudo-scroll">
+                            <PseudoCodePanel :code="pseudoCode" :activeLine="currentStep.activePseudoLine || 0" />
                         </div>
+                    </section>
+
+                    <!-- EXPLANATION -->
+                    <section class="explanation-compact">
+                        <h3 class="section-title-compact">Explanation</h3>
+                        <p>{{ currentStep.explanation }}</p>
+                    </section>
+
+                    <!-- DATA TABLES - Scrollable -->
+                    <div class="data-tables-scroll">
+
+                        <!-- DISTANCE TABLE (Dijkstra) -->
+                        <section v-if="currentStep.distances && !currentStep.gScore" class="distance-table-section-compact">
+                            <h4 class="table-title-compact">Distance Table</h4>
+                            <div class="distance-table-wrapper-compact">
+                                <table class="distance-table-compact">
+                                    <thead>
+                                        <tr>
+                                            <th>Node</th>
+                                            <th v-for="node in graph.nodes" :key="node" 
+                                                :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.visitedNodes?.includes(node) }">
+                                                {{ node }}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="row-label">Dist</td>
+                                            <td v-for="node in graph.nodes" :key="node"
+                                                :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.visitedNodes?.includes(node), 'updated-cell': currentStep.isUpdate && currentStep.highlightedEdges?.some(e => e.to === node) }">
+                                                {{ currentStep.distances[node] === Infinity ? '∞' : currentStep.distances[node] }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="row-label">Prev</td>
+                                            <td v-for="node in graph.nodes" :key="node"
+                                                :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.visitedNodes?.includes(node) }">
+                                                {{ currentStep.previousNodes?.[node] || '—' }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <!-- A* TABLE -->
+                        <section v-if="currentStep.gScore" class="distance-table-section-compact">
+                            <h4 class="table-title-compact">A* Score Table</h4>
+                            <div class="distance-table-wrapper-compact">
+                                <table class="distance-table-compact">
+                                    <thead>
+                                        <tr>
+                                            <th>Node</th>
+                                            <th v-for="node in graph.nodes" :key="node" 
+                                                :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.visitedNodes?.includes(node) }">
+                                                {{ node }}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="row-label">g(n)</td>
+                                            <td v-for="node in graph.nodes" :key="node"
+                                                :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.visitedNodes?.includes(node), 'updated-cell': currentStep.type === 'update' && currentStep.highlightedEdges?.some(e => e.to === node) }">
+                                                {{ currentStep.gScore[node] === Infinity ? '∞' : currentStep.gScore[node] }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="row-label">h(n)</td>
+                                            <td v-for="node in graph.nodes" :key="node"
+                                                :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.visitedNodes?.includes(node) }">
+                                                {{ currentStep.heuristic?.[node] || 0 }}
+                                            </td>
+                                        </tr>
+                                        <tr class="f-score-row">
+                                            <td class="row-label">f(n)</td>
+                                            <td v-for="node in graph.nodes" :key="node"
+                                                :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.visitedNodes?.includes(node), 'updated-cell': currentStep.type === 'update' && currentStep.highlightedEdges?.some(e => e.to === node) }">
+                                                {{ currentStep.fScore[node] === Infinity ? '∞' : currentStep.fScore[node].toFixed(1) }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="row-label">Status</td>
+                                            <td v-for="node in graph.nodes" :key="node"
+                                                :class="{ 'active-col': currentStep.activeNode === node }">
+                                                <span v-if="currentStep.closedSet?.includes(node)" class="status-badge-compact closed">Closed</span>
+                                                <span v-else-if="currentStep.openSet?.includes(node)" class="status-badge-compact open">Open</span>
+                                                <span v-else class="status-badge-compact">—</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div v-if="currentStep.path" class="path-display-compact">
+                                <strong><Target :size="16" class="inline-icon" /></strong> {{ currentStep.path.join(' → ') }}
+                            </div>
+                        </section>
+
+                        <!-- PRIM'S MST TABLE -->
+                        <section v-if="currentStep.key && !currentStep.gScore" class="distance-table-section-compact">
+                            <h4 class="table-title-compact">MST Key Table</h4>
+                            <div class="distance-table-wrapper-compact">
+                                <table class="distance-table-compact">
+                                    <thead>
+                                        <tr>
+                                            <th>Node</th>
+                                            <th v-for="node in graph.nodes" :key="node"
+                                                :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.inMST?.includes(node) }">
+                                                {{ node }}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="row-label">Key</td>
+                                            <td v-for="node in graph.nodes" :key="node"
+                                                :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.inMST?.includes(node), 'updated-cell': currentStep.type === 'update' && currentStep.highlightedEdges?.some(e => e.to === node) }">
+                                                {{ currentStep.key[node] === Infinity ? '∞' : currentStep.key[node] }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="row-label">Parent</td>
+                                            <td v-for="node in graph.nodes" :key="node"
+                                                :class="{ 'active-col': currentStep.activeNode === node, 'visited-col': currentStep.inMST?.includes(node) }">
+                                                {{ currentStep.parent?.[node] || '—' }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="row-label">MST</td>
+                                            <td v-for="node in graph.nodes" :key="node"
+                                                :class="{ 'active-col': currentStep.activeNode === node }">
+                                                <span v-if="currentStep.inMST?.includes(node)" class="status-badge-compact mst-in"><Check :size="14" /></span>
+                                                <span v-else class="status-badge-compact">—</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div v-if="currentStep.mstEdges && currentStep.mstEdges.length > 0" class="mst-summary-compact">
+                                <strong><TreePine :size="16" class="inline-icon" /></strong> {{ currentStep.mstEdges.map(e => `${e.from}—${e.to}(${e.weight})`).join(', ') }}
+                                <span class="mst-cost">| Cost: {{ currentStep.mstCost }}</span>
+                            </div>
+                        </section>
+
+                        <!-- KRUSKAL'S TABLE -->
+                        <section v-if="currentStep.sortedEdges && !currentStep.key && !currentStep.gScore" class="distance-table-section-compact kruskal-section">
+                            <h4 class="table-title-compact">Edge Processing</h4>
+                            <div class="edge-list-wrapper-compact">
+                                <table class="edge-list-table-compact">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Edge</th>
+                                            <th>W</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(edge, index) in currentStep.sortedEdges" :key="index"
+                                            :class="{ 
+                                                'current-edge': index === currentStep.currentEdgeIndex,
+                                                'processed-edge': index < currentStep.currentEdgeIndex,
+                                                'accepted-edge': currentStep.mstEdges.some(e => (e.from === edge.from && e.to === edge.to) || (e.from === edge.to && e.to === edge.from))
+                                            }">
+                                            <td>{{ index + 1 }}</td>
+                                            <td>{{ edge.from }}—{{ edge.to }}</td>
+                                            <td>{{ edge.weight }}</td>
+                                            <td>
+                                                <span v-if="index < currentStep.currentEdgeIndex && currentStep.mstEdges.some(e => (e.from === edge.from && e.to === edge.to) || (e.from === edge.to && e.to === edge.from))" 
+                                                    class="status-badge-compact accepted"><Check :size="14" /></span>
+                                                <span v-else-if="index < currentStep.currentEdgeIndex" 
+                                                    class="status-badge-compact skipped"><X :size="14" /></span>
+                                                <span v-else-if="index === currentStep.currentEdgeIndex" 
+                                                    class="status-badge-compact processing"><Zap :size="14" /></span>
+                                                <span v-else class="status-badge-compact pending"><Circle :size="14" /></span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div v-if="currentStep.mstEdges && currentStep.mstEdges.length > 0" class="mst-summary-compact">
+                                <strong><TreePine :size="16" class="inline-icon" /></strong> {{ currentStep.mstEdges.map(e => `${e.from}—${e.to}(${e.weight})`).join(', ') }}
+                                <span class="mst-cost">| Cost: {{ currentStep.mstCost }}</span>
+                            </div>
+                        </section>
                     </div>
-                    <p class="union-find-hint">💡 Each node points to its "parent" in the Union-Find structure. Nodes with the same root are in the same group/tree.</p>
                 </div>
-
-                <div v-if="currentStep.mstEdges && currentStep.mstEdges.length > 0" class="mst-summary">
-                    <strong>🌲 MST Edges:</strong>
-                    {{ currentStep.mstEdges.map(e => `${e.from}—${e.to}(${e.weight})`).join(', ') }}
-                    <span class="mst-cost">| Total Cost: {{ currentStep.mstCost }}</span>
-                </div>
-            </section>
-
-            <!-- EXPLANATION (for non-A*, non-Prim, non-Kruskal) -->
-            <section v-if="!currentStep.gScore && !currentStep.key && !currentStep.sortedEdges" class="explanation">
-                <h3>Step Explanation</h3>
-                <p>{{ currentStep.explanation }}</p>
-            </section>
+            </div>
         </div>
     </main>
     <AlgorithmInfoModal v-if="showInfo && meta" :info="meta" @close="showInfo = false" />
@@ -404,6 +373,7 @@ import AlgorithmInfoModal from "@/components/visualizer/AlgorithmInfoModal.vue"
 import PseudoCodePanel from './PseudoCodePanel.vue'
 import GraphCanvas from './canvases/GraphCanvas.vue'
 import { Graph } from '@/algorithms/graphOperations/Graph'
+import { Info, Target, TreePine, Zap, Circle, Check, X } from 'lucide-vue-next'
 
 const props = defineProps({
     title: String,
@@ -651,73 +621,76 @@ Include graph creation and traversal implementation.`
 </script>
 
 <style scoped>
+/* COMPACT LAYOUT - Everything fits on one screen */
 .visualizer-page {
-    min-height: 100vh;
+    height: 100vh;
     background: radial-gradient(circle at top, #0f172a, #020617);
-    padding: 40px 24px;
+    padding: 12px;
+    overflow: hidden;
 }
 
-.container {
-    max-width: 1100px;
-    margin: 0 auto;
+.container-compact {
+    max-width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
-.top-section {
-    margin-bottom: 24px;
+.top-section-compact {
+    flex-shrink: 0;
 }
 
-.back-btn {
+.back-btn-compact {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     background: rgba(99, 102, 241, 0.15);
     border: 1px solid rgba(99, 102, 241, 0.3);
     color: #e0e7ff;
-    padding: 10px 18px;
-    border-radius: 10px;
+    padding: 6px 12px;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
 }
 
-.back-btn:hover {
+.back-btn-compact:hover {
     background: rgba(99, 102, 241, 0.25);
-    transform: translateX(-3px);
+    transform: translateX(-2px);
 }
 
 .arrow {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
 }
 
-.operation-details {
+/* COMPACT HEADER */
+.page-header-compact {
     background: rgba(30, 41, 59, 0.6);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(100, 116, 139, 0.3);
-    border-radius: 16px;
-    padding: 32px;
-    margin-bottom: 24px;
+    border-radius: 12px;
+    padding: 12px 16px;
+    flex-shrink: 0;
 }
 
-.operation-header {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
-
-.page-header {
-    text-align: center;
-}
-
-.operation-title-group {
+.header-content {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 12px;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
 }
 
-.operation-title-group h1 {
-    font-size: 2.2rem;
+.operation-title-group-compact {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.operation-title-group-compact h1 {
+    font-size: 1.4rem;
     background: linear-gradient(135deg, #818cf8, #c084fc);
     -webkit-background-clip: text;
     background-clip: text;
@@ -725,382 +698,377 @@ Include graph creation and traversal implementation.`
     margin: 0;
 }
 
-.info-btn {
+.info-btn-compact {
     background: rgba(99, 102, 241, 0.2);
     border: 1px solid rgba(99, 102, 241, 0.4);
     color: #a5b4fc;
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s;
 }
 
-.info-btn:hover {
+.info-btn-compact:hover {
     background: rgba(99, 102, 241, 0.3);
     transform: scale(1.1);
 }
 
-.operation-desc {
+.operation-desc-compact {
     color: #94a3b8;
-    font-size: 1.1rem;
-    margin: 12px 0 20px;
+    font-size: 0.85rem;
+    margin: 0;
 }
 
-.algo-badges {
+.algo-badges-compact {
     display: flex;
-    gap: 12px;
+    gap: 6px;
     flex-wrap: wrap;
-    justify-content: center;
 }
 
-.badge {
-    padding: 6px 14px;
+.badge-compact {
+    padding: 4px 8px;
     background: rgba(100, 116, 139, 0.2);
     border: 1px solid rgba(100, 116, 139, 0.3);
-    border-radius: 8px;
+    border-radius: 6px;
     color: #cbd5e1;
-    font-size: 0.9rem;
+    font-size: 0.75rem;
     font-weight: 500;
 }
 
-.graph-input {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.input-row {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.graph-builder {
-    background: rgba(15, 23, 42, 0.5);
-    border: 1px solid rgba(100, 116, 139, 0.3);
-    border-radius: 12px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.builder-section {
-    display: flex;
+/* TWO COLUMN LAYOUT */
+.two-column-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
-    align-items: center;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.left-column, .right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* LEFT COLUMN - Inputs & Canvas */
+.graph-input-compact {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    border-radius: 10px;
+    padding: 10px;
+    flex-shrink: 0;
+}
+
+.input-row-compact {
+    display: flex;
+    gap: 6px;
     flex-wrap: wrap;
 }
 
-.builder-section h4 {
-    color: #e0e7ff;
-    margin: 0;
-    min-width: 100px;
-}
-
-.builder-section input {
-    background: rgba(30, 41, 59, 0.8);
-    border: 1px solid rgba(100, 116, 139, 0.4);
-    color: #e0e7ff;
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    flex: 1;
-    min-width: 80px;
-}
-
-.builder-section input:focus {
-    outline: none;
-    border-color: #6366f1;
-}
-
-.btn-small {
-    padding: 8px 16px;
-    border-radius: 8px;
+.btn-compact {
+    padding: 6px 12px;
+    border-radius: 6px;
     border: none;
-    cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 600;
+    cursor: pointer;
     transition: all 0.2s;
 }
 
-.btn-small.primary {
+.btn-compact.primary {
     background: linear-gradient(135deg, #6366f1, #8b5cf6);
     color: white;
 }
 
-.btn-small.primary:hover {
-    transform: translateY(-2px);
+.btn-compact.primary:hover:not(:disabled) {
+    transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
 }
 
-.btn-small.danger {
+.btn-compact.ghost {
+    background: rgba(100, 116, 139, 0.2);
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    color: #cbd5e1;
+}
+
+.btn-compact.ghost:hover:not(:disabled) {
+    background: rgba(100, 116, 139, 0.3);
+}
+
+.btn-compact.danger {
     background: linear-gradient(135deg, #ef4444, #dc2626);
     color: white;
 }
 
-.btn-small.danger:hover {
-    transform: translateY(-2px);
+.btn-compact.danger:hover {
+    transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
 }
 
-.builder-toggles {
-    display: flex;
-    gap: 20px;
-    align-items: center;
+.btn-compact:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
-.toggle-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #cbd5e1;
-    font-size: 0.95rem;
+.btn-tiny {
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: none;
+    font-size: 0.75rem;
+    font-weight: 600;
     cursor: pointer;
-    user-select: none;
+    transition: all 0.2s;
 }
 
-.toggle-label input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
+.btn-tiny.primary {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+}
+
+.btn-tiny.danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+/* GRAPH BUILDER */
+.graph-builder-compact {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    border-radius: 8px;
+    padding: 8px;
+    margin-top: 6px;
+}
+
+.builder-content-scroll {
+    max-height: 150px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.builder-toggles-compact {
+    display: flex;
+    gap: 12px;
+}
+
+.toggle-label-compact {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #cbd5e1;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.toggle-label-compact input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
     accent-color: #6366f1;
     cursor: pointer;
 }
 
-.builder-select {
+.builder-section-compact {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.builder-input-compact,
+.builder-select-compact,
+.weight-input-compact {
     background: rgba(30, 41, 59, 0.8);
     border: 1px solid rgba(100, 116, 139, 0.4);
     color: #e0e7ff;
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 0.95rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
     flex: 1;
-    min-width: 80px;
-    cursor: pointer;
+    min-width: 60px;
 }
 
-.builder-select:focus {
+.weight-input-compact {
+    max-width: 50px;
+}
+
+.builder-input-compact:focus,
+.builder-select-compact:focus {
     outline: none;
     border-color: #6366f1;
 }
 
-.weight-input {
-    max-width: 90px;
-}
-
-.builder-items {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.builder-items h4 {
-    color: #e0e7ff;
-    margin: 0;
-    font-size: 0.9rem;
-}
-
-.item-chips {
+.item-chips-compact {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 4px;
 }
 
-.chip {
+.chip-compact {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 5px 12px;
+    gap: 4px;
+    padding: 3px 8px;
     background: rgba(99, 102, 241, 0.15);
     border: 1px solid rgba(99, 102, 241, 0.3);
-    border-radius: 20px;
+    border-radius: 12px;
     color: #c7d2fe;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 500;
 }
 
-.edge-chip {
+.chip-compact.edge-chip {
     background: rgba(139, 92, 246, 0.15);
     border-color: rgba(139, 92, 246, 0.3);
 }
 
-.chip-weight {
+.chip-weight-compact {
     color: #94a3b8;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
 }
 
-.chip-remove {
+.chip-remove-compact {
     background: none;
     border: none;
     color: #ef4444;
     cursor: pointer;
-    font-size: 1rem;
-    padding: 0 2px;
+    font-size: 0.9rem;
+    padding: 0;
     line-height: 1;
     opacity: 0.7;
-    transition: opacity 0.2s;
 }
 
-.chip-remove:hover {
+.chip-remove-compact:hover {
     opacity: 1;
 }
 
-.builder-message {
+.builder-message-compact {
     margin: 0;
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 0.9rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
     font-weight: 500;
 }
 
-.builder-message.success {
+.builder-message-compact.success {
     background: rgba(34, 197, 94, 0.15);
     border: 1px solid rgba(34, 197, 94, 0.3);
     color: #86efac;
 }
 
-.builder-message.error {
+.builder-message-compact.error {
     background: rgba(239, 68, 68, 0.15);
     border: 1px solid rgba(239, 68, 68, 0.3);
     color: #fca5a5;
 }
 
-.builder-message.info {
-    background: rgba(99, 102, 241, 0.15);
-    border: 1px solid rgba(99, 102, 241, 0.3);
-    color: #c7d2fe;
-}
-
-.start-node-section {
+.start-node-section-compact {
     display: flex;
     align-items: center;
-    gap: 12px;
-    justify-content: center;
+    gap: 6px;
+    margin-top: 6px;
 }
 
-.start-node-section label {
+.start-node-section-compact label {
     color: #e0e7ff;
     font-weight: 600;
+    font-size: 0.8rem;
 }
 
-.node-select {
+.node-select-compact {
     background: rgba(30, 41, 59, 0.8);
     border: 1px solid rgba(100, 116, 139, 0.4);
     color: #e0e7ff;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 1rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
     cursor: pointer;
 }
 
-.node-select:focus {
+.node-select-compact:focus {
     outline: none;
     border-color: #6366f1;
 }
 
-.controls {
+/* CONTROLS */
+.controls-compact {
     display: flex;
-    gap: 12px;
+    gap: 6px;
     align-items: center;
     flex-wrap: wrap;
-    justify-content: center;
-}
-
-.btn {
-    padding: 10px 20px;
-    border-radius: 10px;
-    border: none;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn.primary {
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    color: white;
-}
-
-.btn.primary:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
-}
-
-.btn.ghost {
-    background: rgba(100, 116, 139, 0.2);
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
     border: 1px solid rgba(100, 116, 139, 0.3);
-    color: #cbd5e1;
+    border-radius: 10px;
+    padding: 8px;
+    flex-shrink: 0;
 }
 
-.btn.ghost:hover:not(:disabled) {
-    background: rgba(100, 116, 139, 0.3);
-}
-
-.btn.danger {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
-}
-
-.btn.danger:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
-}
-
-.btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.step-counter {
-    padding: 10px 20px;
+.step-counter-compact {
+    padding: 5px 10px;
     background: rgba(99, 102, 241, 0.1);
     border: 1px solid rgba(99, 102, 241, 0.3);
-    border-radius: 10px;
+    border-radius: 6px;
     color: #e0e7ff;
     font-weight: 600;
+    font-size: 0.75rem;
 }
 
-.speed {
+.speed-compact {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
     color: #e0e7ff;
+    font-size: 0.75rem;
 }
 
-.speed input[type="range"] {
-    width: 120px;
+.speed-slider {
+    width: 80px;
     cursor: pointer;
 }
 
-.canvas {
-    margin-bottom: 24px;
-}
-
-.canvas-legend {
+/* CANVAS */
+.canvas-compact {
+    flex: 1;
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    border-radius: 10px;
+    padding: 8px;
+    overflow: hidden;
     display: flex;
-    gap: 24px;
-    justify-content: center;
-    margin-top: 16px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    min-height: 0;
 }
 
-.legend-item {
+.canvas-legend-compact {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 8px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.legend-item-compact {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
     color: #cbd5e1;
-    font-size: 0.95rem;
+    font-size: 0.75rem;
 }
 
 .dot {
-    width: 24px;
-    height: 24px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
     border: 2px solid #1e293b;
 }
@@ -1125,275 +1093,166 @@ Include graph creation and traversal implementation.`
     background: #6366f1;
 }
 
-.pseudo-section {
-    margin-bottom: 24px;
-}
-
-.explanation {
+/* RIGHT COLUMN - Pseudo & Explanation */
+.pseudo-section-compact {
     background: rgba(30, 41, 59, 0.6);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(100, 116, 139, 0.3);
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 24px;
+    border-radius: 10px;
+    padding: 10px;
+    flex-shrink: 0;
 }
 
-.explanation h3 {
+.section-title-compact {
     color: #e0e7ff;
-    margin: 0 0 12px 0;
-    font-size: 1.3rem;
+    margin: 0 0 8px 0;
+    font-size: 1rem;
 }
 
-.explanation p {
+.pseudo-scroll {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.explanation-compact {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    border-radius: 10px;
+    padding: 10px;
+    flex-shrink: 0;
+}
+
+.explanation-compact h3 {
+    color: #e0e7ff;
+    margin: 0 0 6px 0;
+    font-size: 0.9rem;
+}
+
+.explanation-compact p {
     color: #94a3b8;
-    font-size: 1.05rem;
-    line-height: 1.6;
+    font-size: 0.85rem;
+    line-height: 1.4;
     margin: 0;
 }
 
-/* Distance Table (Dijkstra) */
-.distance-table-section {
+/* DATA TABLES */
+.data-tables-scroll {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+}
+
+.distance-table-section-compact {
     background: rgba(30, 41, 59, 0.6);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(100, 116, 139, 0.3);
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 24px;
+    border-radius: 10px;
+    padding: 10px;
+    flex-shrink: 0;
 }
 
-.distance-table-section h3 {
+.table-title-compact {
     color: #e0e7ff;
-    margin: 0 0 16px 0;
-    font-size: 1.3rem;
+    margin: 0 0 8px 0;
+    font-size: 0.9rem;
 }
 
-.distance-table-wrapper {
+.distance-table-wrapper-compact {
     overflow-x: auto;
 }
 
-.distance-table {
+.distance-table-compact {
     width: 100%;
     border-collapse: collapse;
     text-align: center;
 }
 
-.distance-table th,
-.distance-table td {
-    padding: 10px 16px;
+.distance-table-compact th,
+.distance-table-compact td {
+    padding: 6px 10px;
     border: 1px solid rgba(100, 116, 139, 0.3);
     color: #cbd5e1;
-    font-size: 0.95rem;
-    min-width: 60px;
+    font-size: 0.75rem;
+    min-width: 40px;
 }
 
-.distance-table th {
+.distance-table-compact th {
     background: rgba(99, 102, 241, 0.15);
     color: #e0e7ff;
     font-weight: 600;
 }
 
-.distance-table .row-label {
+.distance-table-compact .row-label {
     background: rgba(99, 102, 241, 0.1);
     color: #a5b4fc;
     font-weight: 600;
     text-align: left;
 }
 
-.distance-table .active-col {
+.distance-table-compact .active-col {
     background: rgba(34, 197, 94, 0.15);
     color: #86efac;
 }
 
-.distance-table .visited-col {
+.distance-table-compact .visited-col {
     background: rgba(99, 102, 241, 0.1);
 }
 
-.distance-table .updated-cell {
+.distance-table-compact .updated-cell {
     background: rgba(251, 191, 36, 0.2);
     color: #fde68a;
     font-weight: 700;
 }
 
-/* A* Specific Styles */
-.astar-table-section .label-desc {
-    font-size: 0.75rem;
-    color: #94a3b8;
-    font-weight: 400;
-    display: block;
-    margin-top: 2px;
-}
-
-.astar-table-section .f-score-row {
-    background: rgba(99, 102, 241, 0.05);
-}
-
-.astar-table-section .f-score-row td {
-    font-weight: 600;
-    color: #c7d2fe;
-}
-
-.status-badge {
+.status-badge-compact {
     display: inline-block;
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-size: 0.65rem;
     font-weight: 600;
     text-transform: uppercase;
 }
 
-.status-badge.open {
+.status-badge-compact.open {
     background: rgba(34, 197, 94, 0.2);
     color: #86efac;
     border: 1px solid rgba(34, 197, 94, 0.4);
 }
 
-.status-badge.closed {
+.status-badge-compact.closed {
     background: rgba(239, 68, 68, 0.2);
     color: #fca5a5;
     border: 1px solid rgba(239, 68, 68, 0.4);
 }
 
-.path-display {
-    margin-top: 20px;
-    padding: 16px;
-    background: rgba(34, 197, 94, 0.1);
-    border: 2px solid rgba(34, 197, 94, 0.3);
-    border-radius: 12px;
-    text-align: center;
-    font-size: 1.1rem;
-    color: #86efac;
-    font-weight: 600;
-}
-
-.path-display strong {
-    color: #22c55e;
-}
-
-/* Prim's MST Table */
-.prim-table-section {
-    margin-top: 24px;
-}
-
-.status-badge.mst-in {
+.status-badge-compact.mst-in {
     background: rgba(34, 197, 94, 0.15);
     color: #22c55e;
-    padding: 2px 10px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 700;
 }
 
-.mst-summary {
-    margin-top: 20px;
-    padding: 16px;
-    background: rgba(34, 197, 94, 0.1);
-    border: 2px solid rgba(34, 197, 94, 0.3);
-    border-radius: 12px;
-    text-align: center;
-    font-size: 1rem;
-    color: #86efac;
-    font-weight: 600;
-}
-
-.mst-summary strong {
-    color: #22c55e;
-}
-
-.mst-cost {
-    margin-left: 12px;
-    color: #fbbf24;
-    font-weight: 700;
-}
-
-/* Kruskal's Edge List Table */
-.kruskal-table-section {
-    margin-top: 24px;
-}
-
-.edge-list-wrapper {
-    overflow-x: auto;
-    margin: 16px 0;
-}
-
-.edge-list-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: rgba(30, 41, 59, 0.4);
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-.edge-list-table thead {
-    background: rgba(51, 65, 85, 0.6);
-}
-
-.edge-list-table th,
-.edge-list-table td {
-    padding: 12px 16px;
-    text-align: center;
-    border-bottom: 1px solid rgba(71, 85, 105, 0.3);
-}
-
-.edge-list-table th {
-    color: #94a3b8;
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.edge-list-table td {
-    color: #cbd5e1;
-    font-size: 1rem;
-}
-
-.edge-list-table tr.current-edge {
-    background: rgba(59, 130, 246, 0.15);
-    border-left: 3px solid #3b82f6;
-}
-
-.edge-list-table tr.accepted-edge {
-    background: rgba(34, 197, 94, 0.1);
-}
-
-.edge-list-table tr.processed-edge {
-    opacity: 0.6;
-}
-
-.status-badge.accepted {
+.status-badge-compact.accepted {
     background: rgba(34, 197, 94, 0.15);
     color: #22c55e;
-    padding: 4px 12px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 700;
 }
 
-.status-badge.skipped {
+.status-badge-compact.skipped {
     background: rgba(239, 68, 68, 0.15);
     color: #ef4444;
-    padding: 4px 12px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 700;
 }
 
-.status-badge.processing {
+.status-badge-compact.processing {
     background: rgba(59, 130, 246, 0.15);
     color: #3b82f6;
-    padding: 4px 12px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 700;
     animation: pulse 2s ease-in-out infinite;
 }
 
-.status-badge.pending {
+.status-badge-compact.pending {
     background: rgba(100, 116, 139, 0.15);
     color: #64748b;
-    padding: 4px 12px;
-    border-radius: 8px;
-    font-size: 0.85rem;
 }
 
 @keyframes pulse {
@@ -1401,58 +1260,121 @@ Include graph creation and traversal implementation.`
     50% { opacity: 0.6; }
 }
 
-/* Union-Find Section */
-.union-find-section {
-    margin-top: 24px;
-    padding: 20px;
-    background: rgba(30, 41, 59, 0.4);
-    border-radius: 12px;
-    border: 1px solid rgba(71, 85, 105, 0.3);
-}
-
-.union-find-section h4 {
-    color: #94a3b8;
-    font-size: 1rem;
-    margin-bottom: 16px;
+.path-display-compact,
+.mst-summary-compact {
+    margin-top: 8px;
+    padding: 8px;
+    background: rgba(34, 197, 94, 0.1);
+    border: 2px solid rgba(34, 197, 94, 0.3);
+    border-radius: 8px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #86efac;
     font-weight: 600;
 }
 
-.parent-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 12px;
-    margin-bottom: 16px;
+.mst-cost {
+    margin-left: 8px;
+    color: #fbbf24;
+    font-weight: 700;
 }
 
-.parent-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 10px;
-    background: rgba(51, 65, 85, 0.4);
+/* Kruskal Edge List */
+.edge-list-wrapper-compact {
+    overflow-x: auto;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.edge-list-table-compact {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(30, 41, 59, 0.4);
     border-radius: 8px;
-    font-size: 0.95rem;
+    overflow: hidden;
 }
 
-.node-label {
-    color: #60a5fa;
-    font-weight: 700;
+.edge-list-table-compact thead {
+    background: rgba(51, 65, 85, 0.6);
 }
 
-.parent-arrow {
-    color: #64748b;
+.edge-list-table-compact th,
+.edge-list-table-compact td {
+    padding: 6px 10px;
+    text-align: center;
+    border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+    font-size: 0.75rem;
 }
 
-.parent-value {
-    color: #22c55e;
-    font-weight: 700;
-}
-
-.union-find-hint {
+.edge-list-table-compact th {
     color: #94a3b8;
-    font-size: 0.9rem;
-    margin: 0;
-    font-style: italic;
+    font-weight: 600;
+}
+
+.edge-list-table-compact td {
+    color: #cbd5e1;
+}
+
+.edge-list-table-compact tr.current-edge {
+    background: rgba(59, 130, 246, 0.15);
+    border-left: 3px solid #3b82f6;
+}
+
+.edge-list-table-compact tr.accepted-edge {
+    background: rgba(34, 197, 94, 0.1);
+}
+
+.edge-list-table-compact tr.processed-edge {
+    opacity: 0.6;
+}
+
+/* SCROLLBAR STYLING */
+.builder-content-scroll::-webkit-scrollbar,
+.pseudo-scroll::-webkit-scrollbar,
+.data-tables-scroll::-webkit-scrollbar,
+.edge-list-wrapper-compact::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+.builder-content-scroll::-webkit-scrollbar-track,
+.pseudo-scroll::-webkit-scrollbar-track,
+.data-tables-scroll::-webkit-scrollbar-track,
+.edge-list-wrapper-compact::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.builder-content-scroll::-webkit-scrollbar-thumb,
+.pseudo-scroll::-webkit-scrollbar-thumb,
+.data-tables-scroll::-webkit-scrollbar-thumb,
+.edge-list-wrapper-compact::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.25);
+    border-radius: 4px;
+}
+
+.builder-content-scroll::-webkit-scrollbar-thumb:hover,
+.pseudo-scroll::-webkit-scrollbar-thumb:hover,
+.data-tables-scroll::-webkit-scrollbar-thumb:hover,
+.edge-list-wrapper-compact::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 102, 241, 0.4);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .two-column-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .visualizer-page {
+        overflow-y: auto;
+        height: auto;
+        min-height: 100vh;
+    }
+}
+
+.inline-icon {
+    vertical-align: middle;
+    display: inline-block;
+    margin-right: 4px;
 }
 </style>

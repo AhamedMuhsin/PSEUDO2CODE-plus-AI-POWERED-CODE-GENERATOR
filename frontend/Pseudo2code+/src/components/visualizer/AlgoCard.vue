@@ -18,13 +18,15 @@
         Try Now
       </button>
       <button class="info" @click="$emit('show-info', info)">
-        ⓘ
+        <Info :size="16" />
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
+import { Info, Check, X } from 'lucide-vue-next'
+
 defineProps({
   title: String,
   desc: String,

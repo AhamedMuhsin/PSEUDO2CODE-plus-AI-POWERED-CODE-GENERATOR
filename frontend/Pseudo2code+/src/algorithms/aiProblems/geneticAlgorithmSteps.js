@@ -8,6 +8,29 @@ export function geneticAlgorithmSteps() {
   const mutationRate = 0.1
   const generations = 15
 
+  function calculateFitness(chromosome) {
+    let score = 0
+    for (let i = 0; i < targetLength; i++) {
+      if (chromosome[i] === target[i]) score++
+    }
+    // Scale to 0-100
+    return (score / targetLength) * 100
+  }
+
+  function toPopulationObjects(pop) {
+    return pop.map(chrStr => ({
+      chromosome: chrStr.split(''),
+      fitness: calculateFitness(chrStr)
+    }))
+  }
+
+  function getStats(pop) {
+    const fitnesses = pop.map(c => calculateFitness(c))
+    const best = Math.max(...fitnesses)
+    const avg = fitnesses.reduce((a, b) => a + b, 0) / fitnesses.length
+    return { bestFitness: best, avgFitness: avg }
+  }
+
   // Initialize population
   let population = []
   for (let i = 0; i < populationSize; i++) {
@@ -18,29 +41,22 @@ export function geneticAlgorithmSteps() {
     population.push(chromosome)
   }
 
+  const initStats = getStats(population)
   steps.push({
-    population: [...population],
+    population: toPopulationObjects(population),
     generation: 0,
     activePseudoLine: 1,
     explanation: `Initialized population of ${populationSize} chromosomes. Target: ${target}`,
-    fitness: population.map(c => calculateFitness(c)),
-    bestChromosome: null,
+    bestFitness: initStats.bestFitness,
+    avgFitness: initStats.avgFitness,
     status: 'start'
   })
 
-  function calculateFitness(chromosome) {
-    let score = 0
-    for (let i = 0; i < targetLength; i++) {
-      if (chromosome[i] === target[i]) score++
-    }
-    return score
-  }
-
-  function selectParent(population, fitnessScores) {
+  function selectParent(pop, fitnesses) {
     // Tournament selection
-    const i1 = Math.floor(Math.random() * population.length)
-    const i2 = Math.floor(Math.random() * population.length)
-    return fitnessScores[i1] > fitnessScores[i2] ? population[i1] : population[i2]
+    const i1 = Math.floor(Math.random() * pop.length)
+    const i2 = Math.floor(Math.random() * pop.length)
+    return fitnesses[i1] > fitnesses[i2] ? pop[i1] : pop[i2]
   }
 
   function crossover(parent1, parent2) {
@@ -65,27 +81,28 @@ export function geneticAlgorithmSteps() {
   for (let gen = 1; gen <= generations; gen++) {
     const fitnessScores = population.map(c => calculateFitness(c))
     const bestFitness = Math.max(...fitnessScores)
+    const avgFitness = fitnessScores.reduce((a, b) => a + b, 0) / fitnessScores.length
     const bestIndex = fitnessScores.indexOf(bestFitness)
     const bestChromosome = population[bestIndex]
 
     steps.push({
-      population: [...population],
+      population: toPopulationObjects(population),
       generation: gen,
       activePseudoLine: 3,
-      explanation: `Generation ${gen}: Evaluating fitness. Best fitness: ${bestFitness}/${targetLength}`,
-      fitness: [...fitnessScores],
-      bestChromosome,
+      explanation: `Generation ${gen}: Evaluating fitness. Best: ${bestFitness.toFixed(1)}% | Avg: ${avgFitness.toFixed(1)}%`,
+      bestFitness,
+      avgFitness,
       status: 'evaluating'
     })
 
-    if (bestFitness === targetLength) {
+    if (bestFitness >= 100) {
       steps.push({
-        population: [...population],
+        population: toPopulationObjects(population),
         generation: gen,
         activePseudoLine: 12,
         explanation: `✅ Target reached! Chromosome ${bestChromosome} matches ${target}`,
-        fitness: [...fitnessScores],
-        bestChromosome,
+        bestFitness,
+        avgFitness,
         status: 'success'
       })
       break
@@ -93,12 +110,12 @@ export function geneticAlgorithmSteps() {
 
     // Selection
     steps.push({
-      population: [...population],
+      population: toPopulationObjects(population),
       generation: gen,
       activePseudoLine: 5,
       explanation: `Selecting parents based on fitness (tournament selection)...`,
-      fitness: [...fitnessScores],
-      bestChromosome,
+      bestFitness,
+      avgFitness,
       status: 'selection'
     })
 
@@ -113,13 +130,12 @@ export function geneticAlgorithmSteps() {
       const parent2 = selectParent(population, fitnessScores)
 
       steps.push({
-        population: [...population],
+        population: toPopulationObjects(population),
         generation: gen,
         activePseudoLine: 7,
-        explanation: `Crossover: ${parent1} + ${parent2}`,
-        fitness: [...fitnessScores],
-        bestChromosome,
-        parents: [parent1, parent2],
+        explanation: `Crossover: ${parent1} × ${parent2}`,
+        bestFitness,
+        avgFitness,
         status: 'crossover'
       })
 
@@ -130,12 +146,12 @@ export function geneticAlgorithmSteps() {
 
       if (mutatedChild1 !== child1 || mutatedChild2 !== child2) {
         steps.push({
-          population: [...population],
+          population: toPopulationObjects(population),
           generation: gen,
           activePseudoLine: 9,
           explanation: `Mutation applied! ${child1} → ${mutatedChild1}`,
-          fitness: [...fitnessScores],
-          bestChromosome,
+          bestFitness,
+          avgFitness,
           status: 'mutation'
         })
       }
@@ -147,14 +163,15 @@ export function geneticAlgorithmSteps() {
     }
 
     population = newPopulation.slice(0, populationSize)
+    const newStats = getStats(population)
 
     steps.push({
-      population: [...population],
+      population: toPopulationObjects(population),
       generation: gen,
       activePseudoLine: 11,
       explanation: `New generation created. Population evolved.`,
-      fitness: population.map(c => calculateFitness(c)),
-      bestChromosome,
+      bestFitness: newStats.bestFitness,
+      avgFitness: newStats.avgFitness,
       status: 'new_generation'
     })
   }

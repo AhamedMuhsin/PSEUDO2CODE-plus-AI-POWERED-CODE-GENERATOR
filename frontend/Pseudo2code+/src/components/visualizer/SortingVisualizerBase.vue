@@ -1,106 +1,113 @@
 <template>
     <main class="visualizer-page">
-        <div class="container">
+        <div class="container-compact">
             <!-- BACK -->
-            <div class="top-section">
-                <button class="back-btn" @click="router.push('/algorithm-hub')">
+            <div class="top-section-compact">
+                <button class="back-btn-compact" @click="router.push('/algorithm-hub')">
                     <img :src="arrowLeft" class="arrow" />
                     Back
                 </button>
             </div>
+            
             <!-- HEADER -->
-            <section class="operation-details">
-                <div class="operation-header">
-                    <header class="page-header">
-                        <div class="operation-title-group">
-                            <h1>{{ title }}</h1>
-                            <button v-if="meta" class="info-btn" @click="showInfo = true">ⓘ</button>
-                        </div>
-                        <p class="operation-desc">{{ description }}</p>
-                        <div v-if="meta" class="algo-badges">
-                            <span class="badge">Best: {{ meta.best }}</span>
-                            <span class="badge">Avg: {{ meta.average }}</span>
-                            <span class="badge">Worst: {{ meta.worst }}</span>
-                            <span class="badge">Space: {{ meta.space }}</span>
+            <header class="page-header-compact">
+                <div class="header-content">
+                    <div class="operation-title-group-compact">
+                        <h1>{{ title }}</h1>
+                        <button v-if="meta" class="info-btn-compact" @click="showInfo = true"><Info :size="16" /></button>
+                    </div>
+                    <p class="operation-desc-compact">{{ description }}</p>
+                    <div v-if="meta" class="algo-badges-compact">
+                        <span class="badge-compact">Best: {{ meta.best }}</span>
+                        <span class="badge-compact">Avg: {{ meta.average }}</span>
+                        <span class="badge-compact">Worst: {{ meta.worst }}</span>
+                        <span class="badge-compact">Space: {{ meta.space }}</span>
+                        <span class="badge-compact" :class="meta.stable ? 'stable' : 'unstable'">
+                            {{ meta.stable ? 'Stable' : 'Unstable' }}
+                        </span>
+                    </div>
+                </div>
+            </header>
 
-                            <span class="badge" :class="meta.stable ? 'stable' : 'unstable'">
-                                {{ meta.stable ? 'Stable' : 'Unstable' }}
-                            </span>
-                        </div>
-                    </header>
-
+            <!-- TWO COLUMN LAYOUT -->
+            <div class="two-column-layout">
+                <!-- LEFT COLUMN -->
+                <div class="left-column">
                     <!-- ARRAY INPUT -->
-                    <section class="array-input">
-                        <button class="btn ghost" @click="generateRandom">
-                            Random Array
-                        </button>
-
-                        <input v-model="customInput" placeholder="Custom array (Press Enter) : 5,2,8,1"
-                            @keydown.enter="applyCustomArray" />
-                        <button class="btn ghost" @click="goToGenerateCode">
-                            Generate Code
-                        </button>
-
+                    <section class="array-input-compact">
+                        <div class="input-row-compact">
+                            <button class="btn-compact ghost" @click="generateRandom">
+                                Random
+                            </button>
+                            <input v-model="customInput" placeholder="5,2,8,1"
+                                @keydown.enter="applyCustomArray" class="custom-input-compact" />
+                            <button class="btn-compact ghost" @click="goToGenerateCode">
+                                Code
+                            </button>
+                        </div>
                     </section>
 
                     <!-- CONTROLS -->
-                    <section class="controls">
-                        <button class="btn ghost" @click="prev" :disabled="stepIndex === 0">Prev</button>
-                        <button class="btn primary" @click="playing ? pause() : play()">
+                    <section class="controls-compact">
+                        <button class="btn-compact ghost" @click="prev" :disabled="stepIndex === 0">Prev</button>
+                        <button class="btn-compact primary" @click="playing ? pause() : play()">
                             {{ playing ? 'Pause' : 'Play' }}
                         </button>
-                        <button class="btn ghost" @click="next" :disabled="stepIndex === steps.length - 1">Next</button>
-                        <button class="btn danger" @click="reset">Reset</button>
-
-                        <div class="step-counter">
-                            Step {{ currentStepNumber }} / {{ totalSteps }}
-                        </div>
-
-                        <div class="speed">
+                        <button class="btn-compact ghost" @click="next" :disabled="stepIndex === steps.length - 1">Next</button>
+                        <button class="btn-compact danger" @click="reset">Reset</button>
+                        <div class="step-counter-compact">{{ currentStepNumber }}/{{ totalSteps }}</div>
+                        <div class="speed-compact">
                             <label>Speed</label>
-                            <input type="range" min="1" max="5" step="1" v-model="speedLevel" />
-                            <span>{{ ['Slow', 'Normal', 'Fast', 'Very Fast', 'Ultra'][speedLevel - 1] }}</span>
+                            <input type="range" min="1" max="5" step="1" v-model="speedLevel" class="speed-slider" />
+                        </div>
+                    </section>
+                    
+                    <!-- CANVAS -->
+                    <section class="canvas-compact">
+                        <ArrayCanvas :array="currentStep.array" :active="currentStep.active" :swap="currentStep.swap"
+                            :sorted="currentStep.sorted || []" :range="currentStep.range || null"
+                            :pivot="currentStep.pivot ?? null" :max="maxValue" />
+                        <div class="canvas-legend-compact">
+                            <div class="legend-item-compact">
+                                <span class="dot normal"></span>
+                                <span>Unsorted</span>
+                            </div>
+                            <div class="legend-item-compact">
+                                <span class="dot active"></span>
+                                <span>Comparing</span>
+                            </div>
+                            <div class="legend-item-compact">
+                                <span class="dot swap"></span>
+                                <span>Swapping</span>
+                            </div>
+                            <div class="legend-item-compact">
+                                <span class="dot sorted"></span>
+                                <span>Sorted</span>
+                            </div>
+                            <div class="legend-item-compact">
+                                <span class="dot pivot"></span>
+                                <span>Pivot</span>
+                            </div>
                         </div>
                     </section>
                 </div>
-            </section>
-            <!-- CANVAS -->
-            <section class="canvas">
-                <ArrayCanvas :array="currentStep.array" :active="currentStep.active" :swap="currentStep.swap"
-                    :sorted="currentStep.sorted || []" :range="currentStep.range || null"
-                    :pivot="currentStep.pivot ?? null" :max="maxValue" />
-                <div class="canvas-legend">
-                    <div class="legend-item">
-                        <span class="dot normal"></span>
-                        <span>Unsorted</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="dot active"></span>
-                        <span>Comparing</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="dot swap"></span>
-                        <span>Swapping</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="dot sorted"></span>
-                        <span>Sorted</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="dot pivot"></span>
-                        <span>Pivot</span>
-                    </div>
-                </div>
-            </section>
-            <section class="pseudo-section">
-                <PseudoCodePanel :code="pseudoCode" :activeLine="currentStep.codeLine" />
-            </section>
+                
+                <!-- RIGHT COLUMN -->
+                <div class="right-column">
+                    <section class="pseudo-section-compact">
+                        <h3 class="section-title-compact">Pseudocode</h3>
+                        <div class="pseudo-scroll">
+                            <PseudoCodePanel :code="pseudoCode" :activeLine="currentStep.codeLine" />
+                        </div>
+                    </section>
 
-            <!-- EXPLANATION -->
-            <section class="explanation">
-                <h3>Step Explanation</h3>
-                <p>{{ currentStep.explanation }}</p>
-            </section>
+                    <!-- EXPLANATION -->
+                    <section class="explanation-compact">
+                        <h3 class="section-title-compact">Explanation</h3>
+                        <p>{{ currentStep.explanation }}</p>
+                    </section>
+                </div>
+            </div>
         </div>
     </main>
     <AlgorithmInfoModal v-if="showInfo && meta" :info="meta" @close="showInfo = false" />
@@ -115,6 +122,7 @@ const router = useRouter();
 import AlgorithmInfoModal from "@/components/visualizer/AlgorithmInfoModal.vue"
 import PseudoCodePanel from './PseudoCodePanel.vue'
 import ArrayCanvas from './canvases/ArrayCanvas.vue'
+import { Info } from 'lucide-vue-next'
 
 const props = defineProps({
     title: String,
@@ -236,49 +244,309 @@ Take a random input array.`
 </script>
 
 <style scoped>
+/* COMPACT LAYOUT */
 .visualizer-page {
-    min-height: 100vh;
+    height: 100vh;
     background: radial-gradient(circle at top, #0f172a, #020617);
-    padding: 40px 24px;
+    padding: 12px;
+    overflow: hidden;
 }
 
-.container {
-    max-width: 1100px;
-    margin: 0 auto;
-}
-
-/* HEADER */
-.canvas {
-    position: relative;
-}
-
-/* Legend container */
-.canvas-legend {
-    position: absolute;
-    top: 15px;
-    right: 10px;
+.container-compact {
+    max-width: 100%;
+    height: 100%;
     display: flex;
-    gap: 14px;
-    padding: 8px 12px;
-    background: rgba(15, 23, 42, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    font-size: 0.75rem;
-    color: #e5e7eb;
+    flex-direction: column;
+    gap: 8px;
 }
 
-/* Legend item */
-.legend-item {
+.top-section-compact {
+    flex-shrink: 0;
+}
+
+.back-btn-compact {
     display: flex;
     align-items: center;
     gap: 6px;
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    color: #e0e7ff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.85rem;
 }
 
-/* Dots */
+.back-btn-compact:hover {
+    background: rgba(99, 102, 241, 0.25);
+    transform: translateX(-2px);
+}
+
+.arrow {
+    width: 16px;
+    height: 16px;
+}
+
+.page-header-compact {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    border-radius: 12px;
+    padding: 12px 16px;
+    flex-shrink: 0;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.operation-title-group-compact {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.operation-title-group-compact h1 {
+    font-size: 1.4rem;
+    background: linear-gradient(135deg, #818cf8, #c084fc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+}
+
+.info-btn-compact {
+    background: rgba(99, 102, 241, 0.2);
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    color: #a5b4fc;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.info-btn-compact:hover {
+    background: rgba(99, 102, 241, 0.3);
+    transform: scale(1.1);
+}
+
+.operation-desc-compact {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+.algo-badges-compact {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.badge-compact {
+    padding: 4px 8px;
+    background: rgba(100, 116, 139, 0.2);
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    border-radius: 6px;
+    color: #cbd5e1;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.badge-compact.stable {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: rgba(34, 197, 94, 0.3);
+    color: #86efac;
+}
+
+.badge-compact.unstable {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+}
+
+/* TWO COLUMN LAYOUT */
+.two-column-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.left-column, .right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+}
+
+/* ARRAY INPUT */
+.array-input-compact {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    border-radius: 10px;
+    padding: 10px;
+    flex-shrink: 0;
+}
+
+.input-row-compact {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.custom-input-compact {
+    flex: 1;
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(100, 116, 139, 0.4);
+    color: #e0e7ff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+}
+
+.custom-input-compact:focus {
+    outline: none;
+    border-color: #6366f1;
+}
+
+.custom-input-compact::placeholder {
+    color: #64748b;
+    font-size: 0.75rem;
+}
+
+/* BUTTONS */
+.btn-compact {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-compact.primary {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+}
+
+.btn-compact.primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.btn-compact.ghost {
+    background: rgba(100, 116, 139, 0.2);
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    color: #cbd5e1;
+}
+
+.btn-compact.ghost:hover:not(:disabled) {
+    background: rgba(100, 116, 139, 0.3);
+}
+
+.btn-compact.danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+.btn-compact.danger:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.btn-compact:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* CONTROLS */
+.controls-compact {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    border-radius: 10px;
+    padding: 8px;
+    flex-shrink: 0;
+}
+
+.step-counter-compact {
+    padding: 5px 10px;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 6px;
+    color: #e0e7ff;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.speed-compact {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #e0e7ff;
+    font-size: 0.75rem;
+}
+
+.speed-slider {
+    width: 80px;
+    cursor: pointer;
+}
+
+/* CANVAS */
+.canvas-compact {
+    flex: 1;
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    border-radius: 10px;
+    padding: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    position: relative;
+}
+
+.canvas-legend-compact {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 8px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.legend-item-compact {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #cbd5e1;
+    font-size: 0.75rem;
+}
+
 .dot {
-    width: 10px;
-    height: 10px;
+    width: 16px;
+    height: 16px;
     border-radius: 3px;
+    border: 2px solid #1e293b;
 }
 
 .dot.normal {
@@ -299,282 +567,86 @@ Take a random input array.`
 
 .dot.pivot {
     background: #a855f7;
-    /* purple */
 }
 
-
-/* .back {
-    background: transparent;
-    border: none;
-    color: #c7d2fe;
-    cursor: pointer;
-    font-size: 0.9rem;
-} */
-.pseudo-section {
-    margin-top: 24px;
-    margin-bottom: 24px;
+/* RIGHT COLUMN */
+.pseudo-section-compact {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    border-radius: 10px;
+    padding: 10px;
+    flex-shrink: 0;
 }
 
-/* PAGE HEADER */
-.page-header {
-    margin-bottom: 24px;
-}
-
-.page-header h1 {
-    color: white;
-    font-size: 2.2rem;
+.section-title-compact {
+    color: #e0e7ff;
     margin: 0 0 8px 0;
-    background: linear-gradient(135deg, #a78bfa, #818cf8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.page-header p {
-    color: #94a3b8;
     font-size: 1rem;
-    margin: 0;
-    font-weight: 400;
 }
 
-.array-input {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 20px;
-    max-width: 820px;
+.pseudo-scroll {
+    max-height: 250px;
+    overflow-y: auto;
 }
 
-.array-input input {
+.explanation-compact {
     flex: 1;
-    padding: 10px 14px;
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(100, 116, 139, 0.3);
     border-radius: 10px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: white;
+    padding: 10px;
+    overflow-y: auto;
+    min-height: 0;
 }
 
-/* CONTROLS */
-.controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    align-items: center;
-    margin-bottom: 28px;
-    padding-top: 6px;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.btn {
-    padding: 8px 16px;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-}
-
-.btn.primary {
-    background: #6366f1;
-    color: white;
-}
-
-.btn.ghost {
-    background: rgba(255, 255, 255, 0.08);
-    color: white;
-}
-
-.btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.btn.danger {
-    background: #ef4444;
-    color: white;
-}
-
-.step-counter {
-    margin-left: 16px;
-    font-size: 0.85rem;
-    color: #cbd5f5;
-    opacity: 0.85;
-    white-space: nowrap;
-}
-
-.speed {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.85rem;
-}
-
-.algo-badges {
-    display: flex;
-    gap: 10px;
-    margin-top: 8px;
-    flex-wrap: wrap;
-}
-
-.badge {
-    font-size: 0.75rem;
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
-    color: #e5e7eb;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.badge.stable {
-    background: rgba(34, 197, 94, 0.15);
-    color: #22c55e;
-    border-color: rgba(34, 197, 94, 0.3);
-}
-
-.badge.unstable {
-    background: rgba(239, 68, 68, 0.15);
-    color: #ef4444;
-    border-color: rgba(239, 68, 68, 0.3);
-}
-
-/* CANVAS */
-.canvas {
-    background: rgba(15, 23, 42, 0.85);
-    border-radius: 16px;
-    padding: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    margin-bottom: 28px;
-}
-
-.bars {
-    display: flex;
-    align-items: flex-end;
-    gap: 12px;
-    height: 240px;
-}
-
-.bar {
-    flex: 1;
-    background: #6366f1;
-    border-radius: 8px 8px 0 0;
-    color: white;
-    font-size: 0.75rem;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 6px;
-}
-
-.operation-details {
-    background: rgba(15, 23, 42, 0.85);
-    border: 1px solid rgba(99, 102, 241, 0.2);
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.operation-header {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.operation-title-group {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.info-btn {
-    background: rgba(99, 102, 241, 0.2);
-    border: 1px solid rgba(99, 102, 241, 0.4);
-    color: #a78bfa;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    transition: all 0.2s ease;
-}
-
-.info-btn:hover {
-    background: rgba(99, 102, 241, 0.35);
-    border-color: rgba(167, 139, 250, 0.6);
-    transform: scale(1.05);
-}
-
-.operation-details h2 {
-    color: #cbd5f5;
-    font-size: 1.5rem;
-    margin: 0;
-    font-weight: 600;
-}
-.operation-desc {
-  color: #94a3b8;
-  font-size: 0.95rem;
-  margin: 0;
-  line-height: 1.5;
-}
-
-/* EXPLANATION */
-.explanation {
-    background: rgba(15, 23, 42, 0.85);
-    border-radius: 16px;
-    padding: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.explanation h3 {
-    margin-bottom: 6px;
-}
-
-.explanation p {
-    color: #94a3b8;
-}
-
-.top-section {
-    margin-bottom: 16px;
-}
-
-.back-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(99, 102, 241, 0.15);
-    border: 1px solid rgba(99, 102, 241, 0.3);
-    color: #a78bfa;
-    padding: 8px 12px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
+.explanation-compact h3 {
+    color: #e0e7ff;
+    margin: 0 0 6px 0;
     font-size: 0.9rem;
-    font-weight: 500;
 }
 
-.back-btn:hover {
-    background: rgba(99, 102, 241, 0.25);
-    border-color: rgba(99, 102, 241, 0.5);
-    transform: translateX(-2px);
+.explanation-compact p {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin: 0;
 }
 
-.arrow {
-    width: 18px;
-    height: 18px;
+/* SCROLLBAR STYLING */
+.pseudo-scroll::-webkit-scrollbar,
+.explanation-compact::-webkit-scrollbar {
+    width: 6px;
 }
 
-/* RESPONSIVE */
-@media (max-width: 640px) {
-    .visualizer-header {
-        flex-direction: column;
+.pseudo-scroll::-webkit-scrollbar-track,
+.explanation-compact::-webkit-scrollbar-track {
+    background: rgba(30, 41, 59, 0.3);
+    border-radius: 3px;
+}
+
+.pseudo-scroll::-webkit-scrollbar-thumb,
+.explanation-compact::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.3);
+    border-radius: 3px;
+}
+
+.pseudo-scroll::-webkit-scrollbar-thumb:hover,
+.explanation-compact::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 102, 241, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .two-column-layout {
+        grid-template-columns: 1fr;
     }
-
-    .speed {
-        margin-left: 0;
+    
+    .visualizer-page {
+        overflow-y: auto;
+        height: auto;
+        min-height: 100vh;
     }
 }
 </style>

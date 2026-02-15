@@ -1,76 +1,63 @@
 <template>
-  <div class="array-op-visualizer">
-    <!-- HEADER -->
-    <section class="operation-details">
-
-      <div class="operation-header">
-        <div class="operation-title-group">
-          <h1>{{ title }}</h1>
-          <button v-if="info" class="info-btn" @click="showInfo = true">ⓘ</button>
+  <main class="visualizer-page">
+    <div class="container-compact">
+      <header class="page-header-compact">
+        <div class="header-top-row">
+          <div class="operation-title-group-compact">
+            <h1>{{ title }}</h1>
+            <button v-if="info" class="info-btn-compact" @click="showInfo = true"><Info :size="16" /></button>
+          </div>
         </div>
-        <p class="operation-desc">{{ description }}</p>
+        <p class="operation-desc-compact">{{ description }}</p>
+        <div v-if="info" class="algo-badges-compact">
+          <span class="badge-compact">Time: {{ info.time }}</span>
+          <span class="badge-compact">Space: {{ info.space }}</span>
+        </div>
+      </header>
+
+      <div class="two-column-layout">
+        <div class="left-column">
+          <section class="input-section-compact">
+            <div class="input-row-compact">
+              <button class="btn-compact ghost" @click="generateRandom">Random</button>
+              <input v-model="customInput" placeholder="5,2,8,1" @keydown.enter="applyCustomArray" class="custom-input-compact" />
+              <button class="btn-compact ghost" @click="goToGenerateCode">Code</button>
+            </div>
+            <OperationControls :type="operationType" :mode="operationMode" v-model="operationParams" />
+          </section>
+
+          <section class="controls-compact">
+            <button class="btn-compact ghost" @click="prev" :disabled="stepIndex === 0">Prev</button>
+            <button class="btn-compact primary" @click="play" :disabled="!isPlayable">{{ playing ? 'Pause' : 'Play' }}</button>
+            <button class="btn-compact ghost" @click="next" :disabled="stepIndex === steps.length - 1">Next</button>
+            <button class="btn-compact danger" @click="reset">Reset</button>
+            <div class="step-counter-compact">{{ stepIndex + 1 }}/{{ steps.length }}</div>
+          </section>
+
+          <section class="canvas-compact">
+            <ArrayOperationCanvas :array="currentStep.array" :activeIndex="currentStep.activeIndex"
+              :foundIndex="currentStep.foundIndex" :removedIndex="currentStep.removedIndex"
+              :insertedIndex="currentStep.insertedIndex" />
+          </section>
+        </div>
+
+        <div class="right-column">
+          <section class="pseudo-section-compact">
+            <h3 class="section-title-compact">Pseudocode</h3>
+            <div class="pseudo-scroll">
+              <PseudoCodePanel v-if="pseudocode" :code="pseudocode" :activeLine="currentStep.activeLine" />
+            </div>
+          </section>
+
+          <section class="explanation-compact">
+            <h3>Explanation</h3>
+            <p>{{ currentStep.explanation }}</p>
+          </section>
+        </div>
       </div>
-      <div v-if="info" class="complexity-badges">
-        <span class="badge">⏱️ Time: {{ info.time }}</span>
-        <span class="badge">💾 Space: {{ info.space }}</span>
-        <span class="badge" :class="info.stable ? 'stable' : 'unstable'">
-          {{ info.stable ? '✓ Stable' : '✗ Unstable' }}
-        </span>
-      </div>
-
-      <!-- ARRAY INPUT -->
-      <section class="array-input">
-        <button class="btn random-btn" @click="generateRandom">
-          Random Array
-        </button>
-
-        <input v-model="customInput" placeholder="Custom array (Press Enter): 5,2,8,1"
-          @keydown.enter="applyCustomArray" />
-
-        <button class="btn ghost" @click="goToGenerateCode">
-          Generate Code
-        </button>
-      </section>
-
-      <OperationControls :type="operationType" :mode="operationMode" v-model="operationParams" />
-
-      <!-- CONTROLS -->
-      <section class="controls">
-        <button @click="prev" :disabled="stepIndex === 0">Prev</button>
-        <button @click="play" :disabled="!isPlayable">
-          {{ playing ? "Pause" : "Play" }}
-        </button>
-
-        <button @click="next" :disabled="stepIndex === steps.length - 1">
-          Next
-        </button>
-        <button class="danger" @click="reset">Reset</button>
-
-        <span class="step">
-          Step {{ stepIndex + 1 }} / {{ steps.length }}
-        </span>
-      </section>
-    </section>
-    <!-- CANVAS -->
-    <section class="canvas">
-      <ArrayOperationCanvas :array="currentStep.array" :activeIndex="currentStep.activeIndex"
-        :foundIndex="currentStep.foundIndex" :removedIndex="currentStep.removedIndex"
-        :insertedIndex="currentStep.insertedIndex" />
-
-    </section>
-
-    <section class="pseudo-code">
-      <PseudoCodePanel v-if="pseudocode" :code="pseudocode" :activeLine="currentStep.activeLine" />
-    </section>
-    <!-- EXPLANATION -->
-    <section class="explanation">
-      <h3>Step Explanation</h3>
-      <p>{{ currentStep.explanation }}</p>
-    </section>
-
-    <!-- INFO MODAL -->
+    </div>
     <AlgorithmInfoModal v-if="showInfo && info" :info="info" @close="showInfo = false" />
-  </div>
+  </main>
 </template>
 
 <script setup>
@@ -81,6 +68,7 @@ import { useRoute } from "vue-router"
 import { useRouter } from "vue-router"
 import PseudoCodePanel from "@/components/visualizer/PseudoCodePanel.vue"
 import AlgorithmInfoModal from "@/components/visualizer/AlgorithmInfoModal.vue"
+import { Info, Check, X } from 'lucide-vue-next'
 
 const props = defineProps({
   title: String,
@@ -229,244 +217,166 @@ Take a random input array and demonstrate the operation.`
 </script>
 
 <style scoped>
-.array-op-visualizer {
-  margin-top: 40px;
-}
-
-.container {
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.header {
-  margin-bottom: 24px;
-}
-
-.operation-details {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 24px;
+.visualizer-page {
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  overflow: hidden;
 }
-
-.operation-header {
+.container-compact {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  padding: 10px 18px;
+  min-height: 0;
+  overflow: hidden;
 }
-
-.operation-title-group {
+.page-header-compact { margin-bottom: 6px; }
+.header-top-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
-}
-
-.operation-details h2 {
-  color: #cbd5f5;
-  font-size: 1.5rem;
-  margin: 0;
-  font-weight: 600;
-}
-
-.info-btn {
-  background: rgba(99, 102, 241, 0.2);
-  border: 1px solid rgba(99, 102, 241, 0.4);
-  color: #a78bfa;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-}
-
-.info-btn:hover {
-  background: rgba(99, 102, 241, 0.35);
-  border-color: rgba(167, 139, 250, 0.6);
-  transform: scale(1.05);
-}
-
-.operation-desc {
-  color: #94a3b8;
-  font-size: 0.95rem;
-  margin: 0;
-  line-height: 1.5;
-}
-.complexity-badges {
-  display: flex;
-  gap: 8px;
   flex-wrap: wrap;
 }
-
-.badge {
-  background: rgba(99, 102, 241, 0.15);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: #cbd5f5;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.badge.stable {
-  background: rgba(34, 197, 94, 0.15);
-  border-color: rgba(34, 197, 94, 0.3);
-  color: #86efac;
-}
-
-.badge.unstable {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.3);
-  color: #fca5a5;
-}
-
-.header p {
-  color: #94a3b8;
-}
-
-.controls {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.controls button {
-  padding: 8px 14px;
-  border-radius: 10px;
-  border: none;
-  background: #6366f1;
-  color: white;
-  cursor: pointer;
-}
-
-.controls button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.controls .danger {
-  background: #ef4444;
-}
-
-.pseudo-code {
-  margin-bottom: 24px;
-  background: rgba(15, 23, 42, 0.85);
-  padding: 20px;
-  border-radius: 16px;
-}
-
-.step {
-  margin-left: auto;
-  color: #cbd5f5;
-}
-
-.canvas {
-  background: rgba(15, 23, 42, 0.85);
-  padding: 24px;
-  border-radius: 16px;
-  margin-bottom: 24px;
-}
-
-.explanation {
-  background: rgba(15, 23, 42, 0.85);
-  padding: 20px;
-  border-radius: 16px;
-}
-
-.explanation p {
-  color: #94a3b8;
-}
-
-.array-input {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.array-input input {
-  flex: 1;
-  max-width: 420px;
-  padding: 9px 14px;
-  border-radius: 10px;
-  background: rgba(15, 23, 42, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: white;
-  font-size: 0.9rem;
-}
-
-.random-btn {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.btn.ghost {
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 8px 16px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.btn.ghost:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.25);
-}
-
-.random-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.45);
-}
-
-.header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.header-top h1 {
+.operation-title-group-compact { display: flex; align-items: center; gap: 8px; }
+.page-header-compact h1 {
+  font-size: 1.15rem;
   margin: 0;
-  font-size: 2rem;
   background: linear-gradient(135deg, #a78bfa, #818cf8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
-.info-btn {
-  background: rgba(99, 102, 241, 0.2);
-  border: 1px solid rgba(99, 102, 241, 0.4);
+.info-btn-compact {
+  background: rgba(99,102,241,.18);
+  border: 1px solid rgba(99,102,241,.35);
   color: #a78bfa;
-  width: 32px;
-  height: 32px;
+  width: 26px; height: 26px;
   border-radius: 50%;
   cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+  padding: 0;
+}
+.info-btn-compact:hover { background: rgba(99,102,241,.32); }
+.operation-desc-compact { color: #94a3b8; font-size: .78rem; margin: 2px 0 0; line-height: 1.3; }
+.algo-badges-compact { display: flex; gap: 6px; margin-top: 4px; }
+.badge-compact {
+  background: rgba(99,102,241,.12);
+  border: 1px solid rgba(99,102,241,.25);
+  color: #cbd5f5;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: .72rem;
+  font-weight: 500;
+}
+.two-column-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.left-column, .right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+  overflow: hidden;
+}
+.input-section-compact { flex-shrink: 0; }
+.input-row-compact { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 4px; }
+.custom-input-compact {
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: rgba(2,6,23,.55);
+  border: 1px solid rgba(99,102,241,.25);
+  color: #fff;
+  font-size: .78rem;
+  flex: 1;
+  min-width: 80px;
+  transition: border-color .2s;
+}
+.custom-input-compact:focus { outline: none; border-color: #6366f1; }
+.controls-compact { display: flex; gap: 6px; align-items: center; flex-shrink: 0; flex-wrap: wrap; }
+.step-counter-compact { margin-left: auto; color: #94a3b8; font-size: .75rem; font-weight: 500; }
+.btn-compact {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 7px;
+  font-size: .76rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s;
+  border: none;
+  white-space: nowrap;
+}
+.btn-compact.ghost { background: rgba(99,102,241,.12); border: 1px solid rgba(99,102,241,.25); color: #a78bfa; }
+.btn-compact.ghost:hover { background: rgba(99,102,241,.22); }
+.btn-compact.primary { background: #6366f1; color: #fff; }
+.btn-compact.primary:hover:not(:disabled) { background: #4f46e5; box-shadow: 0 3px 10px rgba(99,102,241,.35); }
+.btn-compact.danger { background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.25); color: #fca5a5; }
+.btn-compact.danger:hover:not(:disabled) { background: rgba(239,68,68,.22); }
+.btn-compact:disabled { opacity: .4; cursor: not-allowed; }
+.canvas-compact {
+  flex: 1;
+  min-height: 0;
+  background: rgba(15,23,42,.7);
+  border: 1px solid rgba(99,102,241,.15);
+  border-radius: 10px;
+  padding: 8px;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
-  transition: all 0.2s ease;
 }
-
-.info-btn:hover {
-  background: rgba(99, 102, 241, 0.35);
-  border-color: rgba(167, 139, 250, 0.6);
-  transform: scale(1.05);
+.pseudo-section-compact {
+  flex: 1;
+  min-height: 0;
+  background: rgba(15,23,42,.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(99,102,241,.15);
+  border-radius: 10px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.section-title-compact {
+  color: #cbd5f5;
+  font-size: .75rem;
+  font-weight: 600;
+  margin: 0 0 4px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  flex-shrink: 0;
+}
+.pseudo-scroll { flex: 1; min-height: 0; overflow-y: auto; }
+.pseudo-scroll::-webkit-scrollbar { width: 4px; }
+.pseudo-scroll::-webkit-scrollbar-track { background: transparent; }
+.pseudo-scroll::-webkit-scrollbar-thumb { background: rgba(99,102,241,.25); border-radius: 4px; }
+.explanation-compact {
+  flex-shrink: 0;
+  max-height: 90px;
+  background: rgba(15,23,42,.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(99,102,241,.15);
+  border-radius: 10px;
+  padding: 8px 10px;
+  overflow-y: auto;
+}
+.explanation-compact::-webkit-scrollbar { width: 4px; }
+.explanation-compact::-webkit-scrollbar-track { background: transparent; }
+.explanation-compact::-webkit-scrollbar-thumb { background: rgba(99,102,241,.25); border-radius: 4px; }
+.explanation-compact h3 { color: #cbd5f5; font-size: .75rem; font-weight: 600; margin: 0 0 3px; text-transform: uppercase; letter-spacing: .5px; }
+.explanation-compact p { color: #94a3b8; font-size: .78rem; line-height: 1.45; margin: 0; }
+@media (max-width: 900px) {
+  .two-column-layout { grid-template-columns: 1fr; }
+  .visualizer-page { height: auto; overflow: auto; }
 }
 </style>

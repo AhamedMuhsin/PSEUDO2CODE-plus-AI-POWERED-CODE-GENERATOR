@@ -1,151 +1,78 @@
 <template>
-  <div class="queue-op-visualizer">
-    <!-- BACK BUTTON & HEADER -->
-    <div class="top-section">
-      <button class="back-btn" @click="router.push('/algorithm-hub')">
-        <img :src="arrowLeft" class="arrow" />
-        Back
-      </button>
-    </div>
+  <main class="visualizer-page">
+    <div class="container-compact">
+      <!-- BACK -->
+      <div class="top-section-compact">
+        <button class="back-btn-compact" @click="router.push('/algorithm-hub')">
+          <img :src="arrowLeft" class="arrow" /> Back
+        </button>
+      </div>
 
-    <!-- PAGE HEADER -->
-    <header class="page-header">
-      <h1>Queue Operations</h1>
-      <p>Visualize FIFO data structure operations step by step</p>
-    </header>
-
-    <!-- OPERATION SELECTOR -->
-    <section class="operation-selector-section">
-      <QueueOperationSelector
-        v-model="selectedOp"
-        :operations="queueOperations"
-      />
-    </section>
-
-    <!-- OPERATION DETAILS -->
-    <section class="operation-details">
-      <!-- OPERATION HEADER -->
-      <div class="operation-header">
-        <div class="operation-title-group">
-          <h2>{{ currentOperation.label }}</h2>
-          <button v-if="currentOperation.info" class="info-btn" @click="showInfo = true">ⓘ</button>
+      <!-- HEADER -->
+      <header class="page-header-compact">
+        <div class="header-content">
+          <div class="header-top-row">
+            <div class="operation-title-group-compact">
+              <h1>{{ currentOperation.label || 'Queue Operations' }}</h1>
+              <button v-if="currentOperation.info" class="info-btn-compact" @click="showInfo = true"><Info :size="16" /></button>
+            </div>
+            <QueueOperationSelector v-model="selectedOp" :operations="queueOperations" class="selector-inline" />
+          </div>
+          <p class="operation-desc-compact">{{ currentOperation.description || 'FIFO data structure operations' }}</p>
+          <div v-if="currentOperation.info" class="algo-badges-compact">
+            <span class="badge-compact">Time: {{ currentOperation.info.time }}</span>
+            <span class="badge-compact">Space: {{ currentOperation.info.space }}</span>
+          </div>
         </div>
-        <p class="operation-desc">{{ currentOperation.description }}</p>
+      </header>
+
+      <!-- TWO COLUMN LAYOUT -->
+      <div class="two-column-layout">
+        <!-- LEFT COLUMN -->
+        <div class="left-column">
+          <!-- INPUT -->
+          <section class="input-section-compact">
+            <div class="input-row-compact">
+              <button class="btn-compact ghost" @click="generateRandom">Random</button>
+              <input v-model="customInput" placeholder="5,2,8,1" @keydown.enter="applyCustomQueue" class="custom-input-compact" />
+              <input v-if="operationType === 'value'" v-model.number="operationParams.value" type="number" placeholder="Enqueue val" class="custom-input-compact" @keydown.enter="applyEnqueue" />
+              <button class="btn-compact ghost" @click="goToGenerateCode">Code</button>
+            </div>
+          </section>
+
+          <!-- CONTROLS -->
+          <section class="controls-compact">
+            <button class="btn-compact ghost" @click="prev" :disabled="stepIndex === 0">Prev</button>
+            <button class="btn-compact primary" @click="play" :disabled="!isPlayable">{{ playing ? 'Pause' : 'Play' }}</button>
+            <button class="btn-compact ghost" @click="next" :disabled="stepIndex === steps.length - 1">Next</button>
+            <button class="btn-compact danger" @click="reset">Reset</button>
+            <div class="step-counter-compact">{{ stepIndex + 1 }}/{{ steps.length }}</div>
+          </section>
+
+          <!-- CANVAS -->
+          <section class="canvas-compact">
+            <QueueOperationCanvas :queue="currentStep.queue" :highlight="currentStep.highlight" :frontIndex="currentStep.frontIndex" />
+          </section>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="right-column">
+          <section class="pseudo-section-compact">
+            <h3 class="section-title-compact">Pseudocode</h3>
+            <div class="pseudo-scroll">
+              <PseudoCodePanel v-if="currentOperation.pseudocode" :code="currentOperation.pseudocode" :activeLine="currentStep.activeLine" />
+            </div>
+          </section>
+
+          <section class="explanation-compact">
+            <h3>Explanation</h3>
+            <p>{{ currentStep.explanation }}</p>
+          </section>
+        </div>
       </div>
-
-      <!-- COMPLEXITY BADGES -->
-      <div v-if="currentOperation.info" class="complexity-badges">
-        <span class="badge">⏱️ Time: {{ currentOperation.info.time }}</span>
-        <span class="badge">💾 Space: {{ currentOperation.info.space }}</span>
-        <span class="badge" :class="currentOperation.info.stable ? 'stable' : 'unstable'">
-          {{ currentOperation.info.stable ? '✓ Stable' : '✗ Unstable' }}
-        </span>
-      </div>
-
-      <!-- CONTROLS ROW 1: Queue Input -->
-      <div class="input-row">
-        <button class="btn random-btn" @click="generateRandom">
-          🎲 Random Queue
-        </button>
-
-        <input 
-          v-model="customInput" 
-          placeholder="Enter values: 5,2,8,1"
-          @keydown.enter="applyCustomQueue" 
-          class="queue-input" 
-        />
-
-        <button class="btn ghost" @click="applyCustomQueue" v-if="customInput">
-          Apply
-        </button>
-
-        <button class="btn ghost" @click="goToGenerateCode">
-          💻 Generate Code
-        </button>
-      </div>
-
-      <!-- CONTROLS ROW 2: Value Input (for ENQUEUE only) -->
-      <div v-if="operationType === 'value'" class="input-row">
-        <label>Value to Enqueue:</label>
-        <input 
-          v-model.number="operationParams.value" 
-          type="number" 
-          placeholder="Enter a number"
-          class="param-input"
-          @keydown.enter="applyEnqueue"
-        />
-        <button class="btn ghost" @click="applyEnqueue" :disabled="!operationParams.value && operationParams.value !== 0">
-          ▶ Run
-        </button>
-      </div>
-
-      <!-- CONTROLS ROW 3: Play Controls -->
-      <div class="controls-row">
-        <button @click="prev" :disabled="stepIndex === 0" class="control-btn">
-          ⬅ Prev
-        </button>
-        <button 
-          @click="play" 
-          :disabled="!isPlayable" 
-          class="control-btn primary"
-        >
-          {{ playing ? '⏸ Pause' : '▶ Play' }}
-        </button>
-        <button 
-          @click="next" 
-          :disabled="stepIndex === steps.length - 1" 
-          class="control-btn"
-        >
-          Next ➡
-        </button>
-        <button class="control-btn danger" @click="reset">
-          🔄 Reset
-        </button>
-
-        <span class="step-counter">
-          Step {{ stepIndex + 1 }} / {{ steps.length }}
-        </span>
-      </div>
-    </section>
-
-    <!-- MAIN VISUALIZATION AREA -->
-    <section class="visualization-area">
-      <!-- LEFT: CANVAS -->
-      <div class="canvas-section">
-        <h3>Queue Visualization</h3>
-        <QueueOperationCanvas 
-          :queue="currentStep.queue" 
-          :highlight="currentStep.highlight"
-          :frontIndex="currentStep.frontIndex" 
-        />
-      </div>
-
-      <!-- RIGHT: PSEUDOCODE -->
-      <div class="pseudo-code-section">
-        <h3>Algorithm Pseudocode</h3>
-        <PseudoCodePanel 
-          v-if="currentOperation.pseudocode" 
-          :code="currentOperation.pseudocode" 
-          :activeLine="currentStep.activeLine" 
-        />
-      </div>
-    </section>
-
-    <!-- EXPLANATION SECTION -->
-    <section class="explanation-section">
-      <h3>Step Explanation</h3>
-      <div class="explanation-content">
-        <p>{{ currentStep.explanation }}</p>
-      </div>
-    </section>
-
-    <!-- INFO MODAL -->
-    <AlgorithmInfoModal 
-      v-if="showInfo && currentOperation.info" 
-      :info="currentOperation.info" 
-      @close="showInfo = false" 
-    />
-  </div>
+    </div>
+    <AlgorithmInfoModal v-if="showInfo && currentOperation.info" :info="currentOperation.info" @close="showInfo = false" />
+  </main>
 </template>
 
 <script setup>
@@ -157,6 +84,7 @@ import PseudoCodePanel from "@/components/visualizer/PseudoCodePanel.vue"
 import AlgorithmInfoModal from "@/components/visualizer/AlgorithmInfoModal.vue"
 import QueueOperationSelector from "@/components/visualizer/QueueOperationSelector.vue"
 import { queueOperations } from "@/algorithms/queueOperations/queueOperationsMap"
+import { Info, Check, X } from 'lucide-vue-next'
 
 const props = defineProps({
   title: String,
@@ -336,476 +264,267 @@ function goToGenerateCode() {
 </script>
 
 <style scoped>
-.queue-op-visualizer {
+/* ── PAGE SHELL ── */
+.visualizer-page {
   background: radial-gradient(circle at top, #0f172a, #020617);
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 24px;
+  overflow: hidden;
+}
+.container-compact {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 18px;
+  min-height: 0;
+  overflow: hidden;
 }
 
-/* BACK BUTTON & TOP SECTION */
-.top-section {
-  margin-bottom: 16px;
+/* ── BACK ── */
+.top-section-compact { margin-bottom: 4px; }
+.back-btn-compact {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(99,102,241,.12);
+  border: 1px solid rgba(99,102,241,.25);
+  color: #a78bfa;
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: .78rem;
+  font-weight: 500;
+  transition: all .2s;
 }
+.back-btn-compact:hover { background: rgba(99,102,241,.22); }
+.arrow { width: 15px; height: 15px; }
 
-.back-btn {
+/* ── HEADER ── */
+.page-header-compact { margin-bottom: 6px; }
+.header-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.operation-title-group-compact {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(99, 102, 241, 0.15);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: #a78bfa;
-  padding: 8px 12px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.9rem;
-  font-weight: 500;
 }
-
-.back-btn:hover {
-  background: rgba(99, 102, 241, 0.25);
-  border-color: rgba(99, 102, 241, 0.5);
-  transform: translateX(-2px);
-}
-
-.arrow {
-  width: 18px;
-  height: 18px;
-}
-
-/* PAGE HEADER */
-.page-header {
-  margin-bottom: 24px;
-}
-
-.page-header h1 {
-  color: white;
-  font-size: 2.2rem;
-  margin: 0 0 8px 0;
+.page-header-compact h1 {
+  font-size: 1.15rem;
+  margin: 0;
   background: linear-gradient(135deg, #a78bfa, #818cf8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
-.page-header p {
-  color: #94a3b8;
-  font-size: 1rem;
-  margin: 0;
-  font-weight: 400;
-}
-
-/* OPERATION SELECTOR SECTION */
-.operation-selector-section {
-  margin-bottom: 24px;
-  max-width: 400px;
-}
-
-/* OPERATION DETAILS SECTION */
-.operation-details {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.operation-header {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.operation-title-group {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.operation-details h2 {
-  color: #cbd5f5;
-  font-size: 1.5rem;
-  margin: 0;
-  font-weight: 600;
-}
-
-.info-btn {
-  background: rgba(99, 102, 241, 0.2);
-  border: 1px solid rgba(99, 102, 241, 0.4);
+.info-btn-compact {
+  background: rgba(99,102,241,.18);
+  border: 1px solid rgba(99,102,241,.35);
   color: #a78bfa;
-  width: 32px;
-  height: 32px;
-  padding: 0;
+  width: 26px; height: 26px;
   border-radius: 50%;
   cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+  padding: 0;
+}
+.info-btn-compact:hover { background: rgba(99,102,241,.32); }
+.selector-inline { max-width: 220px; }
+.operation-desc-compact {
+  color: #94a3b8;
+  font-size: .78rem;
+  margin: 2px 0 0;
+  line-height: 1.3;
+}
+.algo-badges-compact {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+.badge-compact {
+  background: rgba(99,102,241,.12);
+  border: 1px solid rgba(99,102,241,.25);
+  color: #cbd5f5;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: .72rem;
+  font-weight: 500;
+}
+
+/* ── TWO-COLUMN LAYOUT ── */
+.two-column-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.left-column, .right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── INPUT ── */
+.input-section-compact { flex-shrink: 0; }
+.input-row-compact {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.custom-input-compact {
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: rgba(2,6,23,.55);
+  border: 1px solid rgba(99,102,241,.25);
+  color: #fff;
+  font-size: .78rem;
+  flex: 1;
+  min-width: 80px;
+  transition: border-color .2s;
+}
+.custom-input-compact:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+/* ── CONTROLS ── */
+.controls-compact {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.step-counter-compact {
+  margin-left: auto;
+  color: #94a3b8;
+  font-size: .75rem;
+  font-weight: 500;
+}
+
+/* ── BUTTONS ── */
+.btn-compact {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 7px;
+  font-size: .76rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s;
+  border: none;
+  white-space: nowrap;
+}
+.btn-compact.ghost {
+  background: rgba(99,102,241,.12);
+  border: 1px solid rgba(99,102,241,.25);
+  color: #a78bfa;
+}
+.btn-compact.ghost:hover { background: rgba(99,102,241,.22); }
+.btn-compact.primary {
+  background: #6366f1;
+  color: #fff;
+}
+.btn-compact.primary:hover:not(:disabled) {
+  background: #4f46e5;
+  box-shadow: 0 3px 10px rgba(99,102,241,.35);
+}
+.btn-compact.danger {
+  background: rgba(239,68,68,.12);
+  border: 1px solid rgba(239,68,68,.25);
+  color: #fca5a5;
+}
+.btn-compact.danger:hover:not(:disabled) { background: rgba(239,68,68,.22); }
+.btn-compact:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ── CANVAS ── */
+.canvas-compact {
+  flex: 1;
+  min-height: 0;
+  background: rgba(15,23,42,.7);
+  border: 1px solid rgba(99,102,241,.15);
+  border-radius: 10px;
+  padding: 8px;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
-  transition: all 0.2s ease;
 }
 
-.info-btn:hover {
-  background: rgba(99, 102, 241, 0.35);
-  border-color: rgba(167, 139, 250, 0.6);
-  transform: scale(1.05);
-}
-
-.operation-desc {
-  color: #94a3b8;
-  font-size: 0.95rem;
-  margin: 0;
-  line-height: 1.5;
-}
-
-/* COMPLEXITY BADGES */
-.complexity-badges {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.badge {
-  background: rgba(99, 102, 241, 0.15);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: #cbd5f5;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.badge.stable {
-  background: rgba(34, 197, 94, 0.15);
-  border-color: rgba(34, 197, 94, 0.3);
-  color: #86efac;
-}
-
-.badge.unstable {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.3);
-  color: #fca5a5;
-}
-
-/* INPUT ROWS */
-.input-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.input-row label {
-  color: #cbd5f5;
-  font-size: 0.9rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.queue-input {
-  padding: 10px 14px;
-  border-radius: 10px;
-  background: rgba(2, 6, 23, 0.6);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: white;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
+/* ── PSEUDO ── */
+.pseudo-section-compact {
   flex: 1;
-  min-width: 150px;
-}
-
-.queue-input:focus {
-  outline: none;
-  border-color: #6366f1;
-  background: rgba(2, 6, 23, 0.8);
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 0.9rem;
-  padding: 10px 14px;
+  min-height: 0;
+  background: rgba(15,23,42,.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(99,102,241,.15);
   border-radius: 10px;
-  transition: all 0.2s ease;
-  border: none;
-  white-space: nowrap;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
-
-.random-btn {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: white;
-  border: none;
+.section-title-compact {
+  color: #cbd5f5;
+  font-size: .75rem;
+  font-weight: 600;
+  margin: 0 0 4px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  flex-shrink: 0;
 }
-
-.random-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.45);
-}
-
-.btn.ghost {
-  background: rgba(99, 102, 241, 0.15);
-  color: #a78bfa;
-  border: 1px solid rgba(99, 102, 241, 0.3);
-}
-
-.btn.ghost:hover {
-  background: rgba(99, 102, 241, 0.25);
-  border-color: rgba(167, 139, 250, 0.5);
-}
-
-.param-input {
-  padding: 10px 14px;
-  border-radius: 10px;
-  background: rgba(2, 6, 23, 0.6);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: white;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
+.pseudo-scroll {
   flex: 1;
-  min-width: 150px;
+  min-height: 0;
+  overflow-y: auto;
 }
+.pseudo-scroll::-webkit-scrollbar { width: 4px; }
+.pseudo-scroll::-webkit-scrollbar-track { background: transparent; }
+.pseudo-scroll::-webkit-scrollbar-thumb { background: rgba(99,102,241,.25); border-radius: 4px; }
 
-.param-input:focus {
-  outline: none;
-  border-color: #6366f1;
-  background: rgba(2, 6, 23, 0.8);
-}
-
-/* CONTROLS ROW */
-.controls-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.control-btn {
-  padding: 10px 14px;
+/* ── EXPLANATION ── */
+.explanation-compact {
+  flex-shrink: 0;
+  max-height: 90px;
+  background: rgba(15,23,42,.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(99,102,241,.15);
   border-radius: 10px;
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  background: rgba(99, 102, 241, 0.15);
-  color: #a78bfa;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
+  padding: 8px 10px;
+  overflow-y: auto;
 }
-
-.control-btn:hover:not(:disabled) {
-  background: rgba(99, 102, 241, 0.25);
-  border-color: rgba(167, 139, 250, 0.5);
-  transform: translateY(-1px);
+.explanation-compact::-webkit-scrollbar { width: 4px; }
+.explanation-compact::-webkit-scrollbar-track { background: transparent; }
+.explanation-compact::-webkit-scrollbar-thumb { background: rgba(99,102,241,.25); border-radius: 4px; }
+.explanation-compact h3 {
+  color: #cbd5f5;
+  font-size: .75rem;
+  font-weight: 600;
+  margin: 0 0 3px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
 }
-
-.control-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.control-btn.primary {
-  background: #6366f1;
-  color: white;
-  border: none;
-}
-
-.control-btn.primary:hover:not(:disabled) {
-  background: #4f46e5;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-}
-
-.control-btn.danger {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.3);
-  color: #fca5a5;
-}
-
-.control-btn.danger:hover:not(:disabled) {
-  background: rgba(239, 68, 68, 0.25);
-  border-color: rgba(239, 68, 68, 0.5);
-}
-
-.step-counter {
-  margin-left: auto;
+.explanation-compact p {
   color: #94a3b8;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-/* VISUALIZATION AREA */
-.visualization-area {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-bottom: 24px;
-}
-
-.canvas-section {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  border-radius: 16px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.canvas-section h3 {
-  color: #cbd5f5;
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.pseudo-code-section {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  border-radius: 16px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.pseudo-code-section h3 {
-  color: #cbd5f5;
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* EXPLANATION SECTION */
-.explanation-section {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  border-radius: 16px;
-  padding: 24px;
-}
-
-.explanation-section h3 {
-  color: #cbd5f5;
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin: 0 0 12px 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.explanation-content {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.explanation-content p {
-  color: #94a3b8;
-  font-size: 0.95rem;
-  line-height: 1.6;
+  font-size: .78rem;
+  line-height: 1.45;
   margin: 0;
 }
 
-/* RESPONSIVE */
-@media (max-width: 1024px) {
-  .visualization-area {
-    grid-template-columns: 1fr;
-  }
-
-  .queue-op-visualizer {
-    padding: 16px;
-  }
-}
-
-@media (max-width: 768px) {
-  .queue-op-visualizer {
-    padding: 12px;
-  }
-
-  .page-header h1 {
-    font-size: 1.8rem;
-  }
-
-  .page-header p {
-    font-size: 0.9rem;
-  }
-
-  .operation-details {
-    padding: 16px;
-    gap: 12px;
-  }
-
-  .input-row,
-  .controls-row {
-    flex-direction: column;
-  }
-
-  .input-row > *,
-  .controls-row > * {
-    width: 100%;
-    min-width: unset;
-  }
-
-  .step-counter {
-    margin-left: 0;
-    text-align: center;
-  }
-
-  .visualization-area {
-    grid-template-columns: 1fr;
-  }
-
-  .canvas-section,
-  .pseudo-code-section {
-    padding: 16px;
-  }
-
-  .explanation-section {
-    padding: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .queue-op-visualizer {
-    padding: 8px;
-  }
-
-  .page-header h1 {
-    font-size: 1.4rem;
-  }
-
-  .operation-title-group {
-    flex-wrap: wrap;
-  }
-
-  .complexity-badges {
-    flex-direction: column;
-  }
-
-  .badge {
-    width: 100%;
-    text-align: center;
-  }
-
-  .input-row,
-  .controls-row {
-    gap: 6px;
-  }
-
-  .control-btn,
-  .queue-input,
-  .param-input {
-    font-size: 0.8rem;
-    padding: 8px 10px;
-  }
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .two-column-layout { grid-template-columns: 1fr; }
+  .visualizer-page { height: auto; overflow: auto; }
 }
 </style>

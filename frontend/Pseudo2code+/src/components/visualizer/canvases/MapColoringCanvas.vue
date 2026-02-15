@@ -13,7 +13,7 @@
 import { ref, watch, onMounted } from "vue"
 
 const props = defineProps({
-  regions: Object,
+  assignments: Object,
   adjacency: Object,
   currentRegion: String,
   conflicts: Array
@@ -84,7 +84,7 @@ const drawVisualization = () => {
 
   // Draw regions
   Object.entries(regionPositions).forEach(([region, pos]) => {
-    const color = props.regions && props.regions[region] ? colorMap[props.regions[region]] : '#64748b'
+    const color = props.assignments && props.assignments[region] ? colorMap[props.assignments[region]] : '#64748b'
     const isConflict = props.conflicts && props.conflicts.includes(region)
     const isCurrent = props.currentRegion === region
 
@@ -142,7 +142,7 @@ const drawVisualization = () => {
   })
 }
 
-watch(() => [props.regions, props.currentRegion, props.conflicts], drawVisualization, { deep: true })
+watch(() => [props.assignments, props.adjacency, props.currentRegion, props.conflicts], drawVisualization, { deep: true })
 onMounted(drawVisualization)
 </script>
 
