@@ -144,3 +144,19 @@ export const primPseudo = [
   "  ",
   "  return MST edges and total cost"
 ]
+
+export const kruskalPseudo = [
+  "KRUSKAL_MST(graph)",
+  "  sortedEdges ← sort all edges by weight",
+  "  mst ← empty set",
+  "  uf ← UnionFind(all nodes)",
+  "  ",
+  "  for each edge (u, v, w) in sortedEdges:",
+  "    if uf.find(u) ≠ uf.find(v):",
+  "      mst.add(edge)",
+  "      uf.union(u, v)",
+  "    else:",
+  "      skip (would create cycle)",
+  "  ",
+  "  return mst and total cost"
+]

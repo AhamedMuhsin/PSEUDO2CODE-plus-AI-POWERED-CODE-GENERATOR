@@ -12,13 +12,6 @@ import InsertionSortVisualizer from "@/components/visualizer/InsertionSortVisual
 import MergeSortVisualizer from "@/components/visualizer/MergeSortVisualizer.vue"
 import QuickSortVisualizer from "@/components/visualizer/QuickSortVisualizer.vue"
 import HeapSortVisualizer from "@/components/visualizer/HeapSortVisualizer.vue"
-import BFSVisualizer from "@/components/visualizer/BFSVisualizer.vue"
-import DFSVisualizer from "@/components/visualizer/DFSVisualizer.vue"
-import DijkstraVisualizer from "@/components/visualizer/DijkstraVisualizer.vue"
-import AStarVisualizer from "@/components/visualizer/AStarVisualizer.vue"
-import PrimVisualizer from "@/components/visualizer/PrimVisualizer.vue"
-import KruskalVisualizer from "@/components/visualizer/KruskalVisualizer.vue"
-
 const route = useRoute()
 
 const visualizerMap = {
@@ -28,12 +21,6 @@ const visualizerMap = {
   "sorting/merge-sort": MergeSortVisualizer,
   "sorting/quick-sort": QuickSortVisualizer,
   "sorting/heap-sort": HeapSortVisualizer,
-  "graph/bfs": BFSVisualizer,
-  "graph/dfs": DFSVisualizer,
-  "graph/dijkstra": DijkstraVisualizer,
-  "graph/astar": AStarVisualizer,
-  "graph/prim": PrimVisualizer,
-  "graph/kruskal": KruskalVisualizer,
 }
 
 const key = computed(() =>

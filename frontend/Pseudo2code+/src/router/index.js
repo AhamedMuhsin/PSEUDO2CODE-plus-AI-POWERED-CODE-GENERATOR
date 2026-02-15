@@ -117,7 +117,8 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: '/graph-operations',
+    path: '/graph-operations/:algo?',
+    name: 'GraphOperations',
     component: () => import('@/views/GraphOperationsHub.vue'),
     meta: { requiresAuth: true },
   },

@@ -301,7 +301,7 @@ import AuthNavbar from '../Navbar/AuthNavbar.vue'
 import arrowLeft from '@/assets/arrow-left.svg'
 import { generateBubbleSortSteps } from '@/algorithms/sorting/bubbleSortSteps'
 
-const router = useRouter()
+const router = useRouter() 
 
 // ─── State ──────────────────────────────────
 const arraySize = ref(10)

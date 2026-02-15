@@ -3,7 +3,10 @@ import { dfsSteps } from "./dfsSteps"
 import { detectCycleSteps } from "./detectCycleSteps"
 import { checkPathSteps } from "./checkPathSteps"
 import { dijkstraSteps } from "./dijkstraSteps"
-import { bfsPseudo, dfsPseudo, detectCyclePseudo, checkPathPseudo, dijkstraPseudo } from "./pseudocode/graphPseudocodes"
+import { astarSteps } from "./astarSteps"
+import { kruskalSteps } from "./kruskalSteps"
+import { primSteps } from "./primSteps"
+import { bfsPseudo, dfsPseudo, detectCyclePseudo, checkPathPseudo, dijkstraPseudo, astarPseudo, kruskalPseudo, primPseudo } from "./pseudocode/graphPseudocodes"
 import { graphOperationsMeta } from "./graphOperationsMeta"
 
 export const graphOperations = {
@@ -55,6 +58,41 @@ export const graphOperations = {
     generateSteps: dijkstraSteps,
     pseudocode: dijkstraPseudo,
     info: graphOperationsMeta.dijkstra,
-    requiresParams: false
+    requiresParams: false,
+    requiresWeighted: true
+  },
+  astar: {
+    key: "astar",
+    label: "A* Algorithm",
+    algorithmName: "A* Pathfinding",
+    description: "Find optimal path using heuristic-guided search (Dijkstra + estimated cost to goal)",
+    generateSteps: astarSteps,
+    pseudocode: astarPseudo,
+    info: graphOperationsMeta.astar,
+    requiresParams: true,
+    requiresWeighted: true,
+    requiresGoal: true
+  },
+  kruskal: {
+    key: "kruskal",
+    label: "Kruskal's Algorithm",
+    algorithmName: "Kruskal's MST",
+    description: "Find Minimum Spanning Tree by sorting edges and adding lightest non-cycle edges",
+    generateSteps: kruskalSteps,
+    pseudocode: kruskalPseudo,
+    info: graphOperationsMeta.kruskal,
+    requiresParams: false,
+    requiresWeighted: true
+  },
+  prim: {
+    key: "prim",
+    label: "Prim's Algorithm",
+    algorithmName: "Prim's MST",
+    description: "Find Minimum Spanning Tree by greedily adding cheapest edge to a new vertex",
+    generateSteps: primSteps,
+    pseudocode: primPseudo,
+    info: graphOperationsMeta.prim,
+    requiresParams: false,
+    requiresWeighted: true
   }
 }

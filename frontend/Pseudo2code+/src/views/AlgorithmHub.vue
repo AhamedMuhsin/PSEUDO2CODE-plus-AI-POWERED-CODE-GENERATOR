@@ -173,7 +173,7 @@
 
         <div class="card-grid">
           <AlgoCard title="Breadth-First Search" level="Beginner" desc="Level-by-level graph traversal" :icon="Route"
-            route="/visualize/graph/bfs" :info="{
+            route="/graph-operations/bfs" :info="{
               name: 'Breadth-First Search',
               best: 'O(V + E)',
               average: 'O(V + E)',
@@ -184,7 +184,7 @@
               description: 'BFS explores graph level by level using a queue. It visits all neighbors of a node before moving to the next level. Essential for shortest path in unweighted graphs, level-order traversal, and finding connected components.'
             }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Depth-First Search" level="Beginner" desc="Explore as far as possible along each branch"
-            :icon="CornerDownRight" route="/visualize/graph/dfs" :info="{
+            :icon="CornerDownRight" route="/graph-operations/dfs" :info="{
               name: 'Depth-First Search',
               best: 'O(V + E)',
               average: 'O(V + E)',
@@ -195,7 +195,7 @@
               description: 'DFS explores graph by going as deep as possible along each branch before backtracking. Uses a stack (or recursion) for traversal. Useful for topological sorting, cycle detection, pathfinding, and connected components.'
             }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Dijkstra's Algorithm" level="Intermediate" desc="Shortest path in weighted graphs"
-            :icon="Map" route="/visualize/graph/dijkstra" :info="{
+            :icon="Map" route="/graph-operations/dijkstra" :info="{
               name: 'Dijkstra\'s Algorithm',
               best: 'O((V + E) log V)',
               average: 'O((V + E) log V)',
@@ -206,7 +206,7 @@
               description: 'Dijkstra\'s algorithm finds the shortest path from a source vertex to all other vertices in a weighted graph with non-negative weights. It uses a greedy approach, always selecting the unvisited node with the smallest tentative distance.'
             }" @show-info="selectedInfo = $event" />
           <AlgoCard title="A* Algorithm" level="Intermediate" desc="Heuristic-based pathfinding" :icon="Navigation" 
-            route="/visualize/graph/astar" :info="{
+            route="/graph-operations/astar" :info="{
               name: 'A* Algorithm',
               best: 'O((V + E) log V)',
               average: 'O((V + E) log V)',
@@ -217,7 +217,7 @@
               description: 'A* is an informed search algorithm that finds the optimal path from start to goal node. It uses f(n) = g(n) + h(n) where g(n) is the actual cost from start and h(n) is the heuristic estimated cost to goal. More efficient than Dijkstra when a good heuristic exists.'
             }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Prim's Algorithm" level="Intermediate" desc="Minimum spanning tree algorithm"
-            :icon="TreePine" route="/visualize/graph/prim" :info="{
+            :icon="TreePine" route="/graph-operations/prim" :info="{
               name: 'Prim\'s Algorithm',
               best: 'O(E log V)',
               average: 'O(E log V)',
@@ -228,7 +228,7 @@
               description: 'Prim\'s algorithm builds a Minimum Spanning Tree by starting from any node and repeatedly adding the cheapest edge connecting the MST to a non-MST node. Greedy approach guarantees minimum total weight.'
             }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Kruskal's Algorithm" level="Intermediate" desc="Minimum spanning tree with edge sorting"
-            :icon="Merge" route="/visualize/graph/kruskal" :info="{
+            :icon="Merge" route="/graph-operations/kruskal" :info="{
               best: 'O(E log E)',
               average: 'O(E log E)',
               worst: 'O(E log E)',
