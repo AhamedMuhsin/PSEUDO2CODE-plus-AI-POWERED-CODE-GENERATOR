@@ -282,7 +282,7 @@
               description: 'State-space search problem. Given two jugs of different capacities, find sequence of operations (fill, empty, pour) to measure exact target amount. Uses BFS to find shortest solution.'
             }" @show-info="selectedInfo = $event" />
           <AlgoCard title="MinMax Algorithm" level="Intermediate" desc="Optimal strategy for two-player games"
-            :icon="Brain" route="/ai-problems/minimax" :info="{
+            :icon="Brain" route="/minmax-visualizer" :info="{
               name: 'MinMax Algorithm',
               best: 'O(b^d)',
               average: 'O(b^d)',
@@ -293,7 +293,7 @@
               description: 'Game theory algorithm for perfect play in two-player zero-sum games. Maximizing player seeks highest score, minimizing player seeks lowest. Used in chess, tic-tac-toe, etc.'
             }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Missionaries & Cannibals" level="Intermediate" desc="River crossing puzzle with constraints"
-            :icon="Users" route="/ai-problems/missionaries" :info="{
+            :icon="Users" route="/missionaries-visualizer" :info="{
               name: 'Missionaries and Cannibals',
               best: 'O(N²)',
               average: 'O(N²)',
@@ -304,7 +304,7 @@
               description: 'Classic river crossing puzzle. Transport 3 missionaries and 3 cannibals across river safely. Boat holds 2 people. Cannibals cannot outnumber missionaries on either side.'
             }" @show-info="selectedInfo = $event" />
           <AlgoCard title="8-Puzzle Problem" level="Intermediate" desc="Sliding tile puzzle using A* search"
-            :icon="LayoutGrid" route="/ai-problems/puzzle" :info="{
+            :icon="LayoutGrid" route="/puzzle-visualizer" :info="{
               name: '8-Puzzle Problem',
               best: 'O(b^d)',
               average: 'O(b^d)',
@@ -315,7 +315,7 @@
               description: 'Sliding tile puzzle solved using A* search with Manhattan distance heuristic. Arrange tiles in correct order by sliding them into empty space. Classic AI search problem.'
             }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Vacuum Cleaner Agent" level="Beginner" desc="Simple reflex agent in grid world"
-            :icon="Sparkles" route="/ai-problems/vacuum" :info="{
+            :icon="Sparkles" route="/vacuum-visualizer" :info="{
               name: 'Vacuum Cleaner Agent',
               best: 'O(N²)',
               average: 'O(N²)',
@@ -326,7 +326,7 @@
               description: 'First AI agent concept. Simple reflex agent that perceives environment and acts. Demonstrates agent types: simple reflex vs. model-based. Core AI fundamental.'
             }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Alpha-Beta Pruning" level="Intermediate" desc="Optimized minimax with branch pruning"
-            :icon="Scissors" route="/ai-problems/alphabeta" :info="{
+            :icon="Scissors" route="/alphabeta-visualizer" :info="{
               name: 'Alpha-Beta Pruning',
               best: 'O(b^(d/2))',
               average: 'O(b^(3d/4))',
@@ -337,7 +337,7 @@
               description: 'Optimization of minimax algorithm. Prunes branches that cannot affect final decision. Significantly reduces nodes evaluated in game trees. Essential for game AI.'
             }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Hill Climbing" level="Intermediate" desc="Local search optimization algorithm"
-            :icon="TrendingUp" route="/ai-problems/hillclimbing" :info="{
+            :icon="TrendingUp" route="/hillclimbing-visualizer" :info="{
               name: 'Hill Climbing',
               best: 'O(∞)',
               average: 'Varies',
@@ -348,7 +348,7 @@
               description: 'Greedy local search that always moves to best neighbor. Fast but can get stuck in local maxima. No backtracking. Good for quick approximate solutions.'
             }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Simulated Annealing" level="Intermediate" desc="Probabilistic optimization with cooling"
-            :icon="Flame" route="/ai-problems/annealing" :info="{
+            :icon="Flame" route="/annealing-visualizer" :info="{
               name: 'Simulated Annealing',
               best: 'O(∞)',
               average: 'Probabilistic',
@@ -359,7 +359,7 @@
               description: 'Probabilistic hill climbing inspired by metallurgy. Accepts worse solutions with decreasing probability (temperature). Can escape local maxima. Used in optimization.'
             }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Map Coloring CSP" level="Intermediate" desc="Constraint satisfaction with backtracking"
-            :icon="Palette" route="/ai-problems/mapcoloring" :info="{
+            :icon="Palette" route="/mapcoloring-visualizer" :info="{
               name: 'Map Coloring',
               best: 'O(d^n)',
               average: 'O(d^n)',
@@ -370,7 +370,7 @@
               description: 'Classic CSP problem. Color map regions so no adjacent regions share same color. Demonstrates constraint satisfaction, backtracking, and constraint propagation.'
             }" @show-info="selectedInfo = $event" />
           <AlgoCard title="Genetic Algorithm" level="Intermediate" desc="Evolutionary optimization algorithm"
-            :icon="Dna" route="/ai-problems/genetic" :info="{
+            :icon="Dna" route="/genetic-visualizer" :info="{
               name: 'Genetic Algorithm',
               best: 'O(g × p × f)',
               average: 'O(g × p × f)',
