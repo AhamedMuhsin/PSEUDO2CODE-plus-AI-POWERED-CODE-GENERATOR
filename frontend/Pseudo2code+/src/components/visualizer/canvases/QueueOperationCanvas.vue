@@ -93,10 +93,10 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   width: 100%;
-  background: rgba(2, 6, 23, 0.4);
+  background: rgba(0, 0, 0, 0.4);
   border-radius: 10px;
   padding: 20px;
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  border: 1px solid var(--accent-border);
 }
 
 canvas {

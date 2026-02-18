@@ -148,13 +148,13 @@ const completionPercent = computed(() => {
 <style scoped>
 /* ════════ BACK ════════ */
 .back-top-bar { flex-shrink: 0; }
-.back-btn-compact { display: flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #e0e7ff; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
-.back-btn-compact:hover { background: rgba(99,102,241,0.25); transform: translateX(-2px); }
+.back-btn-compact { display: flex; align-items: center; gap: 6px; background: var(--accent-bg); border: 1px solid var(--accent-border); color: var(--accent-lighter); padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
+.back-btn-compact:hover { background: var(--accent-bg-hover); transform: translateX(-2px); }
 .arrow { width: 16px; height: 16px; }
 
 .badges-page {
   min-height: 100vh;
-  background: radial-gradient(circle at top, #0f172a, #020617);
+  background: var(--bg-page);
 }
 
 .page-layout {
@@ -179,11 +179,11 @@ const completionPercent = computed(() => {
 .badges-header h1 {
   font-size: 2.2rem;
   font-weight: 800;
-  color: #f8fafc;
+  color: var(--text-primary);
 }
 
 .badges-header p {
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-top: 6px;
 }
 
@@ -197,11 +197,11 @@ const completionPercent = computed(() => {
 }
 
 select {
-  background: #020617;
-  border: 1px solid #1e293b;
-  color: #e5e7eb;
+  background: var(--bg-page);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
   padding: 10px 14px;
-  border-radius: 14px;
+  border-radius: 12px;
   cursor: pointer;
 }
 
@@ -217,19 +217,19 @@ select {
 }
 
 .badge-grid.empty {
-  color: #64748b;
+  color: var(--text-dim);
 }
 
 .badge-card.locked .description {
-  color: #64748b;
+  color: var(--text-dim);
   font-style: italic;
 }
 
 .badge-progress-card {
-  background: linear-gradient(145deg, #0b1220, #0e1628);
-  border-radius: 18px;
+  background: var(--bg-card);
+  border-radius: 12px;
   padding: 20px;
-  border: 1px solid #1e293b;
+  border: 1px solid var(--border-default);
 }
 
 .progress-stats {
@@ -241,20 +241,20 @@ select {
 .progress-bar {
   margin-top: 12px;
   height: 8px;
-  background: #020617;
+  background: var(--bg-page);
   border-radius: 999px;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #6366f1, #22d3ee);
+  background: var(--accent);
   border-radius: 999px;
 }
 
 .progress-text {
   margin-top: 8px;
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 /* ── Responsive ── */

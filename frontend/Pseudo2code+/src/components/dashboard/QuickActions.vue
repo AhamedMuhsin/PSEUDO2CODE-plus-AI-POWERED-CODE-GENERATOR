@@ -72,24 +72,24 @@ const goTo = (path) => {
 }
 
 .quick-actions {
-  background: rgba(15, 23, 42, 0.85);
-  border-radius: 16px;
+  background: var(--bg-card);
+  border-radius: 12px;
   padding: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-md);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .quick-actions:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-lg);
 }
 
 .card-title {
   margin-bottom: 24px;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #f1f5f9;
+  color: var(--text-primary);
   margin: 0 0 24px 0;
 }
 
@@ -108,15 +108,15 @@ const goTo = (path) => {
   gap: 16px;
   padding: 16px;
   border-radius: 12px;
-  background: rgba(15, 23, 42, 0.5);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .action-item:hover {
-  background: rgba(99, 102, 241, 0.1);
-  border-color: rgba(99, 102, 241, 0.4);
+  background: var(--bg-hover);
+  border-color: var(--accent-border);
   transform: translateX(4px);
 }
 
@@ -132,12 +132,12 @@ const goTo = (path) => {
 
 .icon.code {
   background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
+  color: var(--accent-light);
 }
 
 .icon.visual {
   background: rgba(168, 85, 247, 0.15);
-  color: #c084fc;
+  color: var(--accent-lighter);
 }
 
 .icon.algo {
@@ -147,7 +147,7 @@ const goTo = (path) => {
 
 .icon.history {
   background: rgba(34, 197, 94, 0.15);
-  color: #4ade80;
+  color: var(--success);
 }
 
 .icon.badge {
@@ -163,12 +163,12 @@ const goTo = (path) => {
 .action-text {
   font-size: 0.95rem;
   font-weight: 500;
-  color: #e5e7eb;
+  color: var(--text-secondary);
   flex: 1;
 }
 
 .action-arrow {
-  color: #6366f1;
+  color: var(--accent);
   font-size: 1.2rem;
   font-weight: 600;
   opacity: 0;

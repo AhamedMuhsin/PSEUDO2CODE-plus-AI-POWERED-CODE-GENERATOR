@@ -92,7 +92,7 @@ const drawLinkedList = () => {
     if (index === props.activeNodeIndex) return { fill: "rgba(99, 102, 241, 0.2)", border: "#6366f1", text: "#fff" }
     if (index === props.targetIndex) return { fill: "rgba(239, 68, 68, 0.2)", border: "#ef4444", text: "#fff" }
     if (props.highlightNodes.includes(index)) return { fill: "rgba(34, 197, 94, 0.2)", border: "#22c55e", text: "#fff" }
-    return { fill: "rgba(30, 41, 59, 0.8)", border: "#64748b", text: "#e2e8f0" }
+    return { fill: "rgba(18, 18, 18, 0.8)", border: "#64748b", text: "#e2e8f0" }
   }
 
   function drawRectangularNode(index, x, y, width, height) {
@@ -258,11 +258,11 @@ watch([() => props.list, () => props.listType, () => props.activeNodeIndex, () =
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(2, 6, 23, 0.3);
+  background: rgba(0, 0, 0, 0.3);
   border-radius: 10px;
   padding: 12px;
   min-height: 280px;
-  border: 1px solid rgba(99, 102, 241, 0.1);
+  border: 1px solid var(--accent-border);
   overflow-x: auto;
 }
 

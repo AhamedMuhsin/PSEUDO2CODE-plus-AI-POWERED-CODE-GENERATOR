@@ -29,10 +29,10 @@ const tabs = [
   display: inline-flex;
   gap: 6px;
   padding: 6px;
-  background: linear-gradient(145deg, #0b1220, #0e1628);
-  border-radius: 14px;
+  background: var(--bg-card);
+  border-radius: 12px;
   margin-top: 18px;
-  border: 1px solid #1e293b;
+  border: 1px solid var(--border-default);
 }
 
 .leaderboard-tabs button {
@@ -42,18 +42,18 @@ const tabs = [
   border: none;
   font-weight: 600;
   font-size: 0.85rem;
-  color: #94a3b8;
+  color: var(--text-muted);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .leaderboard-tabs button:hover {
-  color: #e5e7eb;
+  color: var(--text-secondary);
 }
 
 .leaderboard-tabs button.active {
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
-  color: #ffffff;
+  background: var(--accent);
+  color: var(--text-primary);
   box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
 }
 

@@ -32,7 +32,7 @@ const drawGrid = () => {
   ctx.clearRect(0, 0, canvasSize, canvasSize)
 
   // Draw background
-  ctx.fillStyle = "rgba(15, 23, 42, 0.5)"
+  ctx.fillStyle = "rgba(10, 10, 10, 0.5)"
   ctx.fillRect(0, 0, canvasSize, canvasSize)
 
   // Draw grid cells
@@ -62,7 +62,7 @@ const drawGrid = () => {
       }
 
       // Grid lines
-      ctx.strokeStyle = '#1e293b'
+      ctx.strokeStyle = '#1a1a1a'
       ctx.lineWidth = 2
       ctx.strokeRect(j * cellSize, i * cellSize, cellSize, cellSize)
     }
@@ -111,7 +111,7 @@ onMounted(drawGrid)
   justify-content: center;
   align-items: center;
   padding: 20px;
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--bg-elevated);
   border-radius: 12px;
 }
 

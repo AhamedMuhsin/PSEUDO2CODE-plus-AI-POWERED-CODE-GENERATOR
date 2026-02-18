@@ -663,8 +663,8 @@ onUnmounted(() => {
 /* ════════ PAGE ════════ */
 .bs-page {
     min-height: 100vh;
-    background: radial-gradient(ellipse at top, #0f172a 0%, #020617 70%);
-    color: #e2e8f0;
+    background: var(--bg-page);
+    color: var(--text-secondary);
     padding: 16px 24px 40px;
     font-family: 'Inter', 'Segoe UI', sans-serif;
 }
@@ -683,9 +683,9 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     gap: 6px;
-    background: rgba(99, 102, 241, 0.15);
-    border: 1px solid rgba(99, 102, 241, 0.3);
-    color: #e0e7ff;
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+    color: var(--accent-lighter);
     padding: 6px 12px;
     border-radius: 8px;
     cursor: pointer;
@@ -694,7 +694,7 @@ onUnmounted(() => {
 }
 
 .back-btn-compact:hover {
-    background: rgba(99, 102, 241, 0.25);
+    background: var(--accent-bg-hover);
     transform: translateX(-2px);
 }
 
@@ -706,7 +706,7 @@ onUnmounted(() => {
 .bs-title {
     font-size: 1.6rem;
     font-weight: 700;
-    color: #f1f5f9;
+    color: var(--text-primary);
     margin: 16px 0 16px;
 }
 
@@ -726,8 +726,8 @@ onUnmounted(() => {
 
 /* ════════ CONTROLS PANEL ════════ */
 .bs-controls-panel {
-    background: rgba(30, 41, 59, 0.65);
-    border: 1px solid rgba(100, 116, 139, 0.25);
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
     border-radius: 12px;
     padding: 14px;
     display: flex;
@@ -747,9 +747,9 @@ onUnmounted(() => {
     gap: 6px;
     padding: 8px 10px;
     border-radius: 8px;
-    border: 1px solid rgba(100, 116, 139, 0.3);
-    background: rgba(100, 116, 139, 0.12);
-    color: #cbd5e1;
+    border: 1px solid var(--border-medium);
+    background: var(--border-light);
+    color: var(--text-tertiary);
     font-size: 0.82rem;
     font-weight: 500;
     cursor: pointer;
@@ -757,7 +757,7 @@ onUnmounted(() => {
 }
 
 .bs-btn:hover:not(:disabled) {
-    background: rgba(100, 116, 139, 0.25);
+    background: var(--border-default);
 }
 
 .bs-btn:disabled {
@@ -767,7 +767,7 @@ onUnmounted(() => {
 
 .bs-btn.active {
     background: rgba(99, 102, 241, 0.3);
-    border-color: rgba(99, 102, 241, 0.5);
+    border-color: var(--accent-border);
 }
 
 .bs-icon {
@@ -784,27 +784,27 @@ onUnmounted(() => {
     flex-direction: column;
     gap: 8px;
     padding: 8px;
-    background: rgba(15, 23, 42, 0.5);
+    background: var(--bg-elevated);
     border-radius: 8px;
 }
 
 .bs-setting-row label {
     font-size: 0.78rem;
-    color: #94a3b8;
+    color: var(--text-muted);
 }
 
 .bs-slider {
     width: 100%;
     cursor: pointer;
-    accent-color: #818cf8;
+    accent-color: var(--accent-light);
 }
 
 .bs-code-btn {
     width: 100%;
     justify-content: center;
-    background: rgba(99, 102, 241, 0.15) !important;
-    border-color: rgba(99, 102, 241, 0.35) !important;
-    color: #a5b4fc !important;
+    background: var(--accent-bg) !important;
+    border-color: var(--accent-border) !important;
+    color: var(--accent-lighter) !important;
 }
 
 .bs-code-btn:hover {
@@ -813,7 +813,7 @@ onUnmounted(() => {
 
 .bs-info-block {
     font-size: 0.78rem;
-    color: #94a3b8;
+    color: var(--text-muted);
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -823,7 +823,7 @@ onUnmounted(() => {
 /* Shortcuts */
 .bs-shortcuts h4 {
     font-size: 0.78rem;
-    color: #94a3b8;
+    color: var(--text-muted);
     margin: 0 0 6px;
     font-weight: 600;
 }
@@ -833,15 +833,15 @@ onUnmounted(() => {
     grid-template-columns: auto 1fr;
     gap: 4px 8px;
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: var(--text-muted);
 }
 
 .bs-key {
-    background: rgba(100, 116, 139, 0.25);
+    background: var(--border-default);
     padding: 2px 6px;
     border-radius: 4px;
     font-family: monospace;
-    color: #e0e7ff;
+    color: var(--accent-lighter);
     font-size: 0.72rem;
     text-align: center;
 }
@@ -849,7 +849,7 @@ onUnmounted(() => {
 /* Legend */
 .bs-legend h4 {
     font-size: 0.82rem;
-    color: #f1f5f9;
+    color: var(--text-primary);
     margin: 0 0 8px;
 }
 
@@ -859,11 +859,11 @@ onUnmounted(() => {
     align-items: flex-start;
     margin-bottom: 8px;
     font-size: 0.78rem;
-    color: #cbd5e1;
+    color: var(--text-tertiary);
 }
 
 .bs-legend-item small {
-    color: #64748b;
+    color: var(--text-dim);
 }
 
 .bs-dot {
@@ -897,13 +897,13 @@ onUnmounted(() => {
 .bs-legend-note {
     margin-top: 8px;
     font-size: 0.72rem;
-    color: #64748b;
+    color: var(--text-dim);
 }
 
 .bs-legend-note h5 {
     margin: 0 0 4px;
     font-weight: 600;
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 0.72rem;
 }
 
@@ -924,8 +924,8 @@ onUnmounted(() => {
 }
 
 .bs-chart-wrapper {
-    background: rgba(30, 41, 59, 0.65);
-    border: 1px solid rgba(100, 116, 139, 0.25);
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
     border-radius: 12px;
     padding: 16px 16px 8px;
     display: flex;
@@ -957,7 +957,7 @@ onUnmounted(() => {
 .wj-jug-label {
     font-size: 0.82rem;
     font-weight: 600;
-    color: #e0e7ff;
+    color: var(--accent-lighter);
     margin-bottom: 4px;
 }
 
@@ -969,7 +969,7 @@ onUnmounted(() => {
     border-top: none;
     border-radius: 0 0 12px 12px;
     overflow: hidden;
-    background: rgba(15, 23, 42, 0.6);
+    background: var(--bg-input);
     transition: border-color 0.3s;
 }
 
@@ -991,12 +991,12 @@ onUnmounted(() => {
     position: absolute;
     left: 0;
     width: 100%;
-    border-top: 1px solid rgba(100, 116, 139, 0.4);
+    border-top: 1px solid var(--border-strong);
 }
 
 .wj-mark-label {
     font-size: 0.55rem;
-    color: #64748b;
+    color: var(--text-dim);
     position: absolute;
     top: -8px;
     left: 2px;
@@ -1028,7 +1028,7 @@ onUnmounted(() => {
 .wj-water-label {
     font-size: 1.2rem;
     font-weight: 700;
-    color: white;
+    color: var(--text-primary);
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
     z-index: 2;
 }
@@ -1044,7 +1044,7 @@ onUnmounted(() => {
 
 .wj-jug-amount {
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: var(--text-muted);
     font-weight: 600;
 }
 
@@ -1062,13 +1062,13 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     gap: 6px;
-    background: rgba(99, 102, 241, 0.15);
-    border: 1px solid rgba(99, 102, 241, 0.35);
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
     padding: 6px 14px;
     border-radius: 10px;
     font-size: 0.82rem;
     font-weight: 600;
-    color: #a5b4fc;
+    color: var(--accent-lighter);
 }
 
 .wj-target-icon {
@@ -1093,13 +1093,13 @@ onUnmounted(() => {
 .wj-op-empty {
     background: rgba(239, 68, 68, 0.1);
     border: 1px solid rgba(239, 68, 68, 0.3);
-    color: #fca5a5;
+    color: var(--error-text);
 }
 
 .wj-op-pour {
     background: rgba(139, 92, 246, 0.15);
     border: 1px solid rgba(139, 92, 246, 0.35);
-    color: #c4b5fd;
+    color: var(--accent-light);
 }
 
 .wj-op-explore {
@@ -1111,7 +1111,7 @@ onUnmounted(() => {
 .wj-op-success {
     background: rgba(34, 197, 94, 0.15);
     border: 1px solid rgba(34, 197, 94, 0.35);
-    color: #86efac;
+    color: var(--success-text);
 }
 
 .wj-op-arrow {
@@ -1124,26 +1124,26 @@ onUnmounted(() => {
     display: flex;
     justify-content: space-between;
     font-size: 0.72rem;
-    color: #64748b;
+    color: var(--text-dim);
     padding: 6px 0 4px;
 }
 
 .bs-scrubber {
     width: 100%;
-    accent-color: #818cf8;
+    accent-color: var(--accent-light);
     cursor: pointer;
     margin-top: 4px;
 }
 
 /* Status bar */
 .bs-status-bar {
-    background: rgba(30, 41, 59, 0.65);
-    border: 1px solid rgba(100, 116, 139, 0.25);
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
     border-radius: 10px;
     padding: 12px 20px;
     text-align: center;
     font-size: 0.9rem;
-    color: #e2e8f0;
+    color: var(--text-secondary);
     font-weight: 500;
 }
 
@@ -1155,17 +1155,17 @@ onUnmounted(() => {
 
 .bs-complexity-badge {
     font-size: 0.82rem;
-    color: #94a3b8;
+    color: var(--text-muted);
 }
 
 .bs-complexity-badge strong {
-    color: #e0e7ff;
+    color: var(--accent-lighter);
 }
 
 /* ════════ INSPECTOR ════════ */
 .bs-inspector {
-    background: rgba(30, 41, 59, 0.65);
-    border: 1px solid rgba(100, 116, 139, 0.25);
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
     border-radius: 12px;
     padding: 14px;
     overflow-y: auto;
@@ -1177,7 +1177,7 @@ onUnmounted(() => {
 }
 
 .bs-inspector::-webkit-scrollbar-thumb {
-    background: rgba(100, 116, 139, 0.3);
+    background: var(--border-medium);
     border-radius: 2px;
 }
 
@@ -1191,16 +1191,16 @@ onUnmounted(() => {
 .bs-inspector-header h3 {
     margin: 0;
     font-size: 1rem;
-    color: #f1f5f9;
+    color: var(--text-primary);
 }
 
 .bs-step-badge {
     background: rgba(99, 102, 241, 0.2);
-    border: 1px solid rgba(99, 102, 241, 0.4);
+    border: 1px solid var(--accent-border);
     padding: 3px 10px;
     border-radius: 12px;
     font-size: 0.72rem;
-    color: #a5b4fc;
+    color: var(--accent-lighter);
     font-weight: 600;
 }
 
@@ -1208,14 +1208,14 @@ onUnmounted(() => {
     display: flex;
     justify-content: space-between;
     font-size: 0.78rem;
-    color: #94a3b8;
+    color: var(--text-muted);
     margin-bottom: 4px;
 }
 
 .bs-progress-track {
     width: 100%;
     height: 6px;
-    background: rgba(100, 116, 139, 0.2);
+    background: var(--border-light);
     border-radius: 3px;
     margin-bottom: 16px;
     overflow: hidden;
@@ -1223,7 +1223,7 @@ onUnmounted(() => {
 
 .bs-progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #6366f1, #818cf8);
+    background: var(--accent);
     border-radius: 3px;
     transition: width 0.25s;
 }
@@ -1231,7 +1231,7 @@ onUnmounted(() => {
 .bs-inspector-label {
     font-size: 0.7rem;
     letter-spacing: 0.06em;
-    color: #64748b;
+    color: var(--text-dim);
     margin: 14px 0 6px;
     font-weight: 700;
 }
@@ -1241,7 +1241,7 @@ onUnmounted(() => {
     align-items: center;
     gap: 8px;
     font-size: 0.78rem;
-    color: #cbd5e1;
+    color: var(--text-tertiary);
     margin-bottom: 4px;
 }
 
@@ -1285,13 +1285,13 @@ onUnmounted(() => {
 
 .bs-metric-label {
     font-size: 0.7rem;
-    color: #64748b;
+    color: var(--text-dim);
 }
 
 .bs-metric-value {
     font-size: 1.15rem;
     font-weight: 700;
-    color: #f1f5f9;
+    color: var(--text-primary);
 }
 
 .wj-status-text {
@@ -1311,17 +1311,17 @@ onUnmounted(() => {
 }
 
 .bs-step-detail {
-    background: rgba(15, 23, 42, 0.5);
+    background: var(--bg-elevated);
     padding: 8px 10px;
     border-radius: 6px;
     font-size: 0.78rem;
-    color: #cbd5e1;
+    color: var(--text-tertiary);
     font-family: 'Fira Code', monospace;
 }
 
 /* ════════ JUG STATES ════════ */
 .wj-jug-states {
-    background: rgba(15, 23, 42, 0.5);
+    background: var(--bg-elevated);
     padding: 8px 10px;
     border-radius: 6px;
     display: flex;
@@ -1337,7 +1337,7 @@ onUnmounted(() => {
 
 .wj-state-label {
     font-size: 0.72rem;
-    color: #94a3b8;
+    color: var(--text-muted);
     font-weight: 600;
     min-width: 42px;
 }
@@ -1345,25 +1345,25 @@ onUnmounted(() => {
 .wj-state-bar-track {
     flex: 1;
     height: 10px;
-    background: rgba(100, 116, 139, 0.2);
+    background: var(--border-light);
     border-radius: 5px;
     overflow: hidden;
 }
 
 .wj-state-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    background: var(--accent);
     border-radius: 5px;
     transition: width 0.4s ease;
 }
 
 .wj-state-bar-jug3 {
-    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    background: var(--accent);
 }
 
 .wj-state-val {
     font-size: 0.72rem;
-    color: #e0e7ff;
+    color: var(--accent-lighter);
     font-family: 'Fira Code', monospace;
     min-width: 42px;
     text-align: right;
@@ -1371,7 +1371,7 @@ onUnmounted(() => {
 
 /* ════════ SOLUTION PATH ════════ */
 .wj-solution-path {
-    background: rgba(15, 23, 42, 0.5);
+    background: var(--bg-elevated);
     padding: 8px 10px;
     border-radius: 6px;
     max-height: 140px;
@@ -1383,7 +1383,7 @@ onUnmounted(() => {
 }
 
 .wj-solution-path::-webkit-scrollbar-thumb {
-    background: rgba(100, 116, 139, 0.3);
+    background: var(--border-medium);
     border-radius: 2px;
 }
 
@@ -1392,7 +1392,7 @@ onUnmounted(() => {
     align-items: center;
     gap: 6px;
     font-size: 0.72rem;
-    color: #94a3b8;
+    color: var(--text-muted);
     padding: 2px 0;
 }
 
@@ -1403,21 +1403,21 @@ onUnmounted(() => {
 
 .wj-path-num {
     font-weight: 700;
-    color: #64748b;
+    color: var(--text-dim);
     font-family: 'Fira Code', monospace;
     min-width: 24px;
 }
 
 .wj-no-path {
     font-size: 0.72rem;
-    color: #475569;
+    color: var(--text-faint);
     font-style: italic;
 }
 
 /* ════════ COLLAPSIBLE SECTIONS ════════ */
 .bs-section {
-    background: rgba(30, 41, 59, 0.65);
-    border: 1px solid rgba(100, 116, 139, 0.25);
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
     border-radius: 12px;
     margin-bottom: 12px;
     overflow: hidden;
@@ -1431,7 +1431,7 @@ onUnmounted(() => {
     padding: 14px 18px;
     background: none;
     border: none;
-    color: #e2e8f0;
+    color: var(--text-secondary);
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
@@ -1451,8 +1451,8 @@ onUnmounted(() => {
     height: 22px;
     border-radius: 50%;
     background: rgba(99, 102, 241, 0.2);
-    border: 1px solid rgba(99, 102, 241, 0.4);
-    color: #a5b4fc;
+    border: 1px solid var(--accent-border);
+    color: var(--accent-lighter);
     font-size: 0.82rem;
     font-weight: 700;
     flex-shrink: 0;
@@ -1460,20 +1460,20 @@ onUnmounted(() => {
 
 .bs-section-body {
     padding: 0 20px 20px;
-    color: #cbd5e1;
+    color: var(--text-tertiary);
     font-size: 0.88rem;
     line-height: 1.7;
 }
 
 .bs-section-body h2 {
     font-size: 1.15rem;
-    color: #f1f5f9;
+    color: var(--text-primary);
     margin: 0 0 8px;
 }
 
 .bs-section-body h3 {
     font-size: 0.95rem;
-    color: #e0e7ff;
+    color: var(--accent-lighter);
     margin: 16px 0 6px;
 }
 
@@ -1496,8 +1496,8 @@ onUnmounted(() => {
 }
 
 .bs-edge-card {
-    background: rgba(15, 23, 42, 0.5);
-    border: 1px solid rgba(100, 116, 139, 0.3);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-medium);
     border-radius: 10px;
     padding: 14px;
     cursor: pointer;
@@ -1505,19 +1505,19 @@ onUnmounted(() => {
 }
 
 .bs-edge-card:hover {
-    border-color: rgba(99, 102, 241, 0.5);
-    background: rgba(99, 102, 241, 0.08);
+    border-color: var(--accent-border);
+    background: var(--bg-hover);
 }
 
 .bs-edge-card strong {
     display: block;
-    color: #f1f5f9;
+    color: var(--text-primary);
     font-size: 0.88rem;
     margin-bottom: 4px;
 }
 
 .bs-edge-card small {
-    color: #64748b;
+    color: var(--text-dim);
     font-size: 0.78rem;
 }
 
@@ -1540,7 +1540,7 @@ onUnmounted(() => {
     align-items: center;
     gap: 10px;
     font-size: 0.82rem;
-    color: #e0e7ff;
+    color: var(--accent-lighter);
     font-weight: 600;
     cursor: pointer;
     user-select: none;
@@ -1554,7 +1554,7 @@ onUnmounted(() => {
     position: relative;
     width: 40px;
     height: 22px;
-    background: rgba(100, 116, 139, 0.3);
+    background: var(--border-medium);
     border-radius: 11px;
     transition: background 0.3s;
     flex-shrink: 0;
@@ -1586,15 +1586,15 @@ onUnmounted(() => {
     border-radius: 12px;
     font-size: 0.72rem;
     font-weight: 600;
-    background: rgba(100, 116, 139, 0.15);
-    border: 1px solid rgba(100, 116, 139, 0.3);
-    color: #94a3b8;
+    background: var(--border-light);
+    border: 1px solid var(--border-medium);
+    color: var(--text-muted);
 }
 
 .wj-jug-mode-badge.wj-three-mode {
-    background: rgba(99, 102, 241, 0.15);
-    border-color: rgba(99, 102, 241, 0.4);
-    color: #a5b4fc;
+    background: var(--accent-bg);
+    border-color: var(--accent-border);
+    color: var(--accent-lighter);
 }
 
 /* ════════ RESPONSIVE ════════ */

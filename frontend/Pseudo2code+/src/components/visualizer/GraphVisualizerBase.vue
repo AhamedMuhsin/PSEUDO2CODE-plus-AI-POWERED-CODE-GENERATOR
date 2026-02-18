@@ -624,7 +624,7 @@ Include graph creation and traversal implementation.`
 /* COMPACT LAYOUT - Everything fits on one screen */
 .visualizer-page {
     height: 100vh;
-    background: radial-gradient(circle at top, #0f172a, #020617);
+    background: var(--bg-page);
     padding: 12px;
     overflow: hidden;
 }
@@ -645,9 +645,9 @@ Include graph creation and traversal implementation.`
     display: flex;
     align-items: center;
     gap: 6px;
-    background: rgba(99, 102, 241, 0.15);
-    border: 1px solid rgba(99, 102, 241, 0.3);
-    color: #e0e7ff;
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+    color: var(--accent-lighter);
     padding: 6px 12px;
     border-radius: 8px;
     cursor: pointer;
@@ -656,7 +656,7 @@ Include graph creation and traversal implementation.`
 }
 
 .back-btn-compact:hover {
-    background: rgba(99, 102, 241, 0.25);
+    background: var(--accent-bg-hover);
     transform: translateX(-2px);
 }
 
@@ -667,9 +667,9 @@ Include graph creation and traversal implementation.`
 
 /* COMPACT HEADER */
 .page-header-compact {
-    background: rgba(30, 41, 59, 0.6);
+    background: rgba(18, 18, 18, 0.6);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(100, 116, 139, 0.3);
+    border: 1px solid var(--border-medium);
     border-radius: 12px;
     padding: 12px 16px;
     flex-shrink: 0;
@@ -691,7 +691,7 @@ Include graph creation and traversal implementation.`
 
 .operation-title-group-compact h1 {
     font-size: 1.4rem;
-    background: linear-gradient(135deg, #818cf8, #c084fc);
+    background: var(--accent);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -700,8 +700,8 @@ Include graph creation and traversal implementation.`
 
 .info-btn-compact {
     background: rgba(99, 102, 241, 0.2);
-    border: 1px solid rgba(99, 102, 241, 0.4);
-    color: #a5b4fc;
+    border: 1px solid var(--accent-border);
+    color: var(--accent-lighter);
     width: 24px;
     height: 24px;
     border-radius: 50%;
@@ -719,7 +719,7 @@ Include graph creation and traversal implementation.`
 }
 
 .operation-desc-compact {
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 0.85rem;
     margin: 0;
 }
@@ -732,10 +732,10 @@ Include graph creation and traversal implementation.`
 
 .badge-compact {
     padding: 4px 8px;
-    background: rgba(100, 116, 139, 0.2);
-    border: 1px solid rgba(100, 116, 139, 0.3);
+    background: var(--border-light);
+    border: 1px solid var(--border-medium);
     border-radius: 6px;
-    color: #cbd5e1;
+    color: var(--text-tertiary);
     font-size: 0.75rem;
     font-weight: 500;
 }
@@ -760,9 +760,9 @@ Include graph creation and traversal implementation.`
 
 /* LEFT COLUMN - Inputs & Canvas */
 .graph-input-compact {
-    background: rgba(30, 41, 59, 0.6);
+    background: rgba(18, 18, 18, 0.6);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(100, 116, 139, 0.3);
+    border: 1px solid var(--border-medium);
     border-radius: 10px;
     padding: 10px;
     flex-shrink: 0;
@@ -785,8 +785,8 @@ Include graph creation and traversal implementation.`
 }
 
 .btn-compact.primary {
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    color: white;
+    background: var(--accent);
+    color: var(--text-primary);
 }
 
 .btn-compact.primary:hover:not(:disabled) {
@@ -795,18 +795,18 @@ Include graph creation and traversal implementation.`
 }
 
 .btn-compact.ghost {
-    background: rgba(100, 116, 139, 0.2);
-    border: 1px solid rgba(100, 116, 139, 0.3);
-    color: #cbd5e1;
+    background: var(--border-light);
+    border: 1px solid var(--border-medium);
+    color: var(--text-tertiary);
 }
 
 .btn-compact.ghost:hover:not(:disabled) {
-    background: rgba(100, 116, 139, 0.3);
+    background: var(--border-medium);
 }
 
 .btn-compact.danger {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
+    background: var(--accent);
+    color: var(--text-primary);
 }
 
 .btn-compact.danger:hover {
@@ -830,19 +830,19 @@ Include graph creation and traversal implementation.`
 }
 
 .btn-tiny.primary {
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    color: white;
+    background: var(--accent);
+    color: var(--text-primary);
 }
 
 .btn-tiny.danger {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
+    background: var(--accent);
+    color: var(--text-primary);
 }
 
 /* GRAPH BUILDER */
 .graph-builder-compact {
-    background: rgba(15, 23, 42, 0.5);
-    border: 1px solid rgba(100, 116, 139, 0.3);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-medium);
     border-radius: 8px;
     padding: 8px;
     margin-top: 6px;
@@ -865,7 +865,7 @@ Include graph creation and traversal implementation.`
     display: flex;
     align-items: center;
     gap: 4px;
-    color: #cbd5e1;
+    color: var(--text-tertiary);
     font-size: 0.8rem;
     cursor: pointer;
 }
@@ -886,9 +886,9 @@ Include graph creation and traversal implementation.`
 .builder-input-compact,
 .builder-select-compact,
 .weight-input-compact {
-    background: rgba(30, 41, 59, 0.8);
-    border: 1px solid rgba(100, 116, 139, 0.4);
-    color: #e0e7ff;
+    background: rgba(18, 18, 18, 0.8);
+    border: 1px solid var(--border-strong);
+    color: var(--accent-lighter);
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 0.8rem;
@@ -903,7 +903,7 @@ Include graph creation and traversal implementation.`
 .builder-input-compact:focus,
 .builder-select-compact:focus {
     outline: none;
-    border-color: #6366f1;
+    border-color: var(--accent);
 }
 
 .item-chips-compact {
@@ -917,10 +917,10 @@ Include graph creation and traversal implementation.`
     align-items: center;
     gap: 4px;
     padding: 3px 8px;
-    background: rgba(99, 102, 241, 0.15);
-    border: 1px solid rgba(99, 102, 241, 0.3);
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
     border-radius: 12px;
-    color: #c7d2fe;
+    color: var(--accent-lighter);
     font-size: 0.75rem;
     font-weight: 500;
 }
@@ -931,7 +931,7 @@ Include graph creation and traversal implementation.`
 }
 
 .chip-weight-compact {
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 0.7rem;
 }
 
@@ -961,13 +961,13 @@ Include graph creation and traversal implementation.`
 .builder-message-compact.success {
     background: rgba(34, 197, 94, 0.15);
     border: 1px solid rgba(34, 197, 94, 0.3);
-    color: #86efac;
+    color: var(--success-text);
 }
 
 .builder-message-compact.error {
     background: rgba(239, 68, 68, 0.15);
     border: 1px solid rgba(239, 68, 68, 0.3);
-    color: #fca5a5;
+    color: var(--error-text);
 }
 
 .start-node-section-compact {
@@ -978,15 +978,15 @@ Include graph creation and traversal implementation.`
 }
 
 .start-node-section-compact label {
-    color: #e0e7ff;
+    color: var(--accent-lighter);
     font-weight: 600;
     font-size: 0.8rem;
 }
 
 .node-select-compact {
-    background: rgba(30, 41, 59, 0.8);
-    border: 1px solid rgba(100, 116, 139, 0.4);
-    color: #e0e7ff;
+    background: rgba(18, 18, 18, 0.8);
+    border: 1px solid var(--border-strong);
+    color: var(--accent-lighter);
     padding: 4px 8px;
     border-radius: 6px;
     font-size: 0.8rem;
@@ -995,7 +995,7 @@ Include graph creation and traversal implementation.`
 
 .node-select-compact:focus {
     outline: none;
-    border-color: #6366f1;
+    border-color: var(--accent);
 }
 
 /* CONTROLS */
@@ -1004,9 +1004,9 @@ Include graph creation and traversal implementation.`
     gap: 6px;
     align-items: center;
     flex-wrap: wrap;
-    background: rgba(30, 41, 59, 0.6);
+    background: rgba(18, 18, 18, 0.6);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(100, 116, 139, 0.3);
+    border: 1px solid var(--border-medium);
     border-radius: 10px;
     padding: 8px;
     flex-shrink: 0;
@@ -1014,10 +1014,10 @@ Include graph creation and traversal implementation.`
 
 .step-counter-compact {
     padding: 5px 10px;
-    background: rgba(99, 102, 241, 0.1);
-    border: 1px solid rgba(99, 102, 241, 0.3);
+    background: var(--bg-hover);
+    border: 1px solid var(--accent-border);
     border-radius: 6px;
-    color: #e0e7ff;
+    color: var(--accent-lighter);
     font-weight: 600;
     font-size: 0.75rem;
 }
@@ -1026,7 +1026,7 @@ Include graph creation and traversal implementation.`
     display: flex;
     align-items: center;
     gap: 6px;
-    color: #e0e7ff;
+    color: var(--accent-lighter);
     font-size: 0.75rem;
 }
 
@@ -1038,9 +1038,9 @@ Include graph creation and traversal implementation.`
 /* CANVAS */
 .canvas-compact {
     flex: 1;
-    background: rgba(30, 41, 59, 0.6);
+    background: rgba(18, 18, 18, 0.6);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(100, 116, 139, 0.3);
+    border: 1px solid var(--border-medium);
     border-radius: 10px;
     padding: 8px;
     overflow: hidden;
@@ -1062,7 +1062,7 @@ Include graph creation and traversal implementation.`
     display: flex;
     align-items: center;
     gap: 4px;
-    color: #cbd5e1;
+    color: var(--text-tertiary);
     font-size: 0.75rem;
 }
 
@@ -1070,7 +1070,7 @@ Include graph creation and traversal implementation.`
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    border: 2px solid #1e293b;
+    border: 2px solid #1a1a1a;
 }
 
 .dot.normal {
@@ -1090,21 +1090,21 @@ Include graph creation and traversal implementation.`
 }
 
 .dot.visited {
-    background: #6366f1;
+    background-color: var(--accent);
 }
 
 /* RIGHT COLUMN - Pseudo & Explanation */
 .pseudo-section-compact {
-    background: rgba(30, 41, 59, 0.6);
+    background: rgba(18, 18, 18, 0.6);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(100, 116, 139, 0.3);
+    border: 1px solid var(--border-medium);
     border-radius: 10px;
     padding: 10px;
     flex-shrink: 0;
 }
 
 .section-title-compact {
-    color: #e0e7ff;
+    color: var(--accent-lighter);
     margin: 0 0 8px 0;
     font-size: 1rem;
 }
@@ -1115,22 +1115,22 @@ Include graph creation and traversal implementation.`
 }
 
 .explanation-compact {
-    background: rgba(30, 41, 59, 0.6);
+    background: rgba(18, 18, 18, 0.6);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(100, 116, 139, 0.3);
+    border: 1px solid var(--border-medium);
     border-radius: 10px;
     padding: 10px;
     flex-shrink: 0;
 }
 
 .explanation-compact h3 {
-    color: #e0e7ff;
+    color: var(--accent-lighter);
     margin: 0 0 6px 0;
     font-size: 0.9rem;
 }
 
 .explanation-compact p {
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 0.85rem;
     line-height: 1.4;
     margin: 0;
@@ -1147,16 +1147,16 @@ Include graph creation and traversal implementation.`
 }
 
 .distance-table-section-compact {
-    background: rgba(30, 41, 59, 0.6);
+    background: rgba(18, 18, 18, 0.6);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(100, 116, 139, 0.3);
+    border: 1px solid var(--border-medium);
     border-radius: 10px;
     padding: 10px;
     flex-shrink: 0;
 }
 
 .table-title-compact {
-    color: #e0e7ff;
+    color: var(--accent-lighter);
     margin: 0 0 8px 0;
     font-size: 0.9rem;
 }
@@ -1174,32 +1174,32 @@ Include graph creation and traversal implementation.`
 .distance-table-compact th,
 .distance-table-compact td {
     padding: 6px 10px;
-    border: 1px solid rgba(100, 116, 139, 0.3);
-    color: #cbd5e1;
+    border: 1px solid var(--border-medium);
+    color: var(--text-tertiary);
     font-size: 0.75rem;
     min-width: 40px;
 }
 
 .distance-table-compact th {
-    background: rgba(99, 102, 241, 0.15);
-    color: #e0e7ff;
+    background: var(--accent-bg);
+    color: var(--accent-lighter);
     font-weight: 600;
 }
 
 .distance-table-compact .row-label {
-    background: rgba(99, 102, 241, 0.1);
-    color: #a5b4fc;
+    background: var(--bg-hover);
+    color: var(--accent-lighter);
     font-weight: 600;
     text-align: left;
 }
 
 .distance-table-compact .active-col {
     background: rgba(34, 197, 94, 0.15);
-    color: #86efac;
+    color: var(--success-text);
 }
 
 .distance-table-compact .visited-col {
-    background: rgba(99, 102, 241, 0.1);
+    background: var(--bg-hover);
 }
 
 .distance-table-compact .updated-cell {
@@ -1219,13 +1219,13 @@ Include graph creation and traversal implementation.`
 
 .status-badge-compact.open {
     background: rgba(34, 197, 94, 0.2);
-    color: #86efac;
+    color: var(--success-text);
     border: 1px solid rgba(34, 197, 94, 0.4);
 }
 
 .status-badge-compact.closed {
     background: rgba(239, 68, 68, 0.2);
-    color: #fca5a5;
+    color: var(--error-text);
     border: 1px solid rgba(239, 68, 68, 0.4);
 }
 
@@ -1251,8 +1251,8 @@ Include graph creation and traversal implementation.`
 }
 
 .status-badge-compact.pending {
-    background: rgba(100, 116, 139, 0.15);
-    color: #64748b;
+    background: var(--border-light);
+    color: var(--text-dim);
 }
 
 @keyframes pulse {
@@ -1269,7 +1269,7 @@ Include graph creation and traversal implementation.`
     border-radius: 8px;
     text-align: center;
     font-size: 0.8rem;
-    color: #86efac;
+    color: var(--success-text);
     font-weight: 600;
 }
 
@@ -1289,7 +1289,7 @@ Include graph creation and traversal implementation.`
 .edge-list-table-compact {
     width: 100%;
     border-collapse: collapse;
-    background: rgba(30, 41, 59, 0.4);
+    background: rgba(18, 18, 18, 0.4);
     border-radius: 8px;
     overflow: hidden;
 }
@@ -1307,12 +1307,12 @@ Include graph creation and traversal implementation.`
 }
 
 .edge-list-table-compact th {
-    color: #94a3b8;
+    color: var(--text-muted);
     font-weight: 600;
 }
 
 .edge-list-table-compact td {
-    color: #cbd5e1;
+    color: var(--text-tertiary);
 }
 
 .edge-list-table-compact tr.current-edge {
@@ -1348,7 +1348,7 @@ Include graph creation and traversal implementation.`
 .pseudo-scroll::-webkit-scrollbar-thumb,
 .data-tables-scroll::-webkit-scrollbar-thumb,
 .edge-list-wrapper-compact::-webkit-scrollbar-thumb {
-    background: rgba(99, 102, 241, 0.25);
+    background: var(--accent-bg-hover);
     border-radius: 4px;
 }
 

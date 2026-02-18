@@ -85,15 +85,15 @@ const hint = computed(() => {
 .op-hint {
     /* width: 100%; */
     font-size: 0.85rem;
-    color: #94a3b8;
+    color: var(--text-muted);
     margin-bottom: 8px;
 }
 
 .op-controls input {
     padding: 10px 14px;
     border-radius: 10px;
-    background: rgba(15, 23, 42, 0.8);
+    background: var(--bg-code);
     border: 1px solid rgba(255, 255, 255, 0.15);
-    color: white;
+    color: var(--text-primary);
 }
 </style>

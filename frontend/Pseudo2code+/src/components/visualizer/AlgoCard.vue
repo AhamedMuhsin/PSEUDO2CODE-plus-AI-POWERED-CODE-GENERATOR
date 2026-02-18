@@ -41,26 +41,26 @@ defineEmits(['show-info'])
 
 <style scoped>
 .algo-card {
-  background: rgba(15, 23, 42, 0.85);
-  border-radius: 16px;
+  background: var(--bg-card);
+  border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-default);
   position: relative;
   transition: all 0.25s ease;
 }
 
 .algo-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-lg);
 }
 
 .icon {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: rgba(99, 102, 241, 0.15);
-  color: #818cf8;
+  background: var(--accent-bg);
+  color: var(--accent-light);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -92,7 +92,7 @@ h3 {
 }
 
 p {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 0.9rem;
 }
 
@@ -103,8 +103,8 @@ p {
 }
 
 .primary {
-  background: #6366f1;
-  color: white;
+  background-color: var(--accent);
+  color: var(--text-primary);
   cursor: pointer;
   padding: 8px 14px;
   border-radius: 10px;
@@ -114,14 +114,14 @@ p {
 }
 
 .primary:hover {
-  background: #4f46e5;
+  background-color: var(--accent-hover);
   transform: translateY(-1px);
 }
 
 .info {
-  background: rgba(99, 102, 241, 0.15);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: #a78bfa;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  color: var(--accent-light);
   border-radius: 10px;
   padding: 8px 12px;
   cursor: pointer;
@@ -132,8 +132,8 @@ p {
 }
 
 .info:hover {
-  background: rgba(99, 102, 241, 0.25);
-  border-color: rgba(99, 102, 241, 0.5);
+  background: var(--accent-bg-hover);
+  border-color: var(--accent-border);
   transform: translateY(-1px);
 }
 </style>

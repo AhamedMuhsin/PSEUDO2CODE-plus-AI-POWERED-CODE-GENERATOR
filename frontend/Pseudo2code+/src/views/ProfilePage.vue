@@ -339,12 +339,12 @@ async function confirmDelete() {
 <style scoped>
 /* ════════ BACK ════════ */
 .back-top-bar { flex-shrink: 0; }
-.back-btn-compact { display: flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #e0e7ff; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
-.back-btn-compact:hover { background: rgba(99,102,241,0.25); transform: translateX(-2px); }
+.back-btn-compact { display: flex; align-items: center; gap: 6px; background: var(--accent-bg); border: 1px solid var(--accent-border); color: var(--accent-lighter); padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
+.back-btn-compact:hover { background: var(--accent-bg-hover); transform: translateX(-2px); }
 .arrow { width: 16px; height: 16px; }
 
 .profile-page {
-  background: radial-gradient(circle at top, #0f172a, #020617);
+  background: var(--bg-page);
   padding: 32px;
   min-height: calc(100vh - 70px);
 }
@@ -366,37 +366,37 @@ async function confirmDelete() {
 
 .header h1 {
   font-size: 1.8rem;
-  color: #ffffff;
+  color: var(--text-primary);
   margin-bottom: 8px;
 }
 
 .header p {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 0.95rem;
 }
 
 .card {
-  background: rgba(15, 23, 42, 0.85);
-  border-radius: 16px;
+  background: var(--bg-card);
+  border-radius: 12px;
   padding: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-md);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-lg);
 }
 
 .card h3 {
-  color: #ffffff;
+  color: var(--text-primary);
   margin-bottom: 20px;
   font-size: 1.2rem;
 }
 
 .card p {
-  color: #cbd5e1;
+  color: var(--text-tertiary);
   font-size: 0.9rem;
   margin-bottom: 16px;
 }
@@ -417,7 +417,7 @@ async function confirmDelete() {
   height: 80px;
   border-radius: 50%;
   background: rgba(99, 102, 241, 0.2);
-  color: #c7d2fe;
+  color: var(--accent-lighter);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -425,7 +425,7 @@ async function confirmDelete() {
   font-size: 1.4rem;
   background-size: cover;
   background-position: center;
-  border: 2px solid rgba(99, 102, 241, 0.3);
+  border: 2px solid var(--accent-border);
   flex-shrink: 0;
 }
 
@@ -458,7 +458,7 @@ async function confirmDelete() {
 
 label {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--text-muted);
   display: block;
   margin-bottom: 6px;
   font-weight: 500;
@@ -468,22 +468,22 @@ input {
   width: 100%;
   padding: 10px 12px;
   border-radius: 10px;
-  background: #020617;
+  background: var(--bg-page);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #e5e7eb;
+  color: var(--text-secondary);
   font-size: 0.95rem;
   transition: border-color 0.2s ease;
 }
 
 input:focus {
   outline: none;
-  border-color: rgba(99, 102, 241, 0.5);
-  background: rgba(2, 6, 23, 0.8);
+  border-color: var(--accent-border);
+  background: var(--bg-code);
 }
 
 input:disabled {
-  background: rgba(30, 41, 59, 0.5);
-  color: #64748b;
+  background: rgba(18, 18, 18, 0.5);
+  color: var(--text-dim);
   cursor: not-allowed;
 }
 
@@ -503,8 +503,8 @@ input:disabled {
 }
 
 .btn.primary {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  color: white;
+  background: var(--accent);
+  color: var(--text-primary);
 }
 
 .btn.primary:hover:not(:disabled) {
@@ -515,11 +515,11 @@ input:disabled {
 .btn.ghost {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #e5e7eb;
+  color: var(--text-secondary);
 }
 
 .btn.ghost:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--border-default);
   border-color: rgba(255, 255, 255, 0.3);
 }
 
@@ -529,8 +529,8 @@ input:disabled {
 }
 
 .danger-btn {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: white;
+  background: var(--accent);
+  color: var(--text-primary);
   padding: 12px 24px;
 }
 
@@ -542,7 +542,7 @@ input:disabled {
 .success-msg {
   background: rgba(34, 197, 94, 0.1);
   border: 1px solid rgba(34, 197, 94, 0.3);
-  color: #86efac;
+  color: var(--success-text);
   padding: 12px 16px;
   border-radius: 10px;
   font-size: 0.9rem;
@@ -553,7 +553,7 @@ input:disabled {
 .error-msg {
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #fca5a5;
+  color: var(--error-text);
   padding: 12px 16px;
   border-radius: 10px;
   font-size: 0.9rem;

@@ -179,13 +179,13 @@ const nextRankXp = computed(() => {
 <style scoped>
 /* ════════ BACK ════════ */
 .back-top-bar { flex-shrink: 0; }
-.back-btn-compact { display: flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #e0e7ff; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
-.back-btn-compact:hover { background: rgba(99,102,241,0.25); transform: translateX(-2px); }
+.back-btn-compact { display: flex; align-items: center; gap: 6px; background: var(--accent-bg); border: 1px solid var(--accent-border); color: var(--accent-lighter); padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
+.back-btn-compact:hover { background: var(--accent-bg-hover); transform: translateX(-2px); }
 .arrow { width: 16px; height: 16px; }
 
 .leaderboard-page {
     min-height: 100vh;
-    background: radial-gradient(circle at top, #0f172a, #020617);
+    background: var(--bg-page);
 }
 
 .page-layout {
@@ -210,11 +210,11 @@ const nextRankXp = computed(() => {
 .leaderboard-header h1 {
     font-size: 2.2rem;
     font-weight: 800;
-    color: #f8fafc;
+    color: var(--text-primary);
 }
 
 .leaderboard-header p {
-    color: #94a3b8;
+    color: var(--text-muted);
     margin-top: 6px;
 }
 
@@ -227,9 +227,9 @@ const nextRankXp = computed(() => {
 }
 
 .pagination button {
-    background: linear-gradient(145deg, #0b1220, #0e1628);
-    border: 1px solid #1e293b;
-    color: #e5e7eb;
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
+    color: var(--text-secondary);
     padding: 10px 18px;
     border-radius: 12px;
     font-weight: 600;
@@ -238,7 +238,7 @@ const nextRankXp = computed(() => {
 }
 
 .pagination button:hover:not(:disabled) {
-    background: rgba(99, 102, 241, 0.15);
+    background: var(--accent-bg);
 }
 
 .pagination button:disabled {
@@ -248,7 +248,7 @@ const nextRankXp = computed(() => {
 
 .page-info {
     font-size: 0.9rem;
-    color: #94a3b8;
+    color: var(--text-muted);
 }
 
 /* ===== Mobile Responsive ===== */

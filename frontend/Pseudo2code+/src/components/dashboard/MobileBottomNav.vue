@@ -43,8 +43,8 @@ function isActive(path) {
     justify-content: space-around;
     align-items: center;
     height: 64px;
-    background: linear-gradient(to top, rgba(2, 6, 23, 0.98), rgba(15, 23, 42, 0.96));
-    border-top: 1px solid rgba(99, 102, 241, 0.15);
+    background: var(--bg-navbar);
+    border-top: 1px solid var(--accent-border);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     padding: 0 4px;
@@ -60,7 +60,7 @@ function isActive(path) {
     flex: 1;
     padding: 8px 2px;
     text-decoration: none;
-    color: #64748b;
+    color: var(--text-dim);
     transition: color 0.2s ease;
     position: relative;
     -webkit-tap-highlight-color: transparent;
@@ -74,13 +74,13 @@ function isActive(path) {
     transform: translateX(-50%) scaleX(0);
     width: 32px;
     height: 2px;
-    background: linear-gradient(90deg, #6366f1, #818cf8);
+    background: var(--accent);
     border-radius: 0 0 2px 2px;
     transition: transform 0.25s ease;
   }
 
   .nav-item.active {
-    color: #818cf8;
+    color: var(--accent-light);
   }
 
   .nav-item.active::before {
@@ -88,7 +88,7 @@ function isActive(path) {
   }
 
   .nav-item:active {
-    color: #a5b4fc;
+    color: var(--accent-lighter);
   }
 
   .nav-icon {

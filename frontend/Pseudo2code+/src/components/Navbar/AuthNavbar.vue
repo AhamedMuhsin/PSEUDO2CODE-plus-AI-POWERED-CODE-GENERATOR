@@ -14,10 +14,13 @@
             </li>
         </ul>
 
-        <!-- Right: Logout (Desktop) -->
-        <button class="logout-btn" @click="handleLogout">
-            Logout
-        </button>
+        <!-- Right: Theme Toggle + Logout (Desktop) -->
+        <div class="right-actions">
+            <ThemeToggle variant="desktop" />
+            <button class="logout-btn" @click="handleLogout">
+                Logout
+            </button>
+        </div>
 
         <!-- Hamburger Button (Mobile) -->
         <button class="hamburger" :class="{ open: mobileMenuOpen }" @click="toggleMenu" aria-label="Toggle menu">
@@ -48,17 +51,33 @@
                     </li>
                 </ul>
 
-                <!-- App Pages Section -->
-                <div class="mobile-section-label">Pages</div>
-                <ul class="mobile-links mobile-app-links">
-                    <li v-for="(link, i) in appLinks" :key="link.to"
-                        :style="{ animationDelay: ((navLinks.length + i) * 0.06) + 's' }">
-                        <RouterLink :to="link.to" :class="{ active: isActive(link.to) }" @click="closeMenu">
-                            <component :is="link.icon" :size="18" class="mobile-link-icon" />
-                            {{ link.label }}
-                        </RouterLink>
-                    </li>
-                </ul>
+                <!-- App Pages Submenu (collapsible) -->
+                <div class="mobile-submenu">
+                    <button class="submenu-trigger" @click="pagesOpen = !pagesOpen"
+                        :class="{ expanded: pagesOpen }">
+                        <div class="submenu-trigger-left">
+                            <Layers :size="18" class="mobile-link-icon" />
+                            Pages
+                        </div>
+                        <ChevronDown :size="16" class="submenu-chevron" />
+                    </button>
+                    <Transition name="submenu">
+                        <ul v-if="pagesOpen" class="mobile-links mobile-app-links">
+                            <li v-for="(link, i) in appLinks" :key="link.to"
+                                :style="{ animationDelay: (i * 0.04) + 's' }">
+                                <RouterLink :to="link.to" :class="{ active: isActive(link.to) }"
+                                    @click="closeMenu">
+                                    <component :is="link.icon" :size="18" class="mobile-link-icon" />
+                                    {{ link.label }}
+                                </RouterLink>
+                            </li>
+                        </ul>
+                    </Transition>
+                </div>
+
+                <!-- Theme Section -->
+                <div class="mobile-section-label">Theme</div>
+                <ThemeToggle variant="mobile" />
 
                 <div class="mobile-drawer-footer">
                     <button class="mobile-logout-btn" @click="handleLogout">
@@ -76,15 +95,18 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { logout } from '@/services/authService'
 import { useSwipeBack } from '@/composables/useSwipeBack'
+import ThemeToggle from '@/components/common/ThemeToggle.vue'
 import logo from '@/assets/logo_f.png'
 import {
     Sparkles, Info, Mail, LayoutDashboard, User, LogOut,
-    Code, Eye, Brain, Clock, Trophy, BarChart3
+    Code, Eye, Brain, Clock, Trophy, BarChart3,
+    Layers, ChevronDown
 } from 'lucide-vue-next'
 
 const router = useRouter()
 const route = useRoute()
 const mobileMenuOpen = ref(false)
+const pagesOpen = ref(false)
 const scrolled = ref(false)
 
 
@@ -145,13 +167,11 @@ onUnmounted(() => {
     width: 100%;
     height: 70px;
     padding: 0 100px;
-    background: linear-gradient(to bottom,
-            rgba(15, 23, 42, 0.95),
-            rgba(2, 6, 23, 0.95));
+    background: var(--bg-navbar);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid var(--border-default);
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -162,9 +182,9 @@ onUnmounted(() => {
 
 .auth-navbar.nav-scrolled {
     height: 60px;
-    background: rgba(2, 6, 23, 0.98);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
-    border-bottom-color: rgba(99, 102, 241, 0.15);
+    background: var(--bg-navbar-solid);
+    box-shadow: var(--shadow-md);
+    border-bottom-color: var(--accent-border);
 }
 
 /* ════════ LEFT ════════ */
@@ -195,7 +215,7 @@ onUnmounted(() => {
 }
 
 .nav-links a {
-    color: #94a3b8;
+    color: var(--text-muted);
     text-decoration: none;
     font-size: 0.95rem;
     position: relative;
@@ -210,14 +230,14 @@ onUnmounted(() => {
     left: 50%;
     width: 0;
     height: 2px;
-    background: linear-gradient(90deg, #6366f1, #818cf8);
+    background: var(--accent), var(--accent-light));
     border-radius: 1px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     transform: translateX(-50%);
 }
 
 .nav-links a:hover {
-    color: #e5e7eb;
+    color: var(--text-secondary);
 }
 
 .nav-links a:hover::after {
@@ -225,7 +245,7 @@ onUnmounted(() => {
 }
 
 .nav-links .active {
-    color: #6366f1;
+    color: var(--accent);
     font-weight: 600;
 }
 
@@ -233,11 +253,19 @@ onUnmounted(() => {
     width: 100%;
 }
 
+/* ════════ RIGHT ACTIONS (Desktop) ════════ */
+.right-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
 /* ════════ LOGOUT DESKTOP ════════ */
 .logout-btn {
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: #e5e7eb;
+    border: 1px solid var(--border-default);
+    color: var(--text-secondary);
     padding: 6px 16px;
     border-radius: 10px;
     cursor: pointer;
@@ -249,7 +277,7 @@ onUnmounted(() => {
 .logout-btn:hover {
     background: #ef4444;
     border-color: #ef4444;
-    color: white;
+    color: var(--text-primary);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
@@ -263,8 +291,8 @@ onUnmounted(() => {
     gap: 5px;
     width: 40px;
     height: 40px;
-    background: rgba(100, 116, 139, 0.1);
-    border: 1px solid rgba(100, 116, 139, 0.2);
+    background: var(--bg-hover);
+    border: 1px solid var(--border-default);
     border-radius: 10px;
     cursor: pointer;
     padding: 8px;
@@ -274,14 +302,14 @@ onUnmounted(() => {
 }
 
 .hamburger:hover {
-    background: rgba(99, 102, 241, 0.15);
-    border-color: rgba(99, 102, 241, 0.3);
+    background: var(--accent-bg);
+    border-color: var(--accent-border);
 }
 
 .hamburger-line {
     width: 20px;
     height: 2px;
-    background: #e2e8f0;
+    background: var(--text-secondary);
     border-radius: 2px;
     transition: all 0.35s cubic-bezier(0.68, -0.6, 0.32, 1.6);
     transform-origin: center;
@@ -304,7 +332,7 @@ onUnmounted(() => {
 .mobile-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: var(--bg-overlay);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     z-index: 998;
@@ -328,13 +356,13 @@ onUnmounted(() => {
     width: 280px;
     max-width: 85vw;
     height: 100dvh;
-    background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
-    border-left: 1px solid rgba(99, 102, 241, 0.2);
+    background: var(--bg-drawer);
+    border-left: 1px solid var(--accent-border);
     z-index: 999;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--shadow-lg);
 }
 
 .slide-enter-active {
@@ -356,7 +384,7 @@ onUnmounted(() => {
     align-items: center;
     gap: 12px;
     padding: 24px 20px 20px;
-    border-bottom: 1px solid rgba(100, 116, 139, 0.15);
+    border-bottom: 1px solid var(--border-light);
 }
 
 .mobile-logo {
@@ -366,7 +394,7 @@ onUnmounted(() => {
 .mobile-brand {
     font-size: 1.1rem;
     font-weight: 700;
-    background: linear-gradient(135deg, #818cf8, #6366f1);
+    background: var(--accent);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -402,7 +430,7 @@ onUnmounted(() => {
     gap: 12px;
     padding: 12px 16px;
     border-radius: 10px;
-    color: #94a3b8;
+    color: var(--text-muted);
     text-decoration: none;
     font-size: 0.95rem;
     font-weight: 500;
@@ -418,7 +446,7 @@ onUnmounted(() => {
     top: 0;
     bottom: 0;
     width: 3px;
-    background: #6366f1;
+    background: var(--accent);
     border-radius: 0 3px 3px 0;
     transform: scaleY(0);
     transition: transform 0.25s ease;
@@ -426,8 +454,8 @@ onUnmounted(() => {
 
 .mobile-links a:hover,
 .mobile-links a:active {
-    background: rgba(99, 102, 241, 0.08);
-    color: #e2e8f0;
+    background: var(--bg-hover);
+    color: var(--text-secondary);
 }
 
 .mobile-links a:hover::before {
@@ -435,8 +463,8 @@ onUnmounted(() => {
 }
 
 .mobile-links a.active {
-    background: rgba(99, 102, 241, 0.12);
-    color: #818cf8;
+    background: var(--accent-bg);
+    color: var(--accent-light);
     font-weight: 600;
 }
 
@@ -464,16 +492,99 @@ onUnmounted(() => {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1.2px;
-    color: #475569;
+    color: var(--text-faint);
 }
 
 .mobile-app-links {
     padding-top: 0;
+    flex: 0;
+}
+
+/* ════════ PAGES SUBMENU ════════ */
+.mobile-submenu {
+    padding: 4px 12px;
+}
+
+.submenu-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.submenu-trigger-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.submenu-trigger:hover {
+    background: var(--bg-hover);
+    color: var(--text-secondary);
+}
+
+.submenu-trigger.expanded {
+    color: var(--accent-light);
+}
+
+.submenu-chevron {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.5;
+}
+
+.submenu-trigger.expanded .submenu-chevron {
+    transform: rotate(180deg);
+    opacity: 1;
+    color: var(--accent-light);
+}
+
+/* Submenu transition */
+.submenu-enter-active {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.submenu-leave-active {
+    transition: all 0.2s cubic-bezier(0.4, 0, 1, 1);
+    overflow: hidden;
+}
+
+.submenu-enter-from,
+.submenu-leave-to {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-8px);
+}
+
+.submenu-enter-to,
+.submenu-leave-from {
+    opacity: 1;
+    max-height: 500px;
+    transform: translateY(0);
+}
+
+.mobile-submenu .mobile-app-links {
+    padding: 4px 0 0 8px;
+}
+
+.mobile-submenu .mobile-app-links a {
+    padding: 10px 14px;
+    font-size: 0.9rem;
 }
 
 .mobile-drawer-footer {
     padding: 12px 12px 28px;
-    border-top: 1px solid rgba(100, 116, 139, 0.15);
+    border-top: 1px solid var(--border-light);
+    margin-top: auto;
 }
 
 .mobile-logout-btn {
@@ -485,7 +596,7 @@ onUnmounted(() => {
     border-radius: 10px;
     background: rgba(239, 68, 68, 0.08);
     border: 1px solid rgba(239, 68, 68, 0.2);
-    color: #fca5a5;
+    color: var(--error-text);
     font-size: 0.95rem;
     font-weight: 500;
     cursor: pointer;
@@ -506,7 +617,7 @@ onUnmounted(() => {
     }
 
     .nav-links,
-    .logout-btn {
+    .right-actions {
         display: none;
     }
 

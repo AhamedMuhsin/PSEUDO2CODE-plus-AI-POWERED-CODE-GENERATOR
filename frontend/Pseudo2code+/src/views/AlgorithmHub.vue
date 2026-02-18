@@ -445,13 +445,13 @@ const selectedInfo = ref(null)
 <style scoped>
 /* ════════ BACK ════════ */
 .back-top-bar { flex-shrink: 0; }
-.back-btn-compact { display: flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #e0e7ff; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
-.back-btn-compact:hover { background: rgba(99,102,241,0.25); transform: translateX(-2px); }
+.back-btn-compact { display: flex; align-items: center; gap: 6px; background: var(--accent-bg); border: 1px solid var(--accent-border); color: var(--accent-lighter); padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
+.back-btn-compact:hover { background: var(--accent-bg-hover); transform: translateX(-2px); }
 .arrow { width: 16px; height: 16px; }
 
 .algorithm-hub {
   min-height: 100vh;
-  background: radial-gradient(circle at top, #0f172a, #020617);
+  background: var(--bg-page);
   padding: 48px 24px;
 }
 
@@ -471,7 +471,7 @@ const selectedInfo = ref(null)
 }
 
 .page-header p {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 1rem;
 }
 
@@ -485,7 +485,7 @@ const selectedInfo = ref(null)
 }
 
 .section-desc {
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-bottom: 24px;
 }
 

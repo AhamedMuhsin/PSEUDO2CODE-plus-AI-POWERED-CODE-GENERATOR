@@ -52,7 +52,7 @@ const drawPuzzle = (canvas, board, highlightEmpty = true) => {
   ctx.clearRect(0, 0, size, size)
 
   // Draw background
-  ctx.fillStyle = "rgba(15, 23, 42, 0.8)"
+  ctx.fillStyle = "rgba(10, 10, 10, 0.8)"
   ctx.fillRect(0, 0, size, size)
 
   for (let i = 0; i < 3; i++) {
@@ -81,7 +81,7 @@ const drawPuzzle = (canvas, board, highlightEmpty = true) => {
       }
 
       // Border
-      ctx.strokeStyle = '#1e293b'
+      ctx.strokeStyle = '#1a1a1a'
       ctx.lineWidth = 2
       ctx.strokeRect(x + padding, y + padding, cellSize - 2 * padding, cellSize - 2 * padding)
     }
@@ -104,7 +104,7 @@ onMounted(redraw)
 <style scoped>
 .puzzle-canvas-container {
   padding: 20px;
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--bg-elevated);
   border-radius: 12px;
 }
 
@@ -122,7 +122,7 @@ onMounted(redraw)
 }
 
 .puzzle-board h4 {
-  color: #e0e7ff;
+  color: var(--accent-lighter);
   margin-bottom: 12px;
   font-size: 1.1rem;
 }
@@ -137,10 +137,10 @@ onMounted(redraw)
   gap: 15px;
   margin-top: 12px;
   padding: 10px;
-  background: rgba(99, 102, 241, 0.1);
+  background: var(--bg-hover);
   border-radius: 8px;
   font-size: 0.9rem;
-  color: #c7d2fe;
+  color: var(--accent-lighter);
 }
 
 .puzzle-stats span {

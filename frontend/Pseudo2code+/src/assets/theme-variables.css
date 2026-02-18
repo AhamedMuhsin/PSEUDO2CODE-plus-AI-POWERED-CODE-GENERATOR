@@ -1,0 +1,220 @@
+/* ============================================================
+   PSEUDO2CODE+ THEME VARIABLE SYSTEM
+   ============================================================
+   Comprehensive CSS variable mapping derived from color audit.
+   88 unique hex colors + 297 unique rgba values consolidated
+   into ~30 semantic variables covering ~90% of all styling.
+   
+   Usage: Toggle [data-theme="light"] on <html> or <body>.
+   Default: dark theme (matches current app styling).
+   ============================================================ */
+
+/* ============================================================
+   DARK THEME (default)
+   ============================================================ */
+:root,
+[data-theme="dark"] {
+  /* ── 1. BACKGROUNDS ── */
+  --bg-page:              #000000;                          /* Full page / body background */
+  --bg-card:              rgba(18, 18, 18, 0.65);           /* Card / panel surfaces */
+  --bg-card-solid:        #121212;                          /* Card surface (solid fallback) */
+  --bg-elevated:          rgba(10, 10, 10, 0.5);            /* Inner sections, inputs, code blocks */
+  --bg-elevated-alt:      rgba(10, 10, 10, 0.6);            /* Slightly darker elevated variant */
+  --bg-elevated-deep:     rgba(10, 10, 10, 0.7);            /* Deepest nested containers */
+  --bg-surface:           #1a1a1a;                          /* Selector cards, dropdowns, tooltips */
+  --bg-overlay:           rgba(0, 0, 0, 0.4);               /* Modal / overlay backdrop */
+  --bg-overlay-heavy:     rgba(0, 0, 0, 0.55);              /* Heavier overlay */
+
+  /* ── 2. TEXT ── */
+  --text-primary:         #f8fafc;                          /* Headings, primary content */
+  --text-secondary:       #e2e8f0;                          /* Body text, descriptions */
+  --text-tertiary:        #cbd5e1;                          /* Subtitles, secondary info */
+  --text-muted:           #94a3b8;                          /* Placeholders, metadata, labels */
+  --text-muted-dark:      #64748b;                          /* Disabled, timestamps, hints */
+  --text-faint:           #475569;                          /* Very subtle elements */
+
+  /* ── 3. BORDERS ── */
+  --border-default:       rgba(100, 116, 139, 0.25);        /* Standard card/panel borders */
+  --border-light:         rgba(100, 116, 139, 0.12);        /* Subtle dividers */
+  --border-medium:        rgba(100, 116, 139, 0.3);         /* Slightly stronger borders */
+  --border-strong:        rgba(100, 116, 139, 0.4);         /* Emphasized borders */
+  --border-separator:     #e5e7eb;                          /* Horizontal rules (light-theme style used in some spots) */
+
+  /* ── 4. ACCENT / BRAND (Indigo) ── */
+  --accent-primary:       #6366f1;                          /* Primary buttons, active states */
+  --accent-light:         #818cf8;                          /* Lighter accent, links, highlights */
+  --accent-lighter:       #a5b4fc;                          /* Tags, badges, subtle highlights */
+  --accent-lightest:      #c7d2fe;                          /* Very light accent tints */
+  --accent-pale:          #e0e7ff;                          /* Background tint, pills, badges */
+  --accent-dark:          #4f46e5;                          /* Hover/pressed buttons */
+  --accent-bg:            rgba(99, 102, 241, 0.15);         /* Accent background tint */
+  --accent-bg-hover:      rgba(99, 102, 241, 0.25);         /* Accent hover background */
+  --accent-bg-active:     rgba(99, 102, 241, 0.35);         /* Accent active/pressed background */
+  --accent-border:        rgba(99, 102, 241, 0.3);          /* Accent-colored borders */
+  --accent-border-strong: rgba(99, 102, 241, 0.5);          /* Stronger accent borders */
+  --accent-glow:          rgba(99, 102, 241, 0.4);          /* Box-shadow glow */
+
+  /* ── 5. FUNCTIONAL: SUCCESS ── */
+  --success:              #22c55e;                          /* Success icons, checkmarks */
+  --success-light:        #4ade80;                          /* Success highlights */
+  --success-pale:         #86efac;                          /* Success badge backgrounds */
+  --success-bg:           rgba(34, 197, 94, 0.15);          /* Success background tint */
+  --success-border:       rgba(34, 197, 94, 0.3);           /* Success borders */
+
+  /* ── 5. FUNCTIONAL: ERROR ── */
+  --error:                #ef4444;                          /* Error icons, destructive actions */
+  --error-dark:           #dc2626;                          /* Darker error variant */
+  --error-light:          #fca5a5;                          /* Error badge text/bg */
+  --error-bg:             rgba(239, 68, 68, 0.25);          /* Error background tint */
+  --error-border:         rgba(239, 68, 68, 0.3);           /* Error borders */
+
+  /* ── 5. FUNCTIONAL: WARNING ── */
+  --warning:              #eab308;                          /* Warning icons */
+  --warning-light:        #fbbf24;                          /* Warning highlights */
+  --warning-amber:        #f59e0b;                          /* Amber / caution */
+  --warning-pale:         #fde68a;                          /* Warning pale background */
+
+  /* ── 6. SHADOWS ── */
+  --shadow-sm:            0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md:            0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg:            0 10px 25px rgba(0, 0, 0, 0.45);
+  --shadow-accent:        0 0 15px rgba(99, 102, 241, 0.2);
+  --shadow-accent-lg:     0 0 30px rgba(99, 102, 241, 0.3);
+
+  /* ── 7. HOVER / ACTIVE STATES ── */
+  --hover-bg:             rgba(99, 102, 241, 0.1);          /* Generic hover background */
+  --hover-bg-strong:      rgba(99, 102, 241, 0.2);          /* Stronger hover */
+  --active-bg:            rgba(99, 102, 241, 0.3);           /* Pressed / active state */
+  --hover-border:         rgba(99, 102, 241, 0.4);          /* Hover border color */
+  --hover-glow:           rgba(99, 102, 241, 0.6);          /* Focus ring / glow */
+
+  /* ── 8. SUPPLEMENTARY PALETTE ── */
+  --purple:               #8b5cf6;                          /* Violet accent (secondary) */
+  --purple-light:         #a78bfa;                          /* Light violet */
+  --purple-lighter:       #c4b5fd;                          /* Lighter violet */
+  --purple-glow:          #c084fc;                          /* Violet glow */
+  --blue:                 #3b82f6;                          /* Info / blue accent */
+  --blue-light:           #60a5fa;                          /* Light blue */
+  --blue-sky:             #38bdf8;                          /* Sky blue */
+  --cyan:                 #06b6d4;                          /* Cyan accent */
+  --cyan-light:           #22d3ee;                          /* Light cyan */
+  --orange:               #f97316;                          /* Orange accent */
+  --white:                #ffffff;
+  --white-muted:          rgba(255, 255, 255, 0.15);        /* White overlay */
+  --white-faint:          rgba(255, 255, 255, 0.08);        /* Subtle white tint */
+
+  /* ── Login/Signup specific (unique palette) ── */
+  --auth-accent:          #6c7bff;                          /* Login/Signup accent */
+  --auth-accent-hover:    #8b95ff;                          /* Login/Signup hover */
+  --auth-accent-pressed:  #5b6cff;                          /* Login/Signup pressed */
+  --auth-accent-dark:     #4b5cf0;                          /* Login/Signup dark */
+  --auth-surface:         #050505;                          /* Login/Signup card bg */
+  --auth-text-muted:      #9aa4b2;                          /* Login/Signup muted text */
+  --auth-input-bg:        #1f2937;                          /* Login/Signup input bg */
+  --auth-accent-glow:     rgba(108, 123, 255, 0.25);        /* Login/Signup glow */
+}
+
+
+/* ============================================================
+   LIGHT THEME
+   ============================================================ */
+[data-theme="light"] {
+  /* ── 1. BACKGROUNDS ── */
+  --bg-page:              #f8fafc;
+  --bg-card:              rgba(255, 255, 255, 0.85);
+  --bg-card-solid:        #ffffff;
+  --bg-elevated:          rgba(241, 245, 249, 0.7);
+  --bg-elevated-alt:      rgba(226, 232, 240, 0.5);
+  --bg-elevated-deep:     rgba(226, 232, 240, 0.7);
+  --bg-surface:           #ffffff;
+  --bg-overlay:           rgba(0, 0, 0, 0.25);
+  --bg-overlay-heavy:     rgba(0, 0, 0, 0.4);
+
+  /* ── 2. TEXT ── */
+  --text-primary:         #0f172a;
+  --text-secondary:       #1e293b;
+  --text-tertiary:        #334155;
+  --text-muted:           #64748b;
+  --text-muted-dark:      #94a3b8;
+  --text-faint:           #cbd5e1;
+
+  /* ── 3. BORDERS ── */
+  --border-default:       rgba(148, 163, 184, 0.3);
+  --border-light:         rgba(148, 163, 184, 0.15);
+  --border-medium:        rgba(148, 163, 184, 0.4);
+  --border-strong:        rgba(100, 116, 139, 0.4);
+  --border-separator:     #e2e8f0;
+
+  /* ── 4. ACCENT / BRAND (Indigo) ── */
+  --accent-primary:       #4f46e5;
+  --accent-light:         #6366f1;
+  --accent-lighter:       #818cf8;
+  --accent-lightest:      #a5b4fc;
+  --accent-pale:          #e0e7ff;
+  --accent-dark:          #3730a3;
+  --accent-bg:            rgba(99, 102, 241, 0.08);
+  --accent-bg-hover:      rgba(99, 102, 241, 0.12);
+  --accent-bg-active:     rgba(99, 102, 241, 0.18);
+  --accent-border:        rgba(99, 102, 241, 0.25);
+  --accent-border-strong: rgba(99, 102, 241, 0.4);
+  --accent-glow:          rgba(99, 102, 241, 0.2);
+
+  /* ── 5. FUNCTIONAL: SUCCESS ── */
+  --success:              #16a34a;
+  --success-light:        #22c55e;
+  --success-pale:         #bbf7d0;
+  --success-bg:           rgba(34, 197, 94, 0.1);
+  --success-border:       rgba(34, 197, 94, 0.25);
+
+  /* ── 5. FUNCTIONAL: ERROR ── */
+  --error:                #dc2626;
+  --error-dark:           #b91c1c;
+  --error-light:          #fca5a5;
+  --error-bg:             rgba(239, 68, 68, 0.1);
+  --error-border:         rgba(239, 68, 68, 0.2);
+
+  /* ── 5. FUNCTIONAL: WARNING ── */
+  --warning:              #ca8a04;
+  --warning-light:        #eab308;
+  --warning-amber:        #d97706;
+  --warning-pale:         #fef9c3;
+
+  /* ── 6. SHADOWS ── */
+  --shadow-sm:            0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md:            0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg:            0 10px 25px rgba(0, 0, 0, 0.1);
+  --shadow-accent:        0 0 15px rgba(99, 102, 241, 0.1);
+  --shadow-accent-lg:     0 0 30px rgba(99, 102, 241, 0.15);
+
+  /* ── 7. HOVER / ACTIVE STATES ── */
+  --hover-bg:             rgba(99, 102, 241, 0.06);
+  --hover-bg-strong:      rgba(99, 102, 241, 0.1);
+  --active-bg:            rgba(99, 102, 241, 0.15);
+  --hover-border:         rgba(99, 102, 241, 0.3);
+  --hover-glow:           rgba(99, 102, 241, 0.4);
+
+  /* ── 8. SUPPLEMENTARY PALETTE ── */
+  --purple:               #7c3aed;
+  --purple-light:         #8b5cf6;
+  --purple-lighter:       #a78bfa;
+  --purple-glow:          #a855f7;
+  --blue:                 #2563eb;
+  --blue-light:           #3b82f6;
+  --blue-sky:             #0ea5e9;
+  --cyan:                 #0891b2;
+  --cyan-light:           #06b6d4;
+  --orange:               #ea580c;
+  --white:                #ffffff;
+  --white-muted:          rgba(255, 255, 255, 0.5);
+  --white-faint:          rgba(255, 255, 255, 0.3);
+
+  /* ── Login/Signup specific ── */
+  --auth-accent:          #4f46e5;
+  --auth-accent-hover:    #6366f1;
+  --auth-accent-pressed:  #3730a3;
+  --auth-accent-dark:     #312e81;
+  --auth-surface:         #ffffff;
+  --auth-text-muted:      #64748b;
+  --auth-input-bg:        #f1f5f9;
+  --auth-accent-glow:     rgba(79, 70, 229, 0.15);
+}

@@ -37,16 +37,16 @@ const updateSelection = (e) => {
 }
 
 .ai-problem-selector label {
-  color: #cbd5e1;
+  color: var(--text-tertiary);
   font-size: 0.95rem;
   font-weight: 500;
 }
 
 .selector {
   padding: 8px 12px;
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(99, 102, 241, 0.4);
-  color: #e0e7ff;
+  background: rgba(18, 18, 18, 0.8);
+  border: 1px solid var(--accent-border);
+  color: var(--accent-lighter);
   border-radius: 8px;
   font-size: 0.95rem;
   cursor: pointer;
@@ -55,19 +55,19 @@ const updateSelection = (e) => {
 }
 
 .selector:hover {
-  border-color: rgba(99, 102, 241, 0.6);
-  background: rgba(30, 41, 59, 1);
+  border-color: var(--accent-border);
+  background: rgba(18, 18, 18, 1);
 }
 
 .selector:focus {
   outline: none;
-  border-color: #818cf8;
+  border-color: var(--accent-light);
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 .selector option {
-  background: #1e293b;
-  color: #e0e7ff;
+  background: var(--bg-surface);
+  color: var(--accent-lighter);
   padding: 8px;
 }
 </style>

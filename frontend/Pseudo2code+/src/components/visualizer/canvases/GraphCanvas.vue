@@ -55,7 +55,7 @@ const drawVisualization = () => {
   ctx.clearRect(0, 0, width, height)
 
   // Background
-  ctx.fillStyle = "rgba(15, 23, 42, 0.5)"
+  ctx.fillStyle = "rgba(10, 10, 10, 0.5)"
   ctx.fillRect(0, 0, width, height)
 
   const nodePositions = getNodePositions(props.nodes)
@@ -115,7 +115,7 @@ const drawVisualization = () => {
       if (edge.weight !== undefined && edge.weight !== 1) {
         const labelX = loopCenterX
         const labelY = loopCenterY - loopRadius - 6
-        ctx.fillStyle = '#1e293b'
+        ctx.fillStyle = '#1a1a1a'
         ctx.beginPath()
         ctx.arc(labelX, labelY, 12, 0, 2 * Math.PI)
         ctx.fill()
@@ -160,7 +160,7 @@ const drawVisualization = () => {
         const midX = (from.x + to.x) / 2
         const midY = (from.y + to.y) / 2
 
-        ctx.fillStyle = '#1e293b'
+        ctx.fillStyle = '#1a1a1a'
         ctx.beginPath()
         ctx.arc(midX, midY, 12, 0, 2 * Math.PI)
         ctx.fill()
@@ -205,7 +205,7 @@ const drawVisualization = () => {
     ctx.shadowBlur = 0
 
     // Node border
-    ctx.strokeStyle = isActive ? '#dcfce7' : '#1e293b'
+    ctx.strokeStyle = isActive ? '#dcfce7' : '#1a1a1a'
     ctx.lineWidth = isActive ? 3 : 2
     ctx.stroke()
 
@@ -223,7 +223,7 @@ const drawVisualization = () => {
       
       // Draw distance badge below node
       const badgeY = pos.y + NODE_RADIUS + 14
-      ctx.fillStyle = 'rgba(15, 23, 42, 0.85)'
+      ctx.fillStyle = 'var(--bg-card)'
       const badgeW = Math.max(ctx.measureText(`d=${distText}`).width + 12, 32)
       const badgeH = 20
       const badgeX = pos.x - badgeW / 2
@@ -265,7 +265,7 @@ const drawVisualization = () => {
       ctx.fillStyle = dsColor
       ctx.fillRect(x, dsY - 15, 40, 30)
       
-      ctx.strokeStyle = '#1e293b'
+      ctx.strokeStyle = '#1a1a1a'
       ctx.lineWidth = 2
       ctx.strokeRect(x, dsY - 15, 40, 30)
 
@@ -300,7 +300,7 @@ onMounted(drawVisualization)
   justify-content: center;
   align-items: center;
   padding: 20px;
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--bg-elevated);
   border-radius: 12px;
 }
 

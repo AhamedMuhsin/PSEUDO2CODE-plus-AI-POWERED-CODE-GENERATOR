@@ -293,7 +293,7 @@ Take a random input stack and demonstrate the operation.`
 /* ULTRA COMPACT STACK VISUALIZER */
 .stack-op-visualizer-compact {
   height: 100vh;
-  background: radial-gradient(circle at top, #0f172a, #020617);
+  background: var(--bg-page);
   padding: 10px;
   display: flex;
   flex-direction: column;
@@ -309,9 +309,9 @@ Take a random input stack and demonstrate the operation.`
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(99, 102, 241, 0.15);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: #e0e7ff;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  color: var(--accent-lighter);
   padding: 5px 10px;
   border-radius: 6px;
   cursor: pointer;
@@ -320,7 +320,7 @@ Take a random input stack and demonstrate the operation.`
 }
 
 .back-btn-compact:hover {
-  background: rgba(99, 102, 241, 0.25);
+  background: var(--accent-bg-hover);
 }
 
 .arrow {
@@ -332,9 +332,9 @@ Take a random input stack and demonstrate the operation.`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(30, 41, 59, 0.6);
+  background: rgba(18, 18, 18, 0.6);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(100, 116, 139, 0.3);
+  border: 1px solid var(--border-medium);
   border-radius: 10px;
   padding: 10px 14px;
   flex-shrink: 0;
@@ -346,7 +346,7 @@ Take a random input stack and demonstrate the operation.`
 
 .title-compact {
   font-size: 1.3rem;
-  background: linear-gradient(135deg, #818cf8, #c084fc);
+  background: var(--accent);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -354,7 +354,7 @@ Take a random input stack and demonstrate the operation.`
 }
 
 .desc-compact {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 0.75rem;
   margin: 0;
 }
@@ -367,9 +367,9 @@ Take a random input stack and demonstrate the operation.`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(30, 41, 59, 0.6);
+  background: rgba(18, 18, 18, 0.6);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(100, 116, 139, 0.3);
+  border: 1px solid var(--border-medium);
   border-radius: 8px;
   padding: 8px 12px;
   flex-shrink: 0;
@@ -382,15 +382,15 @@ Take a random input stack and demonstrate the operation.`
 }
 
 .operation-name {
-  color: #e0e7ff;
+  color: var(--accent-lighter);
   font-size: 1rem;
   margin: 0;
 }
 
 .info-btn-compact {
   background: rgba(99, 102, 241, 0.2);
-  border: 1px solid rgba(99, 102, 241, 0.4);
-  color: #a5b4fc;
+  border: 1px solid var(--accent-border);
+  color: var(--accent-lighter);
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -408,10 +408,10 @@ Take a random input stack and demonstrate the operation.`
 
 .badge-tiny {
   padding: 3px 8px;
-  background: rgba(100, 116, 139, 0.2);
-  border: 1px solid rgba(100, 116, 139, 0.3);
+  background: var(--border-light);
+  border: 1px solid var(--border-medium);
   border-radius: 4px;
-  color: #cbd5e1;
+  color: var(--text-tertiary);
   font-size: 0.7rem;
 }
 
@@ -419,9 +419,9 @@ Take a random input stack and demonstrate the operation.`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(30, 41, 59, 0.6);
+  background: rgba(18, 18, 18, 0.6);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(100, 116, 139, 0.3);
+  border: 1px solid var(--border-medium);
   border-radius: 8px;
   padding: 8px 12px;
   gap: 12px;
@@ -443,23 +443,23 @@ Take a random input stack and demonstrate the operation.`
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  background: rgba(100, 116, 139, 0.2);
-  border: 1px solid rgba(100, 116, 139, 0.3);
-  color: #cbd5e1;
+  background: var(--border-light);
+  border: 1px solid var(--border-medium);
+  color: var(--text-tertiary);
 }
 
 .btn-tiny:hover:not(:disabled) {
-  background: rgba(100, 116, 139, 0.3);
+  background: var(--border-medium);
 }
 
 .btn-tiny.primary {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: white;
+  background: var(--accent);
+  color: var(--text-primary);
 }
 
 .btn-tiny.danger {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
+  background: var(--accent);
+  color: var(--text-primary);
 }
 
 .btn-tiny:disabled {
@@ -469,9 +469,9 @@ Take a random input stack and demonstrate the operation.`
 
 .input-tiny {
   padding: 5px 8px;
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(100, 116, 139, 0.4);
-  color: #e0e7ff;
+  background: rgba(18, 18, 18, 0.8);
+  border: 1px solid var(--border-strong);
+  color: var(--accent-lighter);
   border-radius: 5px;
   font-size: 0.75rem;
   min-width: 100px;
@@ -479,20 +479,20 @@ Take a random input stack and demonstrate the operation.`
 
 .input-tiny:focus {
   outline: none;
-  border-color: #6366f1;
+  border-color: var(--accent);
 }
 
 .input-tiny::placeholder {
-  color: #64748b;
+  color: var(--text-dim);
   font-size: 0.7rem;
 }
 
 .step-display-compact {
   padding: 4px 8px;
-  background: rgba(99, 102, 241, 0.1);
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  background: var(--bg-hover);
+  border: 1px solid var(--accent-border);
   border-radius: 4px;
-  color: #e0e7ff;
+  color: var(--accent-lighter);
   font-size: 0.7rem;
   font-weight: 600;
 }
@@ -508,9 +508,9 @@ Take a random input stack and demonstrate the operation.`
 
 .canvas-area-compact,
 .info-area-compact {
-  background: rgba(30, 41, 59, 0.6);
+  background: rgba(18, 18, 18, 0.6);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(100, 116, 139, 0.3);
+  border: 1px solid var(--border-medium);
   border-radius: 10px;
   padding: 10px;
   overflow: hidden;
@@ -527,16 +527,16 @@ Take a random input stack and demonstrate the operation.`
 }
 
 .canvas-header-compact h3 {
-  color: #e0e7ff;
+  color: var(--accent-lighter);
   font-size: 0.9rem;
   margin: 0;
 }
 
 .stack-size {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 0.75rem;
   padding: 3px 8px;
-  background: rgba(100, 116, 139, 0.2);
+  background: var(--border-light);
   border-radius: 4px;
 }
 
@@ -554,14 +554,14 @@ Take a random input stack and demonstrate the operation.`
 .explanation-compact {
   flex-shrink: 0;
   padding: 10px;
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--bg-elevated);
   border-radius: 8px;
   max-height: 150px;
   overflow-y: auto;
 }
 
 .section-title-mini {
-  color: #e0e7ff;
+  color: var(--accent-lighter);
   font-size: 0.85rem;
   margin: 0 0 6px 0;
 }
@@ -573,7 +573,7 @@ Take a random input stack and demonstrate the operation.`
 }
 
 .explanation-compact p {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 0.8rem;
   line-height: 1.4;
   margin: 0;
@@ -592,7 +592,7 @@ Take a random input stack and demonstrate the operation.`
 
 .pseudo-scroll-mini::-webkit-scrollbar-thumb,
 .explanation-compact::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.25);
+  background: var(--accent-bg-hover);
   border-radius: 4px;
 }
 

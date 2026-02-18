@@ -67,24 +67,24 @@ onMounted(async () => {
 
 <style scoped>
 .dashboard-card {
-  background: rgba(15, 23, 42, 0.85);
-  border-radius: 16px;
+  background: var(--bg-card);
+  border-radius: 12px;
   padding: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-md);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .dashboard-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-lg);
 }
 
 .card-title {
   margin-bottom: 20px;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #f1f5f9;
+  color: var(--text-primary);
 }
 
 .tasks {
@@ -102,15 +102,15 @@ onMounted(async () => {
   align-items: center;
   padding: 16px;
   border-radius: 12px;
-  background: rgba(15, 23, 42, 0.5);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  background: var(--bg-elevated);
+  border: 1px solid var(--accent-border);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .task-item:hover {
-  background: rgba(99, 102, 241, 0.1);
-  border-color: rgba(99, 102, 241, 0.4);
+  background: var(--bg-hover);
+  border-color: var(--accent-border);
   transform: translateX(4px);
 }
 
@@ -118,8 +118,8 @@ onMounted(async () => {
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: rgba(99, 102, 241, 0.15);
-  color: #818cf8;
+  background: var(--accent-bg);
+  color: var(--accent-light);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -136,23 +136,23 @@ onMounted(async () => {
 .title {
   font-size: 0.95rem;
   font-weight: 500;
-  color: #e5e7eb;
+  color: var(--text-secondary);
   margin: 0;
 }
 
 .desc {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 .task-item:nth-child(1) .task-icon {
-  background: rgba(99, 102, 241, 0.15);
-  color: #818cf8;
+  background: var(--accent-bg);
+  color: var(--accent-light);
 }
 
 .task-item:nth-child(2) .task-icon {
   background: rgba(168, 85, 247, 0.15);
-  color: #c084fc;
+  color: var(--accent-lighter);
 }
 
 .task-item:nth-child(3) .task-icon {
@@ -166,7 +166,7 @@ onMounted(async () => {
 }
 
 .arrow {
-  color: #6366f1;
+  color: var(--accent);
   font-size: 1.2rem;
   font-weight: 600;
   opacity: 0;

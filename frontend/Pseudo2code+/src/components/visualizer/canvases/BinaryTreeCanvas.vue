@@ -204,7 +204,7 @@ const drawBinaryTree = () => {
       textColor = "#ffffff"
       borderWidth = 2.5
     } else {
-      fillColor = "rgba(30, 41, 59, 0.8)"
+      fillColor = "rgba(18, 18, 18, 0.8)"
       borderColor = "#64748b"
       textColor = "#e2e8f0"
       borderWidth = 2
@@ -262,7 +262,7 @@ watch(() => [props.activeNodeIndex, props.targetIndex, props.highlightNodes], ()
   display: flex;
   flex-direction: column;
   gap: 16px;
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(2, 6, 23, 0.8));
+  background: var(--accent), rgba(0, 0, 0, 0.8));
   border: 1px solid #334155;
   border-radius: 8px;
   padding: 16px;
@@ -272,7 +272,7 @@ watch(() => [props.activeNodeIndex, props.targetIndex, props.highlightNodes], ()
 }
 
 canvas {
-  background: radial-gradient(circle at top, rgba(15, 23, 42, 0.6), rgba(2, 6, 23, 0.6));
+  background: var(--bg-page);
   border-radius: 6px;
   display: block;
   margin: 0 auto;
@@ -291,7 +291,7 @@ canvas {
 
 .label {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -309,19 +309,19 @@ canvas {
   justify-content: center;
   min-width: 32px;
   height: 32px;
-  background: rgba(30, 41, 59, 0.8);
+  background: rgba(18, 18, 18, 0.8);
   border: 1px solid #475569;
   border-radius: 6px;
   font-size: 13px;
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--text-secondary);
   transition: all 0.3s ease;
 }
 
 .sequence-item.active {
-  background: linear-gradient(135deg, #a78bfa, #8b5cf6);
-  border-color: #6366f1;
-  color: #ffffff;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--text-primary);
   box-shadow: 0 0 12px rgba(99, 102, 241, 0.5);
   transform: scale(1.1);
 }

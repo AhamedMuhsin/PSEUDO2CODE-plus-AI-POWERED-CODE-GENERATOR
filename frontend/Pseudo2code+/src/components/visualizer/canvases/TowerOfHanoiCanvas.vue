@@ -35,7 +35,7 @@ const drawTowers = () => {
   ctx.clearRect(0, 0, width, height)
 
   // Draw background
-  ctx.fillStyle = "rgba(15, 23, 42, 0.5)"
+  ctx.fillStyle = "rgba(10, 10, 10, 0.5)"
   ctx.fillRect(0, 0, width, height)
 
   // Draw base
@@ -99,7 +99,7 @@ onMounted(drawTowers)
   justify-content: center;
   align-items: center;
   padding: 20px;
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--bg-elevated);
   border-radius: 12px;
 }
 

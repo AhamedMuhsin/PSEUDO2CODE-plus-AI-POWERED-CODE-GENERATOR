@@ -38,33 +38,33 @@ defineEmits(['update:modelValue'])
 }
 
 label {
-  color: #cbd5f5;
+  color: var(--text-tertiary);
   font-weight: 500;
 }
 
 select {
   padding: 10px 14px;
   border-radius: 10px;
-  background: rgba(15, 23, 42, 0.85);
+  background: var(--bg-card);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  color: white;
+  color: var(--text-primary);
   font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 select:hover {
-  border-color: rgba(99, 102, 241, 0.4);
+  border-color: var(--accent-border);
 }
 
 select:focus {
   outline: none;
-  border-color: #6366f1;
+  border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 option {
-  background: #1e293b;
-  color: white;
+  background: var(--bg-surface);
+  color: var(--text-primary);
 }
 </style>

@@ -353,8 +353,8 @@ const visualizeCode = async () => {
 <style scoped>
 /* ════════ BACK ════════ */
 .back-top-bar { flex-shrink: 0; }
-.back-btn-compact { display: flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #e0e7ff; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
-.back-btn-compact:hover { background: rgba(99,102,241,0.25); transform: translateX(-2px); }
+.back-btn-compact { display: flex; align-items: center; gap: 6px; background: var(--accent-bg); border: 1px solid var(--accent-border); color: var(--accent-lighter); padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
+.back-btn-compact:hover { background: var(--accent-bg-hover); transform: translateX(-2px); }
 .arrow { width: 16px; height: 16px; }
 
 * {
@@ -381,11 +381,11 @@ const visualizeCode = async () => {
 }
 
 .prompt-indicator.average {
-  color: #facc15;
+  color: var(--warning);
 }
 
 .prompt-indicator.good {
-  color: #4ade80;
+  color: var(--success);
 }
 
 .icon {
@@ -399,7 +399,7 @@ const visualizeCode = async () => {
 }
 
 .icon-success {
-  color: #4ade80;
+  color: var(--success);
   /* green */
 }
 
@@ -410,7 +410,7 @@ const visualizeCode = async () => {
 .copy-btn:has(.icon-success) {
   background: rgba(74, 222, 128, 0.15);
   border-color: rgba(74, 222, 128, 0.35);
-  color: #4ade80;
+  color: var(--success);
 }
 
 .code-actions {
@@ -451,7 +451,7 @@ const visualizeCode = async () => {
   gap: 6px;
   background: rgba(34, 197, 94, 0.18);
   border: 1px solid rgba(34, 197, 94, 0.35);
-  color: #4ade80;
+  color: var(--success);
   border-radius: 8px;
   padding: 8px 12px;
   cursor: pointer;
@@ -467,37 +467,37 @@ const visualizeCode = async () => {
 
 /* Generate */
 .icon-generate {
-  color: #a78bfa;
+  color: var(--accent-light);
   /* violet-400 */
 }
 
 /* Loading */
 .icon-loading {
-  color: #818cf8;
+  color: var(--accent-light);
   /* indigo-400 */
 }
 
 /* Copy */
 .icon-copy {
-  color: #60a5fa;
+  color: var(--accent-light);
   /* blue-400 */
 }
 
 /* Language badge */
 .icon-language {
-  color: #c084fc;
+  color: var(--accent-lighter);
   /* purple-400 */
 }
 
 /* Empty state */
 .icon-empty {
-  color: #64748b;
+  color: var(--text-dim);
   /* slate-500 */
 }
 
 /* Visualize */
 .icon-visualize {
-  color: #4ade80;
+  color: var(--success);
   /* green-400 */
 }
 
@@ -579,13 +579,13 @@ const visualizeCode = async () => {
 
 .prompt-indicator.average {
   background: rgba(250, 204, 21, 0.15);
-  color: #facc15;
+  color: var(--warning);
   border: 1px solid rgba(250, 204, 21, 0.3);
 }
 
 .prompt-indicator.good {
   background: rgba(74, 222, 128, 0.15);
-  color: #4ade80;
+  color: var(--success);
   border: 1px solid rgba(74, 222, 128, 0.3);
 }
 
@@ -600,10 +600,10 @@ const visualizeCode = async () => {
 .code-scroll {
   flex: 1;
   overflow-y: auto;
-  background: rgba(2, 6, 23, 0.85);
-  border-radius: 14px;
+  background: var(--bg-code);
+  border-radius: 12px;
   padding: 18px;
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  border: 1px solid var(--accent-border);
 }
 
 .code-scroll {
@@ -651,8 +651,8 @@ code {
   width: 100%;
   border-radius: 12px;
   border: none;
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-  color: #ecfdf5;
+  background: var(--accent);
+  color: var(--text-on-accent);
   font-weight: 700;
   font-size: 0.95rem;
   cursor: pointer;
@@ -671,7 +671,7 @@ code {
 
 .generate-container {
   min-height: 100vh;
-  background: radial-gradient(circle at top, #0f172a, #020617);
+  background: var(--bg-page);
   padding: 40px 24px;
 }
 
@@ -693,11 +693,11 @@ code {
 .page-header h1 {
   font-size: 2.4rem;
   font-weight: 800;
-  color: #f8fafc;
+  color: var(--text-primary);
 }
 
 .page-header p {
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-top: 6px;
   font-size: 1rem;
 }
@@ -711,16 +711,16 @@ code {
 }
 
 .card {
-  background: rgba(15, 23, 42, 0.85);
-  border-radius: 16px;
+  background: var(--bg-card);
+  border-radius: 12px;
   padding: 32px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-md);
   transition: box-shadow 0.2s ease;
 }
 
 .card:hover {
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-lg);
 }
 
 .output-card {
@@ -729,13 +729,13 @@ code {
 }
 
 h2 {
-  color: #f1f5f9;
+  color: var(--text-primary);
   font-size: 1.4rem;
   margin-bottom: 6px;
 }
 
 .subtitle {
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-bottom: 20px;
   font-size: 0.95rem;
 }
@@ -743,11 +743,11 @@ h2 {
 .code-textarea {
   width: 100%;
   min-height: 320px;
-  background: rgba(2, 6, 23, 0.7);
-  border: 1px solid rgba(99, 102, 241, 0.25);
-  border-radius: 14px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
   padding: 18px;
-  color: #e5e7eb;
+  color: var(--text-secondary);
   font-family: "JetBrains Mono", monospace;
   font-size: 0.95rem;
   line-height: 1.6;
@@ -757,7 +757,7 @@ h2 {
 
 .code-textarea:focus {
   outline: none;
-  border-color: rgba(99, 102, 241, 0.6);
+  border-color: var(--accent);
 }
 
 .controls {
@@ -766,7 +766,7 @@ h2 {
 
 .language-selector label {
   display: block;
-  color: #cbd5f5;
+  color: var(--text-tertiary);
   font-weight: 500;
   margin-bottom: 6px;
 }
@@ -775,9 +775,9 @@ h2 {
   width: 100%;
   padding: 12px;
   border-radius: 10px;
-  background: rgba(2, 6, 23, 0.7);
-  color: #e5e7eb;
-  border: 1px solid rgba(99, 102, 241, 0.25);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
 }
 
 .generate-btn {
@@ -785,8 +785,8 @@ h2 {
   padding: 15px;
   border-radius: 12px;
   border: none;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: #fff;
+  background: var(--accent);
+  color: var(--text-on-accent);
   font-weight: 700;
   font-size: 1rem;
   cursor: pointer;
@@ -795,7 +795,7 @@ h2 {
 
 .generate-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.45);
+  box-shadow: var(--shadow-lg);
 }
 
 .generate-btn:disabled {
@@ -812,7 +812,7 @@ h2 {
 
 .language-badge {
   background: rgba(99, 102, 241, 0.2);
-  color: #818cf8;
+  color: var(--accent-light);
   padding: 5px 14px;
   border-radius: 999px;
   font-size: 0.75rem;
@@ -821,16 +821,16 @@ h2 {
 
 .copy-btn {
   background: rgba(99, 102, 241, 0.2);
-  color: #a5b4fc;
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: var(--accent-lighter);
+  border: 1px solid var(--accent-border);
   border-radius: 8px;
   padding: 8px 14px;
   cursor: pointer;
 }
 
 pre {
-  background: rgba(2, 6, 23, 0.8);
-  border-radius: 14px;
+  background: var(--bg-code);
+  border-radius: 12px;
   padding: 18px;
   overflow-x: auto;
   max-height: 420px;
@@ -838,19 +838,19 @@ pre {
 
 code {
   font-family: "JetBrains Mono", monospace;
-  color: #e5e7eb;
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
 .explanation {
   margin-top: 18px;
-  background: rgba(99, 102, 241, 0.12);
+  background: var(--accent-bg);
   border-radius: 12px;
   padding: 16px;
 }
 
 .explanation h4 {
-  color: #a5b4fc;
+  color: var(--accent-lighter);
   margin-bottom: 6px;
 }
 
@@ -860,7 +860,7 @@ code {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 0.95rem;
   text-align: center;
 }
@@ -874,7 +874,7 @@ code {
 
 .selector label {
   display: block;
-  color: #cbd5f5;
+  color: var(--text-tertiary);
   font-weight: 500;
   margin-bottom: 6px;
 }
@@ -883,15 +883,15 @@ code {
   width: 100%;
   padding: 12px;
   border-radius: 10px;
-  background: rgba(2, 6, 23, 0.7);
-  color: #e5e7eb;
-  border: 1px solid rgba(99, 102, 241, 0.25);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
   cursor: pointer;
 }
 
 .selector select:focus {
   outline: none;
-  border-color: rgba(99, 102, 241, 0.6);
+  border-color: var(--accent);
 }
 
 /* Mobile */

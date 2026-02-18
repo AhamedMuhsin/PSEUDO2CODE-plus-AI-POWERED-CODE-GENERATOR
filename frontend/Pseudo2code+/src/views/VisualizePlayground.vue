@@ -87,18 +87,18 @@ const visualize = async () => {
 <style scoped>
 /* ════════ BACK ════════ */
 .back-top-bar { flex-shrink: 0; }
-.back-btn-compact { display: flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #e0e7ff; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
-.back-btn-compact:hover { background: rgba(99,102,241,0.25); transform: translateX(-2px); }
+.back-btn-compact { display: flex; align-items: center; gap: 6px; background: var(--accent-bg); border: 1px solid var(--accent-border); color: var(--accent-lighter); padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
+.back-btn-compact:hover { background: var(--accent-bg-hover); transform: translateX(-2px); }
 .arrow { width: 16px; height: 16px; }
 
 .code-input {
   width: 100%;
   height: 260px;
-  background: #020617;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-page);
+  border: 1px solid var(--border-default);
   border-radius: 12px;
   padding: 16px;
-  color: #e5e7eb;
+  color: var(--text-secondary);
   margin-top: 20px;
   font-family: monospace;
 }
@@ -106,8 +106,8 @@ const visualize = async () => {
 .language-select {
   margin-top: 16px;
   padding: 10px;
-  background: #020617;
-  color: #e5e7eb;
+  background: var(--bg-page);
+  color: var(--text-secondary);
   border-radius: 8px;
 }
 
@@ -124,8 +124,8 @@ const visualize = async () => {
 .playground-container {
   min-height: 100vh;
   padding: 48px 24px;
-  background: radial-gradient(circle at top, #0f172a, #020617);
-  color: #f8fafc;
+  background: var(--bg-page);
+  color: var(--text-primary);
 }
 
 .playground-container h1 {
@@ -134,45 +134,45 @@ const visualize = async () => {
 }
 
 .playground-container p {
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-top: 6px;
 }
 
 /* 🔮 Glass Card */
 .playground-card {
-  background: rgba(15, 23, 42, 0.85);
-  border-radius: 16px;
+  background: var(--bg-card);
+  border-radius: 12px;
   padding: 32px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-md);
   transition: box-shadow 0.2s ease;
 }
 
 .playground-card:hover {
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-lg);
 }
 
 /* 🧠 Code Input */
 .code-input {
   width: 100%;
   height: 320px;
-  background: #020617;
+  background: var(--bg-page);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
+  border-radius: 12px;
   padding: 18px;
-  color: #e5e7eb;
+  color: var(--text-secondary);
   font-family: "JetBrains Mono", monospace;
   font-size: 14px;
   resize: vertical;
 }
 
 .code-input::placeholder {
-  color: #64748b;
+  color: var(--text-dim);
 }
 
 .code-input:focus {
   outline: none;
-  border-color: #6366f1;
+  border-color: var(--accent);
   box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.4);
 }
 
@@ -187,9 +187,9 @@ const visualize = async () => {
 
 /* 🌐 Language Select */
 .language-select {
-  background: #020617;
+  background: var(--bg-page);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #e5e7eb;
+  color: var(--text-secondary);
   padding: 10px 14px;
   border-radius: 10px;
   font-weight: 500;
@@ -197,7 +197,7 @@ const visualize = async () => {
 
 /* 🚀 Visualize Button */
 .visualize-btn {
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+  background: var(--accent);
   color: #022c22;
   padding: 12px 20px;
   border-radius: 12px;

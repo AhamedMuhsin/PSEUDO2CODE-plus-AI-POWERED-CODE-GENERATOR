@@ -31,8 +31,8 @@ const model = defineModel()
 select {
   padding: 12px;
   border-radius: 10px;
-  background: rgba(15,23,42,0.8);
-  color: white;
+  background: var(--bg-code);
+  color: var(--text-primary);
   border: 1px solid rgba(255,255,255,0.15);
 }
 </style>

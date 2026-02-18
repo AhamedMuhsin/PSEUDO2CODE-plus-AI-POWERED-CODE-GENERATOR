@@ -31,7 +31,7 @@ const drawVisualization = () => {
   ctx.clearRect(0, 0, width, height)
 
   // Background
-  ctx.fillStyle = "rgba(15, 23, 42, 0.5)"
+  ctx.fillStyle = "rgba(10, 10, 10, 0.5)"
   ctx.fillRect(0, 0, width, height)
 
   // Title
@@ -75,7 +75,7 @@ const drawVisualization = () => {
           ctx.fillRect(x, y - 5, cellWidth, cellHeight)
 
           // Gene value
-          ctx.strokeStyle = '#1e293b'
+          ctx.strokeStyle = '#1a1a1a'
           ctx.lineWidth = 1
           ctx.strokeRect(x, y - 5, cellWidth, cellHeight)
 
@@ -136,7 +136,7 @@ onMounted(drawVisualization)
   justify-content: center;
   align-items: center;
   padding: 20px;
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--bg-elevated);
   border-radius: 12px;
 }
 

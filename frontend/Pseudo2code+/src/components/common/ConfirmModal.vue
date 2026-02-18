@@ -43,7 +43,7 @@ defineProps({
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--bg-deep);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -52,9 +52,9 @@ defineProps({
 }
 
 .modal {
-  background: rgba(15, 23, 42, 0.95);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-overlay);
+  border-radius: 12px;
+  border: 1px solid var(--border-default);
   width: 90%;
   max-width: 400px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
@@ -71,11 +71,11 @@ defineProps({
   justify-content: space-between;
   align-items: center;
   padding: 24px 24px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-default);
 }
 
 .modal-header h3 {
-  color: #ffffff;
+  color: var(--text-primary);
   font-size: 1.2rem;
   margin: 0;
 }
@@ -83,7 +83,7 @@ defineProps({
 .close-btn {
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--text-muted);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -93,7 +93,7 @@ defineProps({
 }
 
 .close-btn:hover {
-  color: #e5e7eb;
+  color: var(--text-secondary);
 }
 
 .modal-body {
@@ -101,7 +101,7 @@ defineProps({
 }
 
 .modal-body p {
-  color: #cbd5e1;
+  color: var(--text-tertiary);
   margin: 0;
   font-size: 0.95rem;
   line-height: 1.5;
@@ -127,17 +127,17 @@ defineProps({
 .btn.ghost {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #e5e7eb;
+  color: var(--text-secondary);
 }
 
 .btn.ghost:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--border-default);
   border-color: rgba(255, 255, 255, 0.3);
 }
 
 .btn.primary {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  color: white;
+  background: var(--accent);
+  color: var(--text-primary);
 }
 
 .btn.primary:hover {
@@ -146,8 +146,8 @@ defineProps({
 }
 
 .btn.danger {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: white;
+  background: var(--accent);
+  color: var(--text-primary);
 }
 
 .btn.danger:hover {

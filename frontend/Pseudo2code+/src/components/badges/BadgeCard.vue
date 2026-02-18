@@ -46,30 +46,30 @@ const formatDate = (date) =>
 
 <style scoped>
 .title {
-    color: #f8fafc;
+    color: var(--text-primary);
     font-size: 1.1rem;
     font-weight: 700;
     margin-bottom: 6px;
 }
 
 .description {
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 0.85rem;
     min-height: 40px;
 }
 
 .badge-card.locked .description {
-    color: #64748b;
+    color: var(--text-dim);
     font-style: italic;
 }
 
 .badge-card {
-    /* background: linear-gradient(145deg, #0b1220, #0e1628); */
-    background: rgba(15, 23, 42, 0.85);
-    border-radius: 16px;
+    /* background: var(--accent); */
+    background: var(--bg-card);
+    border-radius: 12px;
     padding: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-default);
+    box-shadow: var(--shadow-md);
     text-align: center;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     cursor: default;
@@ -77,7 +77,7 @@ const formatDate = (date) =>
 
 .badge-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+    box-shadow: var(--shadow-lg);
 }
 
 .badge-icon {
@@ -87,7 +87,7 @@ const formatDate = (date) =>
 
 .badge-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+    box-shadow: var(--shadow-lg);
 }
 
 /* LOCKED STATE */
@@ -102,14 +102,14 @@ const formatDate = (date) =>
 }
 
 .badge-title {
-    color: #f8fafc;
+    color: var(--text-primary);
     font-size: 1.1rem;
     font-weight: 700;
     margin-bottom: 6px;
 }
 
 .badge-desc {
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 0.85rem;
     min-height: 40px;
 }
@@ -117,6 +117,6 @@ const formatDate = (date) =>
 .earned-date {
     margin-top: 10px;
     font-size: 0.75rem;
-    color: #60a5fa;
+    color: var(--accent-light);
 }
 </style>

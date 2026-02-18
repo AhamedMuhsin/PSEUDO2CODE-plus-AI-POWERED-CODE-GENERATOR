@@ -203,13 +203,13 @@ const exportSVG = () => {
 <style scoped>
 /* ════════ BACK ════════ */
 .back-top-bar { flex-shrink: 0; }
-.back-btn-compact { display: flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #e0e7ff; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
-.back-btn-compact:hover { background: rgba(99,102,241,0.25); transform: translateX(-2px); }
+.back-btn-compact { display: flex; align-items: center; gap: 6px; background: var(--accent-bg); border: 1px solid var(--accent-border); color: var(--accent-lighter); padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
+.back-btn-compact:hover { background: var(--accent-bg-hover); transform: translateX(-2px); }
 .arrow { width: 16px; height: 16px; }
 
 .visualize-container {
   min-height: 100vh;
-  background: radial-gradient(circle at top, #0f172a, #020617);
+  background: var(--bg-page);
   padding: 40px 24px;
 }
 
@@ -232,13 +232,13 @@ const exportSVG = () => {
 .cfg-legend h3 {
   font-size: 1rem;
   margin-bottom: 10px;
-  color: #e5e7eb;
+  color: var(--text-secondary);
 }
 
 .cfg-legend ul {
   list-style: none;
   padding: 0;
-  color: #cbd5e1;
+  color: var(--text-tertiary);
 }
 
 .cfg-legend li {
@@ -281,7 +281,7 @@ const exportSVG = () => {
   justify-content: center;
   height: 100%;
   gap: 16px;
-  color: #cbd5e1;
+  color: var(--text-tertiary);
 }
 
 .action-row {
@@ -291,7 +291,7 @@ const exportSVG = () => {
 }
 
 .mermaid-container {
-  background: #020617;
+  background: var(--bg-page);
   border-radius: 12px;
   padding: 16px;
   overflow-x: auto;
@@ -304,7 +304,7 @@ const exportSVG = () => {
 .copy-btn {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #e5e7eb;
+  color: var(--text-secondary);
   padding: 10px 16px;
   border-radius: 10px;
   cursor: pointer;
@@ -325,7 +325,7 @@ const exportSVG = () => {
   align-self: flex-start;
   margin-top: 16px;
 
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+  background: var(--accent);
   color: #022c22;
 
   padding: 10px 18px;
@@ -377,11 +377,11 @@ const exportSVG = () => {
 .page-header h1 {
   font-size: 2.2rem;
   font-weight: 800;
-  color: #f8fafc;
+  color: var(--text-primary);
 }
 
 .page-header p {
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-top: 6px;
 }
 
@@ -394,16 +394,16 @@ const exportSVG = () => {
 }
 
 .card {
-  background: rgba(15, 23, 42, 0.85);
-  border-radius: 16px;
+  background: var(--bg-card);
+  border-radius: 12px;
   padding: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-md);
   transition: box-shadow 0.2s ease;
 }
 
 .card:hover {
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-lg);
 }
 
 .execution-card {
@@ -421,11 +421,11 @@ const exportSVG = () => {
 .tutor-frame {
   width: 100%;
   height: 100%;
-  border-radius: 14px;
-  background: #020617;
+  border-radius: 12px;
+  background: var(--bg-page);
   /* dark behind iframe */
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    inset 0 0 0 1px var(--border-default),
     0 20px 40px rgba(0, 0, 0, 0.6);
 }
 
@@ -438,7 +438,7 @@ const exportSVG = () => {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 18px;
+  border-radius: 12px;
   pointer-events: none;
   box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.35);
 }
@@ -446,7 +446,7 @@ const exportSVG = () => {
 .info-card ul {
   margin-top: 16px;
   padding-left: 18px;
-  color: #cbd5e1;
+  color: var(--text-tertiary);
 }
 
 @media (max-width: 1024px) {

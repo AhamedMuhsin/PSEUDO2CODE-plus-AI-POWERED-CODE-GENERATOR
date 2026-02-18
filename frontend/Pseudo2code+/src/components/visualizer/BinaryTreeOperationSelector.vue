@@ -57,7 +57,7 @@ watch(
   gap: 12px;
   align-items: center;
   padding: 12px 16px;
-  background: rgba(30, 41, 59, 0.5);
+  background: rgba(18, 18, 18, 0.5);
   border: 1px solid #334155;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -65,7 +65,7 @@ watch(
 
 .section-label {
   font-size: 13px;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -75,8 +75,8 @@ watch(
 .operation-dropdown {
   flex: 1;
   padding: 8px 12px;
-  background: rgba(15, 23, 42, 0.8);
-  color: #e2e8f0;
+  background: var(--bg-code);
+  color: var(--text-secondary);
   border: 1px solid #475569;
   border-radius: 6px;
   font-size: 14px;
@@ -87,24 +87,24 @@ watch(
 
 .operation-dropdown:hover {
   border-color: #64748b;
-  background: rgba(15, 23, 42, 0.95);
+  background: var(--bg-overlay);
 }
 
 .operation-dropdown:focus {
   outline: none;
-  border-color: #a78bfa;
+  border-color: var(--accent-light);
   box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
 }
 
 .operation-dropdown option {
-  background: #0f172a;
-  color: #e2e8f0;
+  background: var(--bg-surface);
+  color: var(--text-secondary);
   padding: 8px;
 }
 
 .operation-dropdown optgroup {
-  background: #1e293b;
-  color: #94a3b8;
+  background: var(--bg-surface);
+  color: var(--text-muted);
   font-weight: 600;
   font-style: normal;
 }

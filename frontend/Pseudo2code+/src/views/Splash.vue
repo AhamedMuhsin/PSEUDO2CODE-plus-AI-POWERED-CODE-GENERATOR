@@ -33,7 +33,7 @@ onMounted(() => {
 <style scoped>
 .splash {
   height: 100vh;
-  background: radial-gradient(circle at top, #0f172a, #020617);
+  background: var(--bg-page);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -51,14 +51,14 @@ onMounted(() => {
 .title {
   font-size: 2.5rem;
   font-weight: bold;
-  background: linear-gradient(90deg, #6366f1, #22d3ee);
+  background: var(--accent);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
 }
 
 .subtitle {
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-bottom: 30px;
 }
 

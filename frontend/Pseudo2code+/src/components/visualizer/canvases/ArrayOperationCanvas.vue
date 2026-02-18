@@ -58,8 +58,8 @@ defineProps({
   min-width: 56px;
   padding: 14px 0;
   border-radius: 12px;
-  background: #6366f1;
-  color: white;
+  background-color: var(--accent);
+  color: var(--text-primary);
   font-weight: 600;
   text-align: center;
   transition: all 0.3s ease;
@@ -74,7 +74,7 @@ defineProps({
 /* Target index */
 .cell.target {
   background: #facc15;
-  color: #020617;
+  color: var(--text-primary);
 }
 
 /* Found (search success) */

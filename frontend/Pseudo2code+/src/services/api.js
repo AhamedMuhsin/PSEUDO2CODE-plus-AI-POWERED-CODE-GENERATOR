@@ -1,8 +1,12 @@
 import axios from 'axios'
 import router from '@/router'
 
+// Use the same hostname the browser is on so mobile / LAN access works
+const API_HOST = window.location.hostname   // e.g. "10.38.152.190" or "localhost"
+const API_PORT = 8000
+
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:8000',
+  baseURL: `http://${API_HOST}:${API_PORT}`,
 })
 
 /* ────────── REQUEST INTERCEPTOR ────────── */

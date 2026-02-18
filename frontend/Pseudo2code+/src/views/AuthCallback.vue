@@ -21,11 +21,11 @@
 <style scoped>
 .callback-page {
   height: 100vh;
-  background: radial-gradient(circle at top, #0b1220, #05080f);
+  background: var(--bg-page);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .content {
@@ -39,14 +39,14 @@
 
 .text {
   font-size: 1.1rem;
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-bottom: 20px;
 }
 
 .spinner {
   width: 32px;
   height: 32px;
-  border: 3px solid rgba(99, 102, 241, 0.3);
+  border: 3px solid var(--accent-border);
   border-top-color: #6366f1;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;

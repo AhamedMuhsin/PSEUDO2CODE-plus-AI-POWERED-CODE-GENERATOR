@@ -42,7 +42,7 @@ defineEmits(['update:modelValue'])
 }
 
 label {
-  color: #cbd5f5;
+  color: var(--text-tertiary);
   font-weight: 600;
   font-size: 0.95rem;
   white-space: nowrap;
@@ -60,9 +60,9 @@ label {
   gap: 8px;
   padding: 12px 16px;
   border-radius: 10px;
-  background: rgba(99, 102, 241, 0.15);
-  border: 2px solid rgba(99, 102, 241, 0.3);
-  color: #a78bfa;
+  background: var(--accent-bg);
+  border: 2px solid var(--accent-border);
+  color: var(--accent-light);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.9rem;
@@ -71,15 +71,15 @@ label {
 }
 
 .type-btn:hover {
-  background: rgba(99, 102, 241, 0.25);
+  background: var(--accent-bg-hover);
   border-color: rgba(167, 139, 250, 0.5);
   transform: translateY(-2px);
 }
 
 .type-btn.active {
-  background: #6366f1;
-  border-color: #6366f1;
-  color: white;
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--text-primary);
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
 }
 

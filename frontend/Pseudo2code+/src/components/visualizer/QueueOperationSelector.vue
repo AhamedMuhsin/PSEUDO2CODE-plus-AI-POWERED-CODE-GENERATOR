@@ -28,9 +28,9 @@ defineEmits(['update:modelValue'])
 select {
   padding: 10px 14px;
   border-radius: 10px;
-  background: rgba(2, 6, 23, 0.6);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: white;
+  background: var(--bg-overlay);
+  border: 1px solid var(--accent-border);
+  color: var(--text-primary);
   font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
@@ -38,19 +38,19 @@ select {
 }
 
 select:hover {
-  border-color: rgba(99, 102, 241, 0.5);
-  background: rgba(2, 6, 23, 0.7);
+  border-color: var(--accent-border);
+  background: var(--bg-deep);
 }
 
 select:focus {
   outline: none;
-  border-color: #6366f1;
-  background: rgba(2, 6, 23, 0.8);
+  border-color: var(--accent);
+  background: var(--bg-code);
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 option {
-  background: #0f172a;
-  color: white;
+  background: var(--bg-surface);
+  color: var(--text-primary);
 }
 </style>

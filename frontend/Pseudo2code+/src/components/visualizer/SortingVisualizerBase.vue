@@ -247,7 +247,7 @@ Take a random input array.`
 /* COMPACT LAYOUT */
 .visualizer-page {
     height: 100vh;
-    background: radial-gradient(circle at top, #0f172a, #020617);
+    background: var(--bg-page);
     padding: 12px;
     overflow: hidden;
 }
@@ -268,9 +268,9 @@ Take a random input array.`
     display: flex;
     align-items: center;
     gap: 6px;
-    background: rgba(99, 102, 241, 0.15);
-    border: 1px solid rgba(99, 102, 241, 0.3);
-    color: #e0e7ff;
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+    color: var(--accent-lighter);
     padding: 6px 12px;
     border-radius: 8px;
     cursor: pointer;
@@ -279,7 +279,7 @@ Take a random input array.`
 }
 
 .back-btn-compact:hover {
-    background: rgba(99, 102, 241, 0.25);
+    background: var(--accent-bg-hover);
     transform: translateX(-2px);
 }
 
@@ -289,9 +289,9 @@ Take a random input array.`
 }
 
 .page-header-compact {
-    background: rgba(30, 41, 59, 0.6);
+    background: rgba(18, 18, 18, 0.6);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(100, 116, 139, 0.3);
+    border: 1px solid var(--border-medium);
     border-radius: 12px;
     padding: 12px 16px;
     flex-shrink: 0;
@@ -313,7 +313,7 @@ Take a random input array.`
 
 .operation-title-group-compact h1 {
     font-size: 1.4rem;
-    background: linear-gradient(135deg, #818cf8, #c084fc);
+    background: var(--accent);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -322,8 +322,8 @@ Take a random input array.`
 
 .info-btn-compact {
     background: rgba(99, 102, 241, 0.2);
-    border: 1px solid rgba(99, 102, 241, 0.4);
-    color: #a5b4fc;
+    border: 1px solid var(--accent-border);
+    color: var(--accent-lighter);
     width: 24px;
     height: 24px;
     border-radius: 50%;
@@ -341,7 +341,7 @@ Take a random input array.`
 }
 
 .operation-desc-compact {
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 0.85rem;
     margin: 0;
 }
@@ -354,10 +354,10 @@ Take a random input array.`
 
 .badge-compact {
     padding: 4px 8px;
-    background: rgba(100, 116, 139, 0.2);
-    border: 1px solid rgba(100, 116, 139, 0.3);
+    background: var(--border-light);
+    border: 1px solid var(--border-medium);
     border-radius: 6px;
-    color: #cbd5e1;
+    color: var(--text-tertiary);
     font-size: 0.75rem;
     font-weight: 500;
 }
@@ -365,13 +365,13 @@ Take a random input array.`
 .badge-compact.stable {
     background: rgba(34, 197, 94, 0.2);
     border-color: rgba(34, 197, 94, 0.3);
-    color: #86efac;
+    color: var(--success-text);
 }
 
 .badge-compact.unstable {
     background: rgba(239, 68, 68, 0.2);
     border-color: rgba(239, 68, 68, 0.3);
-    color: #fca5a5;
+    color: var(--error-text);
 }
 
 /* TWO COLUMN LAYOUT */
@@ -393,9 +393,9 @@ Take a random input array.`
 
 /* ARRAY INPUT */
 .array-input-compact {
-    background: rgba(30, 41, 59, 0.6);
+    background: rgba(18, 18, 18, 0.6);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(100, 116, 139, 0.3);
+    border: 1px solid var(--border-medium);
     border-radius: 10px;
     padding: 10px;
     flex-shrink: 0;
@@ -409,9 +409,9 @@ Take a random input array.`
 
 .custom-input-compact {
     flex: 1;
-    background: rgba(30, 41, 59, 0.8);
-    border: 1px solid rgba(100, 116, 139, 0.4);
-    color: #e0e7ff;
+    background: rgba(18, 18, 18, 0.8);
+    border: 1px solid var(--border-strong);
+    color: var(--accent-lighter);
     padding: 6px 10px;
     border-radius: 6px;
     font-size: 0.8rem;
@@ -419,11 +419,11 @@ Take a random input array.`
 
 .custom-input-compact:focus {
     outline: none;
-    border-color: #6366f1;
+    border-color: var(--accent);
 }
 
 .custom-input-compact::placeholder {
-    color: #64748b;
+    color: var(--text-dim);
     font-size: 0.75rem;
 }
 
@@ -439,8 +439,8 @@ Take a random input array.`
 }
 
 .btn-compact.primary {
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    color: white;
+    background: var(--accent);
+    color: var(--text-primary);
 }
 
 .btn-compact.primary:hover:not(:disabled) {
@@ -449,18 +449,18 @@ Take a random input array.`
 }
 
 .btn-compact.ghost {
-    background: rgba(100, 116, 139, 0.2);
-    border: 1px solid rgba(100, 116, 139, 0.3);
-    color: #cbd5e1;
+    background: var(--border-light);
+    border: 1px solid var(--border-medium);
+    color: var(--text-tertiary);
 }
 
 .btn-compact.ghost:hover:not(:disabled) {
-    background: rgba(100, 116, 139, 0.3);
+    background: var(--border-medium);
 }
 
 .btn-compact.danger {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
+    background: var(--accent);
+    color: var(--text-primary);
 }
 
 .btn-compact.danger:hover {
@@ -479,9 +479,9 @@ Take a random input array.`
     gap: 6px;
     align-items: center;
     flex-wrap: wrap;
-    background: rgba(30, 41, 59, 0.6);
+    background: rgba(18, 18, 18, 0.6);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(100, 116, 139, 0.3);
+    border: 1px solid var(--border-medium);
     border-radius: 10px;
     padding: 8px;
     flex-shrink: 0;
@@ -489,10 +489,10 @@ Take a random input array.`
 
 .step-counter-compact {
     padding: 5px 10px;
-    background: rgba(99, 102, 241, 0.1);
-    border: 1px solid rgba(99, 102, 241, 0.3);
+    background: var(--bg-hover);
+    border: 1px solid var(--accent-border);
     border-radius: 6px;
-    color: #e0e7ff;
+    color: var(--accent-lighter);
     font-weight: 600;
     font-size: 0.75rem;
 }
@@ -501,7 +501,7 @@ Take a random input array.`
     display: flex;
     align-items: center;
     gap: 6px;
-    color: #e0e7ff;
+    color: var(--accent-lighter);
     font-size: 0.75rem;
 }
 
@@ -513,9 +513,9 @@ Take a random input array.`
 /* CANVAS */
 .canvas-compact {
     flex: 1;
-    background: rgba(30, 41, 59, 0.6);
+    background: rgba(18, 18, 18, 0.6);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(100, 116, 139, 0.3);
+    border: 1px solid var(--border-medium);
     border-radius: 10px;
     padding: 8px;
     overflow: hidden;
@@ -538,7 +538,7 @@ Take a random input array.`
     display: flex;
     align-items: center;
     gap: 4px;
-    color: #cbd5e1;
+    color: var(--text-tertiary);
     font-size: 0.75rem;
 }
 
@@ -546,11 +546,11 @@ Take a random input array.`
     width: 16px;
     height: 16px;
     border-radius: 3px;
-    border: 2px solid #1e293b;
+    border: 2px solid #1a1a1a;
 }
 
 .dot.normal {
-    background: #6366f1;
+    background-color: var(--accent);
 }
 
 .dot.active {
@@ -571,16 +571,16 @@ Take a random input array.`
 
 /* RIGHT COLUMN */
 .pseudo-section-compact {
-    background: rgba(30, 41, 59, 0.6);
+    background: rgba(18, 18, 18, 0.6);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(100, 116, 139, 0.3);
+    border: 1px solid var(--border-medium);
     border-radius: 10px;
     padding: 10px;
     flex-shrink: 0;
 }
 
 .section-title-compact {
-    color: #e0e7ff;
+    color: var(--accent-lighter);
     margin: 0 0 8px 0;
     font-size: 1rem;
 }
@@ -592,9 +592,9 @@ Take a random input array.`
 
 .explanation-compact {
     flex: 1;
-    background: rgba(30, 41, 59, 0.6);
+    background: rgba(18, 18, 18, 0.6);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(100, 116, 139, 0.3);
+    border: 1px solid var(--border-medium);
     border-radius: 10px;
     padding: 10px;
     overflow-y: auto;
@@ -602,13 +602,13 @@ Take a random input array.`
 }
 
 .explanation-compact h3 {
-    color: #e0e7ff;
+    color: var(--accent-lighter);
     margin: 0 0 6px 0;
     font-size: 0.9rem;
 }
 
 .explanation-compact p {
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 0.85rem;
     line-height: 1.4;
     margin: 0;
@@ -622,7 +622,7 @@ Take a random input array.`
 
 .pseudo-scroll::-webkit-scrollbar-track,
 .explanation-compact::-webkit-scrollbar-track {
-    background: rgba(30, 41, 59, 0.3);
+    background: rgba(18, 18, 18, 0.3);
     border-radius: 3px;
 }
 

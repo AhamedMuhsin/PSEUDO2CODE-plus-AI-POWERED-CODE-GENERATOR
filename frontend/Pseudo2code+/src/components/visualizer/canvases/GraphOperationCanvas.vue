@@ -69,7 +69,7 @@ const drawGraph = () => {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight)
 
   // Draw background
-  ctx.fillStyle = "rgba(15, 23, 42, 0.5)"
+  ctx.fillStyle = "rgba(10, 10, 10, 0.5)"
   ctx.fillRect(0, 0, canvasWidth, canvasHeight)
 
   // Draw edges first (so they appear behind nodes)
@@ -215,9 +215,9 @@ watch(
   justify-content: center;
   width: 100%;
   height: 500px;
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.4), rgba(2, 6, 23, 0.4));
+  background: var(--accent), rgba(0, 0, 0, 0.4));
   border-radius: 12px;
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  border: 1px solid var(--accent-border);
   position: relative;
   overflow: hidden;
 }
@@ -234,7 +234,7 @@ watch(
   justify-content: center;
   width: 100%;
   height: 100%;
-  color: #64748b;
+  color: var(--text-dim);
   font-size: 1.1rem;
   pointer-events: none;
 }

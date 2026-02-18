@@ -72,7 +72,7 @@ const drawBoard = () => {
   }
 
   // Draw grid lines
-  ctx.strokeStyle = '#1e293b'
+  ctx.strokeStyle = '#1a1a1a'
   ctx.lineWidth = 1
   for (let i = 0; i <= n; i++) {
     ctx.beginPath()
@@ -104,7 +104,7 @@ export default {
   justify-content: center;
   align-items: center;
   padding: 20px;
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--bg-elevated);
   border-radius: 12px;
 }
 

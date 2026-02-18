@@ -49,7 +49,7 @@ const drawBoard = () => {
   ctx.clearRect(0, 0, 500, 600)
 
   // Draw background
-  ctx.fillStyle = "rgba(15, 23, 42, 0.5)"
+  ctx.fillStyle = "rgba(10, 10, 10, 0.5)"
   ctx.fillRect(0, 0, 500, 600)
 
   // Draw Tic-Tac-Toe board
@@ -118,7 +118,7 @@ onMounted(drawBoard)
 <style scoped>
 .alphabeta-canvas-container {
   padding: 20px;
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--bg-elevated);
   border-radius: 12px;
 }
 
@@ -142,8 +142,8 @@ onMounted(drawBoard)
 
 .value-box {
   padding: 12px 24px;
-  background: rgba(99, 102, 241, 0.1);
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  background: var(--bg-hover);
+  border: 1px solid var(--accent-border);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -151,13 +151,13 @@ onMounted(drawBoard)
 }
 
 .value-box .label {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 0.85rem;
   margin-bottom: 4px;
 }
 
 .value-box .value {
-  color: #e0e7ff;
+  color: var(--accent-lighter);
   font-size: 1.5rem;
   font-weight: bold;
 }
@@ -167,7 +167,7 @@ onMounted(drawBoard)
   background: rgba(239, 68, 68, 0.2);
   border: 1px solid rgba(239, 68, 68, 0.4);
   border-radius: 8px;
-  color: #fca5a5;
+  color: var(--error-text);
   font-weight: bold;
   font-size: 1.1rem;
 }

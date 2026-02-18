@@ -59,7 +59,7 @@ const drawLinkedList = () => {
     } else if (isCurrent) {
       ctx.fillStyle = "rgba(99, 102, 241, 0.15)"
     } else {
-      ctx.fillStyle = "rgba(30, 41, 59, 0.9)"
+      ctx.fillStyle = "rgba(18, 18, 18, 0.9)"
     }
 
     ctx.beginPath()
@@ -137,10 +137,10 @@ onMounted(() => {
   justify-content: flex-start;
   align-items: center;
   width: 100%;
-  background: rgba(2, 6, 23, 0.4);
+  background: rgba(0, 0, 0, 0.4);
   border-radius: 10px;
   padding: 20px;
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  border: 1px solid var(--accent-border);
   min-height: 500px;
   overflow-x: auto;
 }

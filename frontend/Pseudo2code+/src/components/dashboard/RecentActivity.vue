@@ -53,17 +53,17 @@ const props = defineProps({
 
 <style scoped>
 .activity-card {
-  background: rgba(15, 23, 42, 0.85);
-  border-radius: 16px;
+  background: var(--bg-card);
+  border-radius: 12px;
   padding: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-md);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .activity-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-lg);
 }
 
 /* Header */
@@ -79,11 +79,11 @@ const props = defineProps({
 }
 
 .activity-item:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-elevated);
 }
 
 .view-all {
-  color: #60a5fa;
+  color: var(--accent-light);
   cursor: pointer;
   font-size: 0.9rem;
 }
@@ -99,7 +99,7 @@ const props = defineProps({
   display: flex;
   gap: 14px;
   padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-default);
 }
 
 /* Icons */
@@ -129,17 +129,17 @@ const props = defineProps({
 /* COLORS */
 .icon-circle.blue {
   background: rgba(96, 165, 250, 0.18);
-  color: #60a5fa;
+  color: var(--accent-light);
 }
 
 .icon-circle.purple {
   background: rgba(192, 132, 252, 0.18);
-  color: #c084fc;
+  color: var(--accent-lighter);
 }
 
 .icon-circle.yellow {
   background: rgba(250, 204, 21, 0.18);
-  color: #facc15;
+  color: var(--warning);
 }
 
 .icon-circle.green {
@@ -149,17 +149,17 @@ const props = defineProps({
 
 .blue {
   background: rgba(96, 165, 250, 0.15);
-  color: #60a5fa;
+  color: var(--accent-light);
 }
 
 .purple {
   background: rgba(192, 132, 252, 0.15);
-  color: #c084fc;
+  color: var(--accent-lighter);
 }
 
 .yellow {
   background: rgba(250, 204, 21, 0.15);
-  color: #facc15;
+  color: var(--warning);
 }
 
 .green {
@@ -176,36 +176,36 @@ const props = defineProps({
 
 .title {
   font-size: 0.95rem;
-  color: #e5e7eb;
+  color: var(--text-secondary);
   line-height: 0.9;
 }
 
 .time {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-muted);
   line-height: 0.9;
 }
 
 
 /* .title {
   font-size: 0.95rem;
-  color: #e5e7eb;
+  color: var(--text-secondary);
 }
 
 .time {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-muted);
 } */
 
 /* EMPTY STATE */
 .empty-state {
   text-align: center;
   padding: 40px 20px;
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 .empty-icon {
-  color: #64748b;
+  color: var(--text-dim);
   margin-bottom: 16px;
   display: flex;
   justify-content: center;
@@ -213,7 +213,7 @@ const props = defineProps({
 
 .empty-state h4 {
   font-size: 1.1rem;
-  color: #e5e7eb;
+  color: var(--text-secondary);
   margin-bottom: 6px;
 }
 

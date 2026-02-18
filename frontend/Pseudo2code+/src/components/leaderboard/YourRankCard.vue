@@ -37,17 +37,17 @@ defineProps({
 
 <style scoped>
 .rank-card {
-    background: rgba(15, 23, 42, 0.85);
-    border-radius: 16px;
+    background: var(--bg-card);
+    border-radius: 12px;
     padding: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-default);
+    box-shadow: var(--shadow-md);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .rank-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+    box-shadow: var(--shadow-lg);
 }
 
 .rank-card h3 {
@@ -59,11 +59,11 @@ defineProps({
     display: flex;
     justify-content: space-between;
     margin-top: 10px;
-    color: #94a3b8;
+    color: var(--text-muted);
 }
 
 .row strong {
-    color: #f8fafc;
+    color: var(--text-primary);
 }
 
 .up {

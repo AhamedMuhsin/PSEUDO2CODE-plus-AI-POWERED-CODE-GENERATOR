@@ -21,8 +21,8 @@ defineProps({
 
 <style scoped>
 .pseudo {
-  background: rgba(15, 23, 42, 0.85);
-  border-radius: 16px;
+  background: var(--bg-card);
+  border-radius: 12px;
   padding: 18px;
   border: 1px solid rgba(255,255,255,0.06);
   font-family: monospace;
@@ -34,12 +34,12 @@ defineProps({
   gap: 12px;
   padding: 6px 8px;
   border-radius: 8px;
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 .line.active {
-  background: rgba(99,102,241,0.15);
-  color: #e0e7ff;
+  background: var(--accent-bg);
+  color: var(--accent-lighter);
 }
 
 .num {

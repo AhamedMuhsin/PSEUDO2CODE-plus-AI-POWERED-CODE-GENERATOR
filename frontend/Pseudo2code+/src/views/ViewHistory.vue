@@ -348,22 +348,20 @@ const deleteActivity = async (activity) => {
 <style scoped>
 /* ════════ BACK ════════ */
 .back-top-bar { flex-shrink: 0; }
-.back-btn-compact { display: flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #e0e7ff; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
-.back-btn-compact:hover { background: rgba(99,102,241,0.25); transform: translateX(-2px); }
+.back-btn-compact { display: flex; align-items: center; gap: 6px; background: var(--accent-bg); border: 1px solid var(--accent-border); color: var(--accent-lighter); padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
+.back-btn-compact:hover { background: var(--accent-bg-hover); transform: translateX(-2px); }
 .arrow { width: 16px; height: 16px; }
 
 .history-page {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, #0f172a, transparent 60%),
-    radial-gradient(circle at top right, #020617, transparent 60%),
-    linear-gradient(180deg, #020617, #020617);
+  background: var(--bg-page);
 }
 
 .history-container {
   padding: 32px;
-  border-radius: 20px;
-  background: linear-gradient(145deg, #0b1220, #0e1628);
+  border-radius: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
 }
 
 .page-header {
@@ -390,11 +388,11 @@ const deleteActivity = async (activity) => {
 .header-text h1 {
   font-size: 2.2rem;
   font-weight: 800;
-  color: #f8fafc;
+  color: var(--text-primary);
 }
 
 .header-text p {
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-top: 6px;
 }
 
@@ -442,7 +440,7 @@ const deleteActivity = async (activity) => {
 }
 
 .history-item:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-elevated);
   box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.15);
 }
 
@@ -450,7 +448,7 @@ const deleteActivity = async (activity) => {
   display: flex;
   gap: 12px;
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-bottom: 10px;
 }
 
@@ -461,26 +459,26 @@ const deleteActivity = async (activity) => {
 
 /* Force color buttons to override base .btn */
 .actions .action-blue {
-  background: #4f46e5 !important;
+  background-color: var(--accent-hover) !important;
 }
 
 .actions .action-purple {
-  background: linear-gradient(135deg, #9333ea, #7c3aed) !important;
+  background: var(--accent) !important;
 }
 
 .actions .action-gold {
-  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
-  color: #1f2937 !important;
+  background: var(--accent) !important;
+  color: var(--text-on-accent) !important;
 }
 
 .actions .action-cyan {
-  background: linear-gradient(135deg, #06b6d4, #0891b2) !important;
+  background: var(--accent) !important;
 }
 
 .actions .danger {
-  background: #020617 !important;
-  border-color: #7f1d1d !important;
-  color: #fca5a5 !important;
+  background: var(--error-bg) !important;
+  border-color: var(--error-border) !important;
+  color: var(--error) !important;
 }
 
 .actions {
@@ -498,11 +496,11 @@ const deleteActivity = async (activity) => {
 
 .level-header h2 {
   font-size: 1.8rem;
-  color: #f8fafc;
+  color: var(--text-primary);
 }
 
 .muted {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 0.85rem;
 }
 
@@ -516,20 +514,20 @@ const deleteActivity = async (activity) => {
   display: flex;
   justify-content: space-between;
   font-size: 0.85rem;
-  color: #cbd5f5;
+  color: var(--text-tertiary);
 }
 
 .xp-bar {
   height: 10px;
   border-radius: 999px;
-  background: #020617;
+  background: var(--bg-page);
   overflow: hidden;
-  border: 1px solid #1e293b;
+  border: 1px solid var(--border-default);
 }
 
 .xp-fill {
   height: 100%;
-  background: linear-gradient(90deg, #6366f1, #22d3ee);
+  background: var(--accent);
   transition: width 0.3s ease;
 }
 
@@ -540,7 +538,7 @@ const deleteActivity = async (activity) => {
 
 .xp-rules ul {
   padding-left: 16px;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 0.8rem;
 }
 
@@ -551,8 +549,8 @@ const deleteActivity = async (activity) => {
 }
 
 .level-stats div {
-  background: #020617;
-  border: 1px solid #1e293b;
+  background: var(--bg-page);
+  border: 1px solid var(--border-default);
   border-radius: 12px;
   padding: 10px;
   text-align: center;
@@ -560,27 +558,27 @@ const deleteActivity = async (activity) => {
 
 .level-stats span {
   font-size: 0.7rem;
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 .level-stats strong {
   font-size: 1.1rem;
-  color: #f8fafc;
+  color: var(--text-primary);
 }
 
 .code-preview {
-  background: #020617;
-  border: 1px solid #1e293b;
+  background: var(--bg-page);
+  border: 1px solid var(--border-default);
   border-radius: 12px;
   padding: 14px;
-  color: #e5e7eb;
+  color: var(--text-secondary);
   font-size: 0.85rem;
   max-height: 420px;
   overflow: auto;
 }
 
 .history-header p {
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-top: 6px;
 }
 
@@ -594,11 +592,11 @@ const deleteActivity = async (activity) => {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #020617;
-  border: 1px solid #1e293b;
-  border-radius: 14px;
+  background: var(--bg-page);
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
   padding: 12px 16px;
-  color: #94a3b8;
+  color: var(--text-muted);
   flex: 1;
 }
 
@@ -606,7 +604,7 @@ const deleteActivity = async (activity) => {
   background: transparent;
   border: none;
   outline: none;
-  color: #e5e7eb;
+  color: var(--text-secondary);
   width: 260px;
 }
 
@@ -617,11 +615,11 @@ const deleteActivity = async (activity) => {
 
 /* Filter */
 select {
-  background: #020617;
-  border: 1px solid #1e293b;
-  color: #e5e7eb;
+  background: var(--bg-page);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
   padding: 10px 14px;
-  border-radius: 14px;
+  border-radius: 12px;
   cursor: pointer;
 }
 
@@ -636,12 +634,12 @@ select {
 }
 
 .page-header h1 {
-  color: #f8fafc;
+  color: var(--text-primary);
   font-size: 2rem;
 }
 
 .page-header p {
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 .history-item {
@@ -650,7 +648,7 @@ select {
 }
 
 .history-item:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-elevated);
 }
 
 /* FILTERS */
@@ -663,22 +661,22 @@ select {
 
 .meta {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-bottom: 8px;
 }
 
 .filters button {
   padding: 6px 14px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  color: #cbd5f5;
+  background: var(--border-default);
+  color: var(--text-tertiary);
   border: none;
   cursor: pointer;
 }
 
 .filters button.active {
-  background: #6366f1;
-  color: white;
+  background-color: var(--accent);
+  color: var(--text-primary);
 }
 
 /* LIST */
@@ -694,9 +692,10 @@ select {
   display: flex;
   gap: 14px;
   align-items: flex-start;
-  background: rgba(15, 23, 42, 0.85);
+  background: var(--bg-card);
   padding: 16px;
-  border-radius: 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border-default);
 }
 
 /* ICON */
@@ -712,17 +711,17 @@ select {
 
 .icon-circle.blue {
   background: rgba(96, 165, 250, 0.18);
-  color: #60a5fa;
+  color: var(--accent-light);
 }
 
 .icon-circle.purple {
   background: rgba(192, 132, 252, 0.18);
-  color: #c084fc;
+  color: var(--accent-lighter);
 }
 
 .icon-circle.yellow {
   background: rgba(250, 204, 21, 0.18);
-  color: #facc15;
+  color: var(--warning);
 }
 
 .icon-circle.green {
@@ -739,24 +738,24 @@ select {
 }
 
 .title {
-  color: #e5e7eb;
+  color: var(--text-secondary);
 }
 
 .time {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 .empty {
   text-align: center;
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-top: 60px;
 }
 
 .history-container {
   min-height: 100vh;
   padding: 40px 24px;
-  background: radial-gradient(circle at top, #0f172a, #020617);
+  background: var(--bg-page);
 }
 
 /* Header */
@@ -766,13 +765,13 @@ select {
 }
 
 .page-header h1 {
-  color: #f8fafc;
+  color: var(--text-primary);
   font-size: 2.2rem;
   font-weight: 800;
 }
 
 .page-header p {
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-top: 6px;
 }
 
@@ -781,9 +780,9 @@ select {
   width: 100%;
   padding: 12px 16px;
   border-radius: 12px;
-  background: #020617;
-  border: 1px solid #1e293b;
-  color: #e5e7eb;
+  background: var(--bg-page);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
 }
 
 /* Grid */
@@ -797,21 +796,21 @@ select {
 
 /* Card */
 .history-card {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-md);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .history-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-lg);
 }
 
 .title {
-  color: #f8fafc;
+  color: var(--text-primary);
   font-size: 1.05rem;
   font-weight: 600;
 }
@@ -831,21 +830,23 @@ select {
 }
 
 .lang {
-  background: #1e40af;
-  color: #e0e7ff;
+  background: var(--accent-bg);
+  color: var(--accent);
   text-transform: uppercase;
+  border: 1px solid var(--accent-border);
 }
 
 .level {
-  background: #374151;
-  color: #e5e7eb;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
 }
 
 /* Date */
 .date {
   margin-top: 10px;
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 /* Actions */
@@ -860,30 +861,30 @@ select {
   flex: 1;
   padding: 8px;
   border-radius: 10px;
-  background: #020617;
-  border: 1px solid #1e293b;
-  color: #e5e7eb;
+  background: var(--bg-page);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
   cursor: pointer;
   font-size: 0.8rem;
 }
 
 .btn.primary {
-  background: #4f46e5;
-  border-color: #4f46e5;
+  background-color: var(--accent-hover);
+  border-color: var(--accent);
 }
 
 .btn.danger {
   flex: 0;
   width: 40px;
-  background: #020617;
-  border-color: #7f1d1d;
-  color: #fca5a5;
+  background: var(--error-bg);
+  border-color: var(--error-border);
+  color: var(--error);
 }
 
 /* Empty */
 .empty-state {
   text-align: center;
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-top: 80px;
 }
 

@@ -209,16 +209,16 @@ const handleActivityClick = (activity) => {
 
 .dashboard {
   min-height: calc(100vh - 70px);
-  background: radial-gradient(circle at top, #0f172a, #020617);
+  background: var(--bg-page);
   padding: 32px;
 }
 
 .dashboard-card {
-  background: rgba(15, 23, 42, 0.85);
-  border-radius: 16px;
+  background: var(--bg-card);
+  border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-default);
 }
 
 .dashboard-grid {

@@ -106,8 +106,9 @@ const initials = (name = "") =>
 <style scoped>
 .leaderboard-table {
   margin-top: 26px;
-  background: linear-gradient(145deg, #0b1220, #0e1628);
-  border-radius: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
   overflow: hidden;
 }
 
@@ -120,92 +121,86 @@ const initials = (name = "") =>
 }
 
 .badge.muted {
-  color: #64748b;
+  color: var(--text-dim);
   font-size: 0.85rem;
 }
 
 .table-header {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 0.85rem;
-  border-bottom: 1px solid #1e293b;
+  border-bottom: 1px solid var(--border-default);
 }
 
 .badge {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: radial-gradient(circle at top, #1e293b, #020617);
+  background: var(--bg-page);
   display: grid;
   place-items: center;
   font-size: 1rem;
-  border: 1px solid #1e293b;
+  border: 1px solid var(--border-default);
 }
 
 /* 🥇 Gold */
 .rank-gold {
-  background: linear-gradient(135deg,
-      rgba(234, 179, 8, 0.18),
-      rgba(234, 179, 8, 0.05));
+  background: rgba(234, 179, 8, 0.05);
 }
 
 .rank-gold .rank-badge {
-  background: linear-gradient(135deg, #facc15, #eab308);
-  color: #1e293b;
+  background: #eab308;
+  color: #000;
   box-shadow: 0 0 18px rgba(234, 179, 8, 0.6);
 }
 
 /* 🥈 Silver */
 .rank-silver {
-  background: linear-gradient(135deg,
-      rgba(148, 163, 184, 0.18),
-      rgba(148, 163, 184, 0.05));
+  background: rgba(148, 163, 184, 0.05);
 }
 
 .rank-silver .rank-badge {
-  background: linear-gradient(135deg, #e5e7eb, #94a3b8);
-  color: #020617;
+  background: #94a3b8;
+  color: #000;
   box-shadow: 0 0 14px rgba(148, 163, 184, 0.5);
 }
 
 /* 🥉 Bronze */
 .rank-bronze {
-  background: linear-gradient(135deg,
-      rgba(180, 83, 9, 0.2),
-      rgba(180, 83, 9, 0.06));
+  background: rgba(180, 83, 9, 0.06);
 }
 
 .rank-bronze .rank-badge {
-  background: linear-gradient(135deg, #f97316, #b45309);
-  color: #fff7ed;
+  background: #b45309;
+  color: #fff;
   box-shadow: 0 0 14px rgba(180, 83, 9, 0.6);
 }
 
 .table-row {
-  border-bottom: 1px solid #020617;
+  border-bottom: 1px solid var(--border-light);
   transition: background 0.2s ease;
 }
 
 .table-row:hover {
-  background: rgba(99, 102, 241, 0.06);
+  background: var(--bg-hover);
 }
 
 .table-row.me {
-  background: rgba(99, 102, 241, 0.12);
+  background: var(--accent-bg);
 }
 
 .table-row.me {
-  background: rgba(99, 102, 241, 0.12);
+  background: var(--accent-bg);
 }
 
 .rank-badge {
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: #020617;
+  background: var(--bg-page);
   display: grid;
   place-items: center;
   font-weight: 700;
-  color: #e5e7eb;
+  color: var(--text-secondary);
 }
 
 .user {
@@ -218,28 +213,31 @@ const initials = (name = "") =>
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: #6366f1 center / cover no-repeat;
+  background-color: var(--accent);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: grid;
   place-items: center;
   font-weight: 700;
-  color: white;
+  color: var(--text-primary);
   flex-shrink: 0;
 }
 
 .name {
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--text-primary);
 }
 
 .you {
   margin-left: 6px;
   font-size: 0.75rem;
-  color: #60a5fa;
+  color: var(--accent-light);
 }
 
 .metric-value {
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--text-primary);
 }
 
 .badges {
@@ -252,7 +250,7 @@ const initials = (name = "") =>
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #020617;
+  background: var(--bg-page);
   display: grid;
   place-items: center;
   font-size: 0.9rem;

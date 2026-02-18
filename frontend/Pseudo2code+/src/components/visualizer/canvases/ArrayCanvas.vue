@@ -43,9 +43,9 @@ defineProps({
 
 .bar {
   flex: 1;
-  background: #6366f1;
+  background-color: var(--accent);
   border-radius: 8px 8px 0 0;
-  color: white;
+  color: var(--text-primary);
   font-size: 0.75rem;
   display: flex;
   align-items: flex-end;
@@ -64,7 +64,7 @@ defineProps({
 
 .bar.sorted {
   background: rgba(255, 255, 255, 0.25);
-  color: #e5e7eb;
+  color: var(--text-secondary);
   opacity: 0.6;
 }
 

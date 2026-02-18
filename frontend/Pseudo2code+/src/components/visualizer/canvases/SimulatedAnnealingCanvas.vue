@@ -41,7 +41,7 @@ const drawVisualization = () => {
   ctx.clearRect(0, 0, width, height)
 
   // Background
-  ctx.fillStyle = "rgba(15, 23, 42, 0.5)"
+  ctx.fillStyle = "rgba(10, 10, 10, 0.5)"
   ctx.fillRect(0, 0, width, height)
 
   // Draw axes
@@ -149,7 +149,7 @@ onMounted(drawVisualization)
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--bg-elevated);
   border-radius: 12px;
   gap: 15px;
 }
@@ -170,12 +170,12 @@ onMounted(drawVisualization)
 }
 
 .temp-display .label {
-  color: #fb7185;
+  color: var(--error);
   font-weight: 600;
 }
 
 .temp-display .value {
-  color: #fda4af;
+  color: var(--error-text);
   font-size: 1.3rem;
   font-weight: bold;
 }

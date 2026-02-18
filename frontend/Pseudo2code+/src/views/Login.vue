@@ -205,11 +205,11 @@ const handleGithubLogin = async () => {
 
 .page {
   min-height: 100vh;
-  background: radial-gradient(circle at top, #0b1220, #05080f);
+  background: var(--bg-page);
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 /* Back */
@@ -254,7 +254,7 @@ const handleGithubLogin = async () => {
 }
 
 .icon {
-  color: #6c7bff;
+  color: var(--accent);
   margin-right: 2px;
 }
 
@@ -263,17 +263,17 @@ const handleGithubLogin = async () => {
   width: 100%;
   max-width: 500px;
   padding: 36px;
-  border-radius: 16px;
-  background: rgba(15, 23, 42, 0.85);
+  border-radius: 12px;
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-md);
   transition: box-shadow 0.2s ease;
   margin-bottom: 20px;
 }
 
 .card:hover {
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-lg);
 }
 
 /* ===== Google & GitHub Button Base ===== */
@@ -287,20 +287,20 @@ const handleGithubLogin = async () => {
   border-radius: 12px;
   margin-bottom: 12px;
   cursor: pointer;
-  background: #ffffff;
-  color: #000000;
+  background: var(--bg-surface);
+  color: var(--text-primary);
   font-weight: 700;
-  border: none;
+  border: 1px solid var(--border-default);
   transition: all 0.25s ease;
 }
 
 /* ===== Hover Effect ===== */
 .social-btn:hover {
-  background: #000000;
-  color: #ffffff;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
   transform: translateY(-2px);
-  border: 1px solid #ffffff;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-medium);
+  box-shadow: var(--shadow-md);
 }
 
 .social-btn img {
@@ -309,7 +309,7 @@ const handleGithubLogin = async () => {
 }
 
 .social-btn:hover img {
-  filter: brightness(0) invert(1);
+  filter: none;
 }
 
 .google {
@@ -318,9 +318,9 @@ const handleGithubLogin = async () => {
 
 .google:hover {
   transform: translateY(-2px);
-  border-color: #6c7bff;
-  color: white;
-  box-shadow: 0 10px 30px rgba(108, 123, 255, 0.25);
+  border-color: var(--accent);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-md);
 }
 
 /* GitHub hover */
@@ -330,9 +330,9 @@ const handleGithubLogin = async () => {
 
 .github:hover {
   transform: translateY(-2px);
-  border-color: #6c7bff;
-  color: white;
-  box-shadow: 0 10px 30px rgba(108, 123, 255, 0.25);
+  border-color: var(--accent);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-md);
 }
 
 /* Forgot password hover */
@@ -341,7 +341,7 @@ const handleGithubLogin = async () => {
 }
 
 .forgot:hover {
-  color: #8b95ff;
+  color: var(--accent-light);
   text-decoration: underline;
 }
 
@@ -351,7 +351,7 @@ const handleGithubLogin = async () => {
 }
 
 .footer span:hover {
-  color: #8b95ff;
+  color: var(--accent-light);
   text-decoration: underline;
 }
 
@@ -363,7 +363,7 @@ h1 {
 
 .subtitle {
   text-align: center;
-  color: #9aa4b2;
+  color: var(--text-muted);
   font-size: 14px;
   margin-bottom: 28px;
 }
@@ -382,9 +382,9 @@ input {
   padding: 12px;
   margin-top: 6px;
   border-radius: 10px;
-  background: #0b1220;
-  border: 1px solid #1f2a44;
-  color: #fff;
+  background: var(--bg-input);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
 }
 
 /* Password row */
@@ -396,7 +396,7 @@ input {
 
 .forgot {
   font-size: 12px;
-  color: #6c7bff;
+  color: var(--accent);
   cursor: pointer;
 }
 
@@ -404,10 +404,10 @@ input {
 .primary-btn {
   width: 100%;
   padding: 14px;
-  background: #5b6cff;
+  background: var(--accent);
   border: none;
   border-radius: 12px;
-  color: white;
+  color: var(--text-on-accent);
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
@@ -415,13 +415,13 @@ input {
 }
 
 .primary-btn:hover {
-  background: #4b5cf0;
+  background: var(--accent-dark);
 }
 
 /* Divider */
 .divider {
   text-align: center;
-  color: #6b7280;
+  color: var(--text-dim);
   font-size: 12px;
   margin: 22px 0;
   position: relative;
@@ -432,7 +432,7 @@ input {
   content: "";
   height: 2px;
   width: 30%;
-  background: #1f2937;
+  background: var(--bg-surface);
   position: absolute;
   top: 50%;
 }
@@ -450,11 +450,11 @@ input {
   text-align: center;
   margin-top: 10px;
   font-size: 14px;
-  color: #9aa4b2;
+  color: var(--text-muted);
 }
 
 .footer span {
-  color: #6c7bff;
+  color: var(--accent);
   cursor: pointer;
 }
 
@@ -480,7 +480,7 @@ input {
 
   .card {
     padding: 24px 18px;
-    border-radius: 14px;
+    border-radius: 12px;
   }
 
   h1 {

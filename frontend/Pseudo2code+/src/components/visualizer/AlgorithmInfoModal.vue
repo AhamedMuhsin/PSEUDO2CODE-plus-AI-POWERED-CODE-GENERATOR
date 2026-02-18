@@ -61,11 +61,11 @@ defineProps({ info: Object })
 .aim-modal {
     width: 100%;
     max-width: 440px;
-    background: linear-gradient(145deg, #0f172a 0%, #020617 100%);
-    border-radius: 16px;
+    background: var(--bg-card);
+    border-radius: 12px;
     padding: 24px;
-    color: white;
-    border: 1px solid rgba(99, 102, 241, 0.2);
+    color: var(--text-primary);
+    border: 1px solid var(--border-default);
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(99, 102, 241, 0.08);
     max-height: 90vh;
     overflow-y: auto;
@@ -83,14 +83,14 @@ defineProps({ info: Object })
     margin: 0;
     padding: 0;
     font-size: 1.25rem;
-    color: #f1f5f9;
+    color: var(--text-primary);
     line-height: 1.3;
 }
 
 .aim-close-btn {
     background: rgba(99, 102, 241, 0.2);
-    border: 1px solid rgba(99, 102, 241, 0.3);
-    color: #a78bfa;
+    border: 1px solid var(--accent-border);
+    color: var(--accent-light);
     width: 36px;
     height: 36px;
     min-width: 36px;
@@ -120,14 +120,14 @@ defineProps({ info: Object })
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    background: rgba(15, 23, 42, 0.6);
+    background: var(--bg-input);
     padding: 8px 12px;
     border-radius: 10px;
-    border: 1px solid rgba(100, 116, 139, 0.12);
+    border: 1px solid var(--border-light);
 }
 
 .aim-label {
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 0.82rem;
     font-weight: 500;
     white-space: nowrap;
@@ -139,7 +139,7 @@ defineProps({ info: Object })
     font-size: 0.75rem;
     font-weight: 600;
     background: rgba(255, 255, 255, 0.08);
-    color: white;
+    color: var(--text-primary);
     white-space: nowrap;
 }
 
@@ -160,11 +160,11 @@ defineProps({ info: Object })
 
 .aim-badge.aim-blue {
     background: rgba(99, 102, 241, 0.2);
-    color: #818cf8;
+    color: var(--accent-light);
 }
 
 .aim-desc {
-    color: #94a3b8;
+    color: var(--text-muted);
     margin: 0;
     font-size: 0.88rem;
     line-height: 1.6;

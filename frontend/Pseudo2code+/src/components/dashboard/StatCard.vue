@@ -30,21 +30,21 @@ defineProps({
 .stat-card {
   cursor: pointer;
   /* ✅ important */
-  background: rgba(15, 23, 42, 0.85);
-  border-radius: 16px;
+  background: var(--bg-card);
+  border-radius: 12px;
   padding: 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 28px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-md);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-lg);
 }
 
 .icon-container {
@@ -55,21 +55,21 @@ defineProps({
   width: 56px;
   height: 56px;
   border-radius: 12px;
-  background: rgba(99, 102, 241, 0.15);
-  color: #818cf8;
+  background: var(--accent-bg);
+  color: var(--accent-light);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .icon.blue {
-  background: rgba(99, 102, 241, 0.15);
-  color: #818cf8;
+  background: var(--accent-bg);
+  color: var(--accent-light);
 }
 
 .icon.purple {
   background: rgba(168, 85, 247, 0.15);
-  color: #c084fc;
+  color: var(--accent-lighter);
 }
 
 .icon.cyan {
@@ -87,7 +87,7 @@ defineProps({
 .title {
   font-size: 0.9rem;
   font-weight: 500;
-  color: #cbd5e1;
+  color: var(--text-tertiary);
   margin: 0;
   letter-spacing: 0.3px;
 }
@@ -95,11 +95,11 @@ defineProps({
 .value {
   font-size: 2rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: var(--text-primary);
 }
 
 .subtitle {
   font-size: 0.85rem;
-  color: #4ade80;
+  color: var(--success);
 }
 </style>
