@@ -8,6 +8,27 @@ export function minimaxSteps() {
     ['', '', '']
   ]
 
+  // Generate a random mid-game board position (alternating X and O)
+  // Place 2-3 random moves so the tree is small enough to visualize
+  const allPositions = []
+  for (let i = 0; i < 3; i++)
+    for (let j = 0; j < 3; j++)
+      allPositions.push([i, j])
+
+  // Shuffle positions
+  for (let i = allPositions.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[allPositions[i], allPositions[j]] = [allPositions[j], allPositions[i]]
+  }
+
+  // Place 3 moves: X, O, X (so it's O's implied turn but we evaluate for X maximizer)
+  const numMoves = 3
+  const players = ['X', 'O', 'X']
+  for (let k = 0; k < numMoves; k++) {
+    const [r, c] = allPositions[k]
+    board[r][c] = players[k]
+  }
+
   steps.push({
     board: JSON.parse(JSON.stringify(board)),
     activePseudoLine: 1,
@@ -129,11 +150,7 @@ export function minimaxSteps() {
     }
   }
 
-  // Demo with a simple position
-  board[0][0] = 'X'
-  board[1][1] = 'O'
-  board[0][2] = 'X'
-
+  // Find the best move for X (maximizer)
   steps.push({
     board: JSON.parse(JSON.stringify(board)),
     activePseudoLine: 2,
@@ -145,18 +162,43 @@ export function minimaxSteps() {
     status: 'analyzing'
   })
 
-  minimax(board, 0, true)
+  // Track the best move at the top level
+  let bestScore = -Infinity
+  let bestMove = null
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 3; j++) {
+      if (board[i][j] === '') {
+        board[i][j] = 'X'
+        steps.push({
+          board: JSON.parse(JSON.stringify(board)),
+          activePseudoLine: 6,
+          explanation: `Maximizer trying move at (${i},${j})`,
+          player: 'X',
+          bestMove: { row: i, col: j },
+          score: null,
+          depth: 0,
+          status: 'maximizing'
+        })
+        const score = minimax(board, 1, false)
+        board[i][j] = ''
+        if (score > bestScore) {
+          bestScore = score
+          bestMove = { row: i, col: j }
+        }
+      }
+    }
+  }
 
   steps.push({
     board: JSON.parse(JSON.stringify(board)),
     activePseudoLine: 10,
-    explanation: '✅ MinMax analysis complete! Best move calculated.',
+    explanation: `✅ MinMax analysis complete! Best move: (${bestMove ? bestMove.row : '?'},${bestMove ? bestMove.col : '?'}) with score ${bestScore}`,
     player: 'X',
-    bestMove: null,
-    score: null,
+    bestMove,
+    score: bestScore,
     depth: 0,
     status: 'success'
   })
 
-  return steps.slice(0, 50) // Limit steps for performance
+  return steps
 }

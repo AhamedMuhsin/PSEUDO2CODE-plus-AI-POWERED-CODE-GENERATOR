@@ -32,6 +32,16 @@ const routes = [
     meta: { guestOnly: true },
   },
   {
+    path: '/auth/callback/google',
+    name: 'GoogleCallback',
+    component: () => import('@/views/AuthCallback.vue'),
+  },
+  {
+    path: '/auth/callback/github',
+    name: 'GithubCallback',
+    component: () => import('@/views/AuthCallback.vue'),
+  },
+  {
     path: '/dashboard',
     name: 'Dashboard',
     component: Dashboard,

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from firebase_auth import get_current_user
+from auth import get_current_user
 from services.user_service import get_user_by_uid
 from services.tasks.task_resolver import resolve_suggested_tasks
 from services.user_service import serialize_user

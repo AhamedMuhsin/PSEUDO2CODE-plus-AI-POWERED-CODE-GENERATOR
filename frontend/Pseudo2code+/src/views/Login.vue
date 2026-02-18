@@ -63,7 +63,6 @@ import logo from "@/assets/logo_f.png";
 import arrowLeft from "@/assets/arrow-left.svg";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { getFirebaseErrorMessage } from "@/utils/firebaseErrors";
 import { forgotPassword } from "@/services/authService";
 import { isValidEmail, isValidPassword } from "@/utils/validators";
 
@@ -72,6 +71,18 @@ import {
   loginWithGoogle,
   loginWithGithub,
 } from "@/services/authService";
+
+function getErrorMessage(err) {
+  // Handle backend API errors
+  if (err?.response?.data?.detail) {
+    return err.response.data.detail;
+  }
+  // Handle popup/network errors
+  if (err?.message) {
+    return err.message;
+  }
+  return "Something went wrong. Please try again.";
+}
 
 const router = useRouter();
 
@@ -101,7 +112,7 @@ const handleForgotPassword = async () => {
     await forgotPassword(email.value);
 
     success.value =
-      "Password reset email sent. Please check your inbox.";
+      "If an account exists with this email, you will receive a password reset link.";
   } catch (err) {
     success.value = "";
     error.value =
@@ -129,12 +140,9 @@ const handleEmailLogin = async () => {
     loading.value = true;
 
     await loginWithEmail(email.value, password.value);
-    
-    // Small delay to ensure Firebase auth state is updated
-    await new Promise(resolve => setTimeout(resolve, 500));
     router.push("/dashboard");
   } catch (err) {
-    error.value = getFirebaseErrorMessage(err);
+    error.value = getErrorMessage(err);
   } finally {
     loading.value = false;
   }
@@ -147,19 +155,16 @@ const handleGoogleLogin = async () => {
     success.value = "";
 
     await loginWithGoogle();
-    
-    // Small delay to ensure Firebase auth state is updated
-    await new Promise(resolve => setTimeout(resolve, 500));
     router.push("/dashboard");
 
   } catch (err) {
     console.error('Google login error:', err);
     if (err.code === 'auth/popup-closed-by-user') {
       error.value = "Sign in was cancelled.";
-    } else if (err.code === 'auth/network-request-failed') {
+    } else if (err?.message?.includes('network') || err?.message?.includes('Network')) {
       error.value = "Network error. Please check your internet connection.";
     } else {
-      error.value = "Google sign-in failed. Please try again.";
+      error.value = getErrorMessage(err) || "Google sign-in failed. Please try again.";
     }
   } finally {
     loading.value = false;
@@ -173,21 +178,16 @@ const handleGithubLogin = async () => {
     success.value = "";
 
     await loginWithGithub();
-    
-    // Small delay to ensure Firebase auth state is updated
-    await new Promise(resolve => setTimeout(resolve, 500));
     router.push("/dashboard");
 
   } catch (err) {
     console.error('GitHub login error:', err);
     if (err.code === 'auth/popup-closed-by-user') {
       error.value = "Sign in was cancelled.";
-    } else if (err.code === 'auth/account-exists-with-different-credential') {
-      error.value = "An account with this email already exists. Please try signing in with your original method.";
-    } else if (err.code === 'auth/network-request-failed') {
+    } else if (err?.message?.includes('network') || err?.message?.includes('Network')) {
       error.value = "Network error. Please check your internet connection.";
     } else {
-      error.value = "GitHub sign-in failed. Please try again.";
+      error.value = getErrorMessage(err) || "GitHub sign-in failed. Please try again.";
     }
   } finally {
     loading.value = false;

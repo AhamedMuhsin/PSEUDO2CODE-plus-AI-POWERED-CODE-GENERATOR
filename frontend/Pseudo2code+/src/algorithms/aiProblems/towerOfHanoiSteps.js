@@ -36,6 +36,7 @@ export function towerOfHanoiSteps(n = 3) {
   }
 
   function hanoi(n, source, destination, auxiliary) {
+    if (n <= 0) return
     if (n === 1) {
       steps.push({
         towers: JSON.parse(JSON.stringify(towers)),

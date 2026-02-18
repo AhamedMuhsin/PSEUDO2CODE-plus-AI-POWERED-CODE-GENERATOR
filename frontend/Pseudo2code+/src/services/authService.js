@@ -1,113 +1,198 @@
-import {
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  createUserWithEmailAndPassword,
-  GithubAuthProvider,
-  fetchSignInMethodsForEmail,
-  linkWithCredential,
-  sendPasswordResetEmail,
-} from 'firebase/auth'
+/**
+ * Auth Service - JWT-based authentication
+ * Self-hosted JWT + OAuth (Google, GitHub) — no Firebase dependency
+ */
 
-import { auth, googleProvider, githubProvider } from '@/firebase'
-import axios from '@/services/api'
+import api from '@/services/api'
 
-/* ---------------- EMAIL LOGIN ---------------- */
-export const loginWithEmail = (email, password) => {
-  return signInWithEmailAndPassword(auth, email, password)
+const TOKEN_KEY = 'auth_token'
+const USER_KEY = 'auth_user'
+
+// ==================== TOKEN MANAGEMENT ====================
+
+export function getToken() {
+  return localStorage.getItem(TOKEN_KEY)
 }
 
-export const forgotPassword = async (email) => {
-  if (!email) {
-    throw new Error('Please enter your email')
-  }
-
-  await sendPasswordResetEmail(auth, email)
+export function setToken(token) {
+  localStorage.setItem(TOKEN_KEY, token)
 }
 
-/* ---------------- GOOGLE LOGIN ---------------- */
-export const loginWithGoogle = async () => {
-  const result = await signInWithPopup(auth, googleProvider)
-  const token = await result.user.getIdToken()
-
-  await axios.post(
-    '/users',
-    { provider: 'google' },
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    },
-  )
-
-  return result.user
+export function removeToken() {
+  localStorage.removeItem(TOKEN_KEY)
+  localStorage.removeItem(USER_KEY)
 }
 
-/* ---------------- GITHUB LOGIN ---------------- */
-export const loginWithGithub = async () => {
+export function getStoredUser() {
   try {
-    const result = await signInWithPopup(auth, githubProvider)
-    const token = await result.user.getIdToken()
+    const data = localStorage.getItem(USER_KEY)
+    return data ? JSON.parse(data) : null
+  } catch {
+    return null
+  }
+}
 
-    await axios.post(
-      '/users',
-      { provider: 'github' },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      },
+function setStoredUser(user) {
+  localStorage.setItem(USER_KEY, JSON.stringify(user))
+}
+
+// ==================== EMAIL/PASSWORD ====================
+
+export const signupWithEmail = async (email, password, name) => {
+  const res = await api.post('/auth/signup', { email, password, name })
+  const { token, user } = res.data
+  setToken(token)
+  setStoredUser(user)
+  return user
+}
+
+export const loginWithEmail = async (email, password) => {
+  const res = await api.post('/auth/login', { email, password })
+  const { token, user } = res.data
+  setToken(token)
+  setStoredUser(user)
+  return user
+}
+
+// ==================== GOOGLE OAUTH ====================
+
+export const loginWithGoogle = async () => {
+  // Get the OAuth URL from backend
+  const res = await api.get('/auth/google/url')
+  const { url } = res.data
+
+  return new Promise((resolve, reject) => {
+    const width = 500
+    const height = 600
+    const left = window.screenX + (window.outerWidth - width) / 2
+    const top = window.screenY + (window.outerHeight - height) / 2
+
+    const popup = window.open(
+      url,
+      'Google Sign In',
+      `width=${width},height=${height},left=${left},top=${top}`
     )
 
-    return result.user
-  } catch (error) {
-    if (error.code === 'auth/account-exists-with-different-credential') {
-      const email = error.customData.email
-      const pendingCred = GithubAuthProvider.credentialFromError(error)
-
-      const methods = await fetchSignInMethodsForEmail(auth, email)
-
-      if (methods.includes('google.com')) {
-        const googleResult = await signInWithPopup(auth, googleProvider)
-
-        await linkWithCredential(googleResult.user, pendingCred)
-
-        const token = await googleResult.user.getIdToken()
-
-        await axios.post(
-          '/users',
-          { provider: 'google+github' },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        )
-
-        return googleResult.user
-      }
-
-      alert('Please login using your original method.')
-    } else {
-      throw error
+    if (!popup) {
+      reject(new Error('Popup blocked. Please allow popups for this site.'))
+      return
     }
-  }
+
+    const interval = setInterval(async () => {
+      try {
+        if (popup.closed) {
+          clearInterval(interval)
+          reject({ code: 'auth/popup-closed-by-user' })
+          return
+        }
+
+        const currentUrl = popup.location.href
+        if (currentUrl.includes('/auth/callback/google')) {
+          clearInterval(interval)
+          const urlParams = new URL(currentUrl).searchParams
+          const code = urlParams.get('code')
+          popup.close()
+
+          if (code) {
+            const res = await api.post('/auth/google/callback', { code })
+            const { token, user } = res.data
+            setToken(token)
+            setStoredUser(user)
+            resolve(user)
+          } else {
+            reject(new Error('No authorization code received from Google'))
+          }
+        }
+      } catch (e) {
+        // Cross-origin access error expected until redirect
+      }
+    }, 500)
+
+    setTimeout(() => {
+      clearInterval(interval)
+      if (!popup.closed) popup.close()
+      reject(new Error('Sign in timed out'))
+    }, 120000)
+  })
 }
 
-/* ---------------- EMAIL SIGNUP ---------------- */
-export const signupWithEmail = async (email, password, name) => {
-  const result = await createUserWithEmailAndPassword(auth, email, password)
+// ==================== GITHUB OAUTH ====================
 
-  const token = await result.user.getIdToken()
+export const loginWithGithub = async () => {
+  const res = await api.get('/auth/github/url')
+  const { url } = res.data
 
-  await axios.post(
-    '/users',
-    {
-      name,
-      provider: 'password',
-    },
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    },
-  )
+  return new Promise((resolve, reject) => {
+    const width = 500
+    const height = 600
+    const left = window.screenX + (window.outerWidth - width) / 2
+    const top = window.screenY + (window.outerHeight - height) / 2
 
-  return result.user
+    const popup = window.open(
+      url,
+      'GitHub Sign In',
+      `width=${width},height=${height},left=${left},top=${top}`
+    )
+
+    if (!popup) {
+      reject(new Error('Popup blocked. Please allow popups for this site.'))
+      return
+    }
+
+    const interval = setInterval(async () => {
+      try {
+        if (popup.closed) {
+          clearInterval(interval)
+          reject({ code: 'auth/popup-closed-by-user' })
+          return
+        }
+
+        const currentUrl = popup.location.href
+        if (currentUrl.includes('/auth/callback/github')) {
+          clearInterval(interval)
+          const urlParams = new URL(currentUrl).searchParams
+          const code = urlParams.get('code')
+          popup.close()
+
+          if (code) {
+            const res = await api.post('/auth/github/callback', { code })
+            const { token, user } = res.data
+            setToken(token)
+            setStoredUser(user)
+            resolve(user)
+          } else {
+            reject(new Error('No authorization code received from GitHub'))
+          }
+        }
+      } catch (e) {
+        // Cross-origin access error expected until redirect
+      }
+    }, 500)
+
+    setTimeout(() => {
+      clearInterval(interval)
+      if (!popup.closed) popup.close()
+      reject(new Error('Sign in timed out'))
+    }, 120000)
+  })
 }
 
-/* ---------------- LOGOUT ---------------- */
+// ==================== FORGOT PASSWORD ====================
+
+export const forgotPassword = async (email) => {
+  if (!email) throw new Error('Please enter your email')
+  const res = await api.post('/auth/forgot-password', { email })
+  return res.data
+}
+
+// ==================== LOGOUT ====================
+
 export const logout = async () => {
-  await auth.signOut()
+  removeToken()
+}
+
+// ==================== AUTH CHECK ====================
+
+export function isAuthenticated() {
+  return !!getToken()
 }

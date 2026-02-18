@@ -16,23 +16,23 @@
           @click="selectOperation(key)">{{ op.label }}</button>
       </div>
 
-      <!-- ═══════ THREE-COLUMN LAYOUT ═══════ -->
+      <!-- ======= THREE-COLUMN LAYOUT ======= -->
       <div class="so-three-col">
         <!-- LEFT: Controls -->
         <aside class="so-controls-panel">
           <div class="so-btn-group">
             <button class="so-btn" :class="{ active: playing }" @click="playing ? pause() : play()"
-              :disabled="!isPlayable"><span class="so-icon">▶</span> {{ playing ? 'Pause' : 'Play' }}</button>
+              :disabled="!isPlayable"> {{ playing ? 'Pause' : 'Play' }}</button>
             <button class="so-btn" @click="next" :disabled="stepIndex === steps.length - 1"><span
-                class="so-icon">⏭</span> Step</button>
+                class="so-icon"></span> Step</button>
           </div>
           <div class="so-btn-group">
-            <button class="so-btn" @click="reset"><span class="so-icon">↺</span> Reset</button>
-            <button class="so-btn" @click="generateRandom"><span class="so-icon">⤮</span> Randomize</button>
+            <button class="so-btn" @click="reset"> Reset</button>
+            <button class="so-btn" @click="generateRandom"> Randomize</button>
           </div>
 
           <button class="so-btn so-settings-toggle" @click="showSettings = !showSettings"><span
-              class="so-icon">⚙</span> Settings</button>
+              class="so-icon"></span> Settings</button>
           <div v-if="showSettings" class="so-settings-body">
             <div class="so-setting-row"><label>Speed: <strong>{{ speedPercent }}%</strong></label><input type="range"
                 min="1" max="5" v-model.number="speedLevel" class="so-slider" /></div>
@@ -51,13 +51,13 @@
             <input v-model.number="pushValue" type="number" placeholder="Enter value" class="so-text-input" />
           </div>
 
-          <button class="so-btn so-code-btn" @click="goToGenerateCode"><span class="so-icon">{ }</span> Generate
+          <button class="so-btn so-code-btn" @click="goToGenerateCode"> Generate
             Code</button>
 
           <div class="so-shortcuts">
             <h4>Keyboard Shortcuts:</h4>
             <div class="so-shortcut-grid"><span class="so-key">Space</span><span>Play/Pause</span><span
-                class="so-key">→</span><span>Step Forward</span><span class="so-key">←</span><span>Step
+                class="so-key">-></span><span>Step Forward</span><span class="so-key"><-</span><span>Step
                 Back</span><span class="so-key">R</span><span>Reset</span></div>
           </div>
           <div class="so-legend">
@@ -88,12 +88,12 @@
                   <div class="so-cell" :class="cellClass(currentStep.stack.length - i)">
                     {{ currentStep.stack[currentStep.stack.length - i] }}
                   </div>
-                  <span v-if="currentStep.stack.length - i === currentStep.topIndex" class="so-top-indicator">◀ TOP</span>
+                  <span v-if="currentStep.stack.length - i === currentStep.topIndex" class="so-top-indicator">< TOP</span>
                 </div>
               </template>
             </div>
             <div class="so-stack-label-bottom">BASE</div>
-            <div class="so-chart-footer"><span>{{ currentOperation.label }} — {{ currentStep.stack.length }} elements</span></div>
+            <div class="so-chart-footer"><span>{{ currentOperation.label }}  -  {{ currentStep.stack.length }} elements</span></div>
             <input type="range" class="so-scrubber" min="0" :max="steps.length - 1" v-model.number="stepIndex" />
           </div>
           <div class="so-status-bar">{{ currentStep.explanation }}</div>
@@ -136,36 +136,43 @@
       <!-- How It Works -->
       <section class="so-section">
         <button class="so-section-toggle" @click="showHowItWorks = !showHowItWorks"><span
-            class="so-info-circle">ⓘ</span> How {{ currentOperation.label }} Works</button>
+            class="so-info-circle">i</span> How {{ currentOperation.label }} Works</button>
         <div v-if="showHowItWorks" class="so-section-body">
-          <h2>{{ currentOperation.label }}</h2>
-          <p>{{ currentOperation.info.description }}</p>
-          <h3>Complexity:</h3>
-          <ul>
-            <li><strong>Best Case:</strong> {{ currentOperation.info.best }}</li>
-            <li><strong>Average Case:</strong> {{ currentOperation.info.average }}</li>
-            <li><strong>Worst Case:</strong> {{ currentOperation.info.worst }}</li>
-            <li><strong>Space:</strong> {{ currentOperation.info.space }}</li>
-          </ul>
-          <h3>Properties:</h3>
-          <ul>
-            <li><strong>Stable:</strong> {{ currentOperation.info.stable ? 'Yes' : 'No' }}</li>
-            <li><strong>In-Place:</strong> {{ currentOperation.info.inPlace ? 'Yes' : 'No' }}</li>
-          </ul>
+          <p class="so-section-intro">Every stack command manipulates the LIFO structure in a different way. Browse the cards below to see the control flow, guard clauses, and complexity for each operation.</p>
+          <div class="so-how-grid">
+            <article v-for="card in howItWorksCards" :key="card.key" class="so-how-card" :class="{ active: card.key === selectedOp }">
+              <header class="so-how-header">
+                <div>
+                  <h3>{{ card.label }}</h3>
+                  <p>{{ card.summary }}</p>
+                </div>
+                <span class="so-chip" v-if="card.key === selectedOp">Active</span>
+              </header>
+              <ol class="so-step-list">
+                <li v-for="(step, idx) in card.steps" :key="idx">{{ step }}</li>
+              </ol>
+              <div class="so-how-meta">
+                <span>Best: <strong>{{ card.best }}</strong></span>
+                <span>Avg: <strong>{{ card.average }}</strong></span>
+                <span>Worst: <strong>{{ card.worst }}</strong></span>
+                <span>Space: <strong>{{ card.space }}</strong></span>
+              </div>
+            </article>
+          </div>
         </div>
       </section>
 
       <!-- Edge Cases -->
       <section class="so-section">
         <button class="so-section-toggle" @click="showEdgeCases = !showEdgeCases"><span
-            class="so-info-circle">ⓘ</span> Edge Cases &amp; Examples</button>
+            class="so-info-circle">i</span> Edge Cases &amp; Examples</button>
         <div v-if="showEdgeCases" class="so-section-body">
           <h3>Try These:</h3>
           <div class="so-edge-grid">
             <div class="so-edge-card" @click="loadEdgeCase([1, 2, 3, 4, 5])"><strong>Ordered: [1,2,3,4,5]</strong><small>Push elements in order</small></div>
             <div class="so-edge-card" @click="loadEdgeCase([10, 20, 30])"><strong>Small: [10,20,30]</strong><small>Three-element stack</small></div>
             <div class="so-edge-card" @click="loadEdgeCase([42])"><strong>Single: [42]</strong><small>Stack with one element</small></div>
-            <div class="so-edge-card" @click="loadEdgeCase([])"><strong>Empty: []</strong><small>Empty stack — test pop/peek behavior</small></div>
+            <div class="so-edge-card" @click="loadEdgeCase([])"><strong>Empty: []</strong><small>Empty stack  -  test pop/peek behavior</small></div>
           </div>
           <h3>Tips:</h3>
           <ul class="so-tips">
@@ -199,6 +206,68 @@ const playing = ref(false)
 const pushValue = ref(15)
 
 const baseStack = ref([7, 3, 9, 5, 1])
+
+const stackOperationWriteups = {
+  push: {
+    summary: 'Place a new value on top of the stack after verifying capacity.',
+    steps: [
+      'Verify the stack is not already full (overflow check).',
+      'Advance the top pointer to expose the next slot.',
+      'Store the provided value at the top index.',
+      'Surface the updated top pointer and highlight the new cell.'
+    ]
+  },
+  pop: {
+    summary: 'Remove the element at the top pointer and shrink the stack.',
+    steps: [
+      'Confirm the stack is non-empty; otherwise report underflow.',
+      'Read the value currently at the top pointer.',
+      'Decrement the top pointer and clear the slot.',
+      'Return the shortened stack with the popped value in the log.'
+    ]
+  },
+  peek: {
+    summary: 'Look at the top element without mutating the underlying array.',
+    steps: [
+      'Ensure there is at least one element to inspect.',
+      'Locate the cell referenced by the top pointer.',
+      'Highlight the active cell and mirror the value in the inspector.',
+      'Leave the stack contents untouched for the next action.'
+    ]
+  },
+  isEmpty: {
+    summary: 'Check whether the stack currently stores any data.',
+    steps: [
+      'Compare the top pointer against -1 (or size equals zero).',
+      'Highlight the boolean expression inside the pseudocode.',
+      'Return true when no items exist, otherwise false.',
+      'Explain what the outcome means for follow-up operations.'
+    ]
+  },
+  size: {
+    summary: 'Count how many values live on the stack right now.',
+    steps: [
+      'Read the stack length / (top index + 1).',
+      'Display the computation timeline in the explanation tray.',
+      'Output the numeric size to the user interface.',
+      'Remind the user how the size relates to overflow conditions.'
+    ]
+  }
+}
+
+const howItWorksCards = computed(() => Object.entries(stackOperations).map(([key, op]) => {
+  const writeup = stackOperationWriteups[key] || { summary: op.description, steps: [] }
+  return {
+    key,
+    label: op.label,
+    summary: writeup.summary,
+    steps: writeup.steps,
+    best: op.info.best,
+    average: op.info.average,
+    worst: op.info.worst,
+    space: op.info.space
+  }
+}))
 
 const currentOperation = computed(() => stackOperations[selectedOp.value])
 
@@ -353,6 +422,17 @@ onUnmounted(() => { window.removeEventListener('keydown', handleKey); clearInter
 .so-section-body h3{font-size:.95rem;color:#e0e7ff;margin:16px 0 6px}
 .so-section-body ol,.so-section-body ul{padding-left:20px;margin:4px 0}
 .so-section-body li{margin-bottom:3px}
+.so-section-intro{color:#94a3b8;margin:0 0 16px;font-size:.9rem}
+.so-how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.so-how-card{background:rgba(15,23,42,.6);border:1px solid rgba(100,116,139,.25);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;min-height:220px;transition:border .2s,transform .2s}
+.so-how-card.active{border-color:rgba(99,102,241,.6);transform:translateY(-4px);box-shadow:0 8px 24px rgba(99,102,241,.2)}
+.so-how-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.so-how-header h3{margin:0;color:#f8fafc;font-size:1rem}
+.so-how-header p{margin:4px 0 0;color:#cbd5e1;font-size:.85rem}
+.so-chip{background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.5);border-radius:999px;padding:3px 10px;font-size:.7rem;color:#c7d2fe;font-weight:600}
+.so-step-list{margin:0;padding-left:18px;color:#cbd5e1;font-size:.84rem;line-height:1.5}
+.so-how-meta{display:flex;flex-wrap:wrap;gap:8px;font-size:.75rem;color:#94a3b8}
+.so-how-meta strong{color:#f1f5f9}
 .so-edge-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
 .so-edge-card{background:rgba(15,23,42,.5);border:1px solid rgba(100,116,139,.3);border-radius:10px;padding:14px;cursor:pointer;transition:all .15s}
 .so-edge-card:hover{border-color:rgba(99,102,241,.5);background:rgba(99,102,241,.08)}
@@ -361,6 +441,7 @@ onUnmounted(() => { window.removeEventListener('keydown', handleKey); clearInter
 .so-tips{padding-left:20px}
 .so-tips li{margin-bottom:4px}
 
-@media(max-width:1100px){.so-three-col{grid-template-columns:1fr}}
-@media(max-width:640px){.so-edge-grid{grid-template-columns:1fr}.so-page{padding:12px}.so-op-pills{gap:4px}.so-pill{padding:5px 10px;font-size:.75rem}}
+@media(max-width:1100px){.so-three-col{grid-template-columns:1fr;gap:16px}.so-chart-area{order:-1}.so-controls-panel{order:1}.so-inspector{order:2;max-height:none}}
+@media(max-width:768px){.so-shortcuts{display:none}.so-legend{display:none}.so-controls-panel{padding:10px}}
+@media(max-width:640px){.so-edge-grid{grid-template-columns:1fr}.so-page{padding:10px 12px 24px}.so-op-pills{gap:4px}.so-pill{padding:5px 10px;font-size:.75rem}.so-how-card{min-height:auto}}
 </style>

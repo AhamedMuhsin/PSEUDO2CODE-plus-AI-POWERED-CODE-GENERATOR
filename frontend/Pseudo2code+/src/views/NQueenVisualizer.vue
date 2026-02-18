@@ -20,24 +20,24 @@
                     <!-- Playback -->
                     <div class="bs-btn-group">
                         <button class="bs-btn" :class="{ active: playing }" @click="playing ? pause() : play()">
-                            <span class="bs-icon">▶</span> {{ playing ? 'Pause' : 'Play' }}
+                            <span class="bs-icon"><Play :size="14" /></span> {{ playing ? 'Pause' : 'Play' }}
                         </button>
                         <button class="bs-btn" @click="next" :disabled="stepIndex === steps.length - 1">
-                            <span class="bs-icon">⏭</span> Step
+                            <span class="bs-icon"><SkipForward :size="14" /></span> Step
                         </button>
                     </div>
                     <div class="bs-btn-group">
                         <button class="bs-btn" @click="reset">
-                            <span class="bs-icon">↺</span> Reset
+                            <span class="bs-icon"><RotateCcw :size="14" /></span> Reset
                         </button>
                         <button class="bs-btn" @click="generateRandom">
-                            <span class="bs-icon">⤮</span> New Board
+                            <span class="bs-icon"><Shuffle :size="14" /></span> New Board
                         </button>
                     </div>
 
                     <!-- Settings toggle -->
                     <button class="bs-btn bs-settings-toggle" @click="showSettings = !showSettings">
-                        <span class="bs-icon">⚙</span> Settings
+                        <span class="bs-icon"><Settings2 :size="14" /></span> Settings
                     </button>
 
                     <div v-if="showSettings" class="bs-settings-body">
@@ -67,8 +67,8 @@
                         <h4>Keyboard Shortcuts:</h4>
                         <div class="bs-shortcut-grid">
                             <span class="bs-key">Space</span><span>Play/Pause</span>
-                            <span class="bs-key">→</span><span>Step Forward</span>
-                            <span class="bs-key">←</span><span>Step Back</span>
+                            <span class="bs-key"><ArrowRight :size="14" /></span><span>Step Forward</span>
+                            <span class="bs-key"><ArrowLeft :size="14" /></span><span>Step Back</span>
                             <span class="bs-key">R</span><span>Reset</span>
                         </div>
                     </div>
@@ -100,7 +100,7 @@
                         <div class="bs-legend-note">
                             <h5>How to read the visualization:</h5>
                             <ul>
-                                <li>♛ symbols represent queens</li>
+                                <li>Crown icons represent queens</li>
                                 <li>Highlighted cell shows current attempt</li>
                                 <li>Colors indicate action being taken</li>
                                 <li>Watch backtracking in real-time</li>
@@ -128,9 +128,9 @@
                                         'nq-cell-attack': isAttacked(row - 1, col - 1) && currentStep.attemptRow === (row - 1) && currentStep.status === 'conflict',
                                     }">
                                     <span v-if="hasQueen(row - 1, col - 1)" class="nq-queen"
-                                        :class="{ 'nq-queen-success': currentStep.status === 'success' }">♛</span>
+                                        :class="{ 'nq-queen-success': currentStep.status === 'success' }"><Crown :size="18" /></span>
                                     <span v-else-if="currentStep.attemptRow === (row - 1) && currentStep.attemptCol === (col - 1) && (currentStep.status === 'checking' || currentStep.status === 'conflict')"
-                                        class="nq-queen nq-queen-attempt">♛</span>
+                                        class="nq-queen nq-queen-attempt"><Crown :size="18" /></span>
                                     <span v-else class="nq-coord">{{ row - 1 }},{{ col - 1 }}</span>
                                 </div>
                             </template>
@@ -229,7 +229,8 @@
                         <div v-for="(row, ri) in (currentStep.board || [])" :key="ri" class="nq-board-row">
                             <span v-for="(cell, ci) in row" :key="ci" class="nq-board-cell"
                                 :class="{ 'nq-board-queen': cell === 1 }">
-                                {{ cell === 1 ? '♛' : '·' }}
+                                <template v-if="cell === 1"><Crown :size="12" /></template>
+                                <template v-else>·</template>
                             </span>
                         </div>
                     </div>
@@ -239,7 +240,7 @@
             <!-- ═══════ HOW IT WORKS ═══════ -->
             <section class="bs-section">
                 <button class="bs-section-toggle" @click="showHowItWorks = !showHowItWorks">
-                    <span class="bs-info-circle">ⓘ</span>
+                    <span class="bs-info-circle"><Info :size="16" /></span>
                     How N-Queens Works
                 </button>
                 <div v-if="showHowItWorks" class="bs-section-body">
@@ -279,7 +280,7 @@
             <!-- ═══════ EDGE CASES & EXAMPLES ═══════ -->
             <section class="bs-section">
                 <button class="bs-section-toggle" @click="showEdgeCases = !showEdgeCases">
-                    <span class="bs-info-circle">ⓘ</span>
+                    <span class="bs-info-circle"><Info :size="16" /></span>
                     Board Sizes &amp; Facts
                 </button>
                 <div v-if="showEdgeCases" class="bs-section-body">
@@ -321,6 +322,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthNavbar from '@/components/Navbar/AuthNavbar.vue'
 import arrowLeft from '@/assets/arrow-left.svg'
+import { Crown, Play, SkipForward, RotateCcw, Shuffle, Settings2, Info, ArrowRight, ArrowLeft } from 'lucide-vue-next'
 import { nQueensSteps } from '@/algorithms/aiProblems/nQueensSteps'
 
 const router = useRouter()
@@ -524,7 +526,13 @@ onUnmounted(() => {
     font-size: 1.6rem;
     font-weight: 700;
     color: #f1f5f9;
-    margin: 0 0 16px;
+    margin: 16px 0 16px;
+}
+
+.bs-lucide {
+    display: inline-block;
+    vertical-align: -2px;
+    margin-right: 2px;
 }
 
 /* ════════ THREE-COL ════════ */
@@ -1067,17 +1075,18 @@ onUnmounted(() => {
 
 /* ════════ RESPONSIVE ════════ */
 @media (max-width: 1100px) {
-    .bs-three-col {
-        grid-template-columns: 1fr;
-    }
+    .bs-three-col { grid-template-columns: 1fr; gap: 16px; }
+    .bs-chart-area { order: -1; }
+    .bs-controls-panel { order: 1; }
+    .bs-inspector { order: 2; max-height: none; }
 }
-
+@media (max-width: 768px) {
+    .bs-shortcuts { display: none; }
+    .bs-legend { display: none; }
+    .bs-controls-panel { padding: 10px; }
+}
 @media (max-width: 640px) {
-    .bs-edge-grid {
-        grid-template-columns: 1fr;
-    }
-    .bs-page {
-        padding: 12px;
-    }
+    .bs-edge-grid { grid-template-columns: 1fr; }
+    .bs-page { padding: 10px 12px 24px; }
 }
 </style>

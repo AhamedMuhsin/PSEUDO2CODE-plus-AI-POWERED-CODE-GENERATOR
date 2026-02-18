@@ -32,9 +32,16 @@ export function simulatedAnnealingSteps() {
   while (temperature > minTemperature && iterations < maxIterations) {
     iterations++
 
-    // Generate random neighbor
+    // Generate random neighbor (ensure it differs from current)
     const neighbor = currentState + (Math.random() > 0.5 ? 1 : -1)
     const clampedNeighbor = Math.max(0, Math.min(10, neighbor))
+
+    // Skip if neighbor is same as current (boundary clamping)
+    if (clampedNeighbor === currentState) {
+      temperature *= coolingRate
+      continue
+    }
+
     const neighborEnergy = objectiveFunction(clampedNeighbor)
 
     const deltaE = neighborEnergy - currentEnergy

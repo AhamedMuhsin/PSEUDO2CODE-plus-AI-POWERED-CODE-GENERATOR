@@ -1,16 +1,17 @@
 export function missionariesCannibalsSteps() {
   const steps = []
   const visited = new Set()
-  const queue = [[3, 3, 'left', []]] // [missionaries_left, cannibals_left, boat_side, path]
+  const queue = [[0, 0, 'right', []]] // [missionaries_left, cannibals_left, boat_side, path]
+  // Everyone starts on the RIGHT bank. Goal: move all to LEFT bank.
   
   steps.push({
-    missionariesLeft: 3,
-    cannibalsLeft: 3,
-    missionariesRight: 0,
-    cannibalsRight: 0,
-    boatSide: 'left',
+    missionariesLeft: 0,
+    cannibalsLeft: 0,
+    missionariesRight: 3,
+    cannibalsRight: 3,
+    boatSide: 'right',
     activePseudoLine: 1,
-    explanation: 'Starting Missionaries & Cannibals: 3M, 3C on left bank. Goal: All to right bank safely.',
+    explanation: 'Starting Missionaries & Cannibals: 3M, 3C on right bank. Goal: All to left bank safely.',
     move: null,
     path: [],
     status: 'start'
@@ -56,12 +57,12 @@ export function missionariesCannibalsSteps() {
     })
 
     // Check if we reached goal
-    if (mLeft === 0 && cLeft === 0) {
+    if (mLeft === 3 && cLeft === 3) {
       steps.push({
-        missionariesLeft: 0,
-        cannibalsLeft: 0,
-        missionariesRight: 3,
-        cannibalsRight: 3,
+        missionariesLeft: 3,
+        cannibalsLeft: 3,
+        missionariesRight: 0,
+        cannibalsRight: 0,
         boatSide: boat,
         activePseudoLine: 10,
         explanation: `✅ Solution found in ${path.length} moves!`,
@@ -115,11 +116,11 @@ export function missionariesCannibalsSteps() {
   }
 
   steps.push({
-    missionariesLeft: 3,
-    cannibalsLeft: 3,
-    missionariesRight: 0,
-    cannibalsRight: 0,
-    boatSide: 'left',
+    missionariesLeft: 0,
+    cannibalsLeft: 0,
+    missionariesRight: 3,
+    cannibalsRight: 3,
+    boatSide: 'right',
     activePseudoLine: 11,
     explanation: '✗ No solution found!',
     move: null,

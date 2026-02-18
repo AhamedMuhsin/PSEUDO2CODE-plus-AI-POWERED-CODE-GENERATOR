@@ -20,21 +20,21 @@
                     <!-- Playback -->
                     <div class="bs-btn-group">
                         <button class="bs-btn" :class="{ active: playing }" @click="playing ? pause() : play()">
-                            <span class="bs-icon">▶</span> {{ playing ? 'Pause' : 'Play' }}
+                            <span class="bs-icon"><Play :size="14" /></span> {{ playing ? 'Pause' : 'Play' }}
                         </button>
                         <button class="bs-btn" @click="next" :disabled="stepIndex === steps.length - 1">
-                            <span class="bs-icon">⏭</span> Step
+                            <span class="bs-icon"><SkipForward :size="14" /></span> Step
                         </button>
                     </div>
                     <div class="bs-btn-group">
                         <button class="bs-btn" @click="reset">
-                            <span class="bs-icon">↺</span> Reset
+                            <span class="bs-icon"><RotateCcw :size="14" /></span> Reset
                         </button>
                     </div>
 
                     <!-- Settings toggle -->
                     <button class="bs-btn bs-settings-toggle" @click="showSettings = !showSettings">
-                        <span class="bs-icon">⚙</span> Settings
+                        <span class="bs-icon"><Settings2 :size="14" /></span> Settings
                     </button>
                     <div v-if="showSettings" class="bs-settings-body">
                         <div class="bs-setting-row">
@@ -59,8 +59,8 @@
                         <h4>Keyboard Shortcuts:</h4>
                         <div class="bs-shortcut-grid">
                             <span class="bs-key">Space</span><span>Play/Pause</span>
-                            <span class="bs-key">→</span><span>Step Forward</span>
-                            <span class="bs-key">←</span><span>Step Back</span>
+                            <span class="bs-key"><ArrowRight :size="12" /></span><span>Step Forward</span>
+                            <span class="bs-key"><ArrowLeft :size="12" /></span><span>Step Back</span>
                             <span class="bs-key">R</span><span>Reset</span>
                         </div>
                     </div>
@@ -82,7 +82,7 @@
                         </div>
                         <div class="bs-legend-item">
                             <span class="bs-dot ab-pruned"></span>
-                            <div><strong>Pruned</strong><br /><small>Branch cut off ✂️</small></div>
+                            <div><strong>Pruned</strong><br /><small>Branch cut off</small></div>
                         </div>
                         <div class="bs-legend-item">
                             <span class="bs-dot ab-success"></span>
@@ -104,8 +104,8 @@
                                         'ab-cell-highlight': currentStep.currentMove && currentStep.currentMove.row === ri && currentStep.currentMove.col === ci,
                                         'ab-cell-pruned': currentStep.pruned,
                                     }">
-                                        <span v-if="cell === 'X'" class="ab-mark ab-x">✕</span>
-                                        <span v-else-if="cell === 'O'" class="ab-mark ab-o">○</span>
+                                        <span v-if="cell === 'X'" class="ab-mark ab-x"><X :size="20" /></span>
+                                        <span v-else-if="cell === 'O'" class="ab-mark ab-o"><Circle :size="20" /></span>
                                     </div>
                                 </div>
                             </div>
@@ -131,16 +131,16 @@
                                 'ab-sb-pruned': currentStep.status === 'pruned',
                                 'ab-sb-done': currentStep.status === 'success',
                             }">
-                                <span v-if="currentStep.status === 'start'">🎮 Starting Alpha-Beta Pruning</span>
-                                <span v-else-if="currentStep.status === 'maximizing'">🔺 Maximizer (X) — depth {{ currentStep.depth }}</span>
-                                <span v-else-if="currentStep.status === 'minimizing'">🔻 Minimizer (O) — depth {{ currentStep.depth }}</span>
-                                <span v-else-if="currentStep.status === 'pruned'">✂️ PRUNED! β ≤ α — skipping branch</span>
-                                <span v-else-if="currentStep.status === 'success'">✅ Alpha-Beta Complete</span>
+                                <span v-if="currentStep.status === 'start'"><Gamepad2 :size="14" class="bs-lucide" /> Starting Alpha-Beta Pruning</span>
+                                <span v-else-if="currentStep.status === 'maximizing'"><TrendingUp :size="14" class="bs-lucide" /> Maximizer (X) — depth {{ currentStep.depth }}</span>
+                                <span v-else-if="currentStep.status === 'minimizing'"><TrendingDown :size="14" class="bs-lucide" /> Minimizer (O) — depth {{ currentStep.depth }}</span>
+                                <span v-else-if="currentStep.status === 'pruned'"><Scissors :size="14" class="bs-lucide" /> PRUNED! β ≤ α — skipping branch</span>
+                                <span v-else-if="currentStep.status === 'success'"><CheckCircle2 :size="14" class="bs-lucide" /> Alpha-Beta Complete</span>
                             </div>
 
                             <!-- Pruning flash overlay -->
                             <div v-if="currentStep.pruned" class="ab-prune-flash">
-                                <span class="ab-prune-icon">✂️</span>
+                                <span class="ab-prune-icon"><Scissors :size="18" /></span>
                                 <span class="ab-prune-text">β({{ formatAB(currentStep.beta) }}) ≤ α({{ formatAB(currentStep.alpha) }})</span>
                             </div>
                         </div>
@@ -269,7 +269,7 @@
             <!-- ═══════ HOW IT WORKS ═══════ -->
             <section class="bs-section">
                 <button class="bs-section-toggle" @click="showHowItWorks = !showHowItWorks">
-                    <span class="bs-info-circle">ⓘ</span>
+                    <span class="bs-info-circle"><Info :size="14" /></span>
                     How Alpha-Beta Pruning Works
                 </button>
                 <div v-if="showHowItWorks" class="bs-section-body">
@@ -309,26 +309,26 @@
             <!-- ═══════ EXAMPLES ═══════ -->
             <section class="bs-section">
                 <button class="bs-section-toggle" @click="showExamples = !showExamples">
-                    <span class="bs-info-circle">ⓘ</span>
+                    <span class="bs-info-circle"><Info :size="14" /></span>
                     Alpha-Beta vs MinMax
                 </button>
                 <div v-if="showExamples" class="bs-section-body">
                     <h3>Key Differences:</h3>
                     <div class="bs-edge-grid">
                         <div class="bs-edge-card">
-                            <strong>🧮 MinMax</strong>
+                            <strong><Calculator :size="14" class="bs-lucide" /> MinMax</strong>
                             <small>Explores ALL branches. Complete but slower. O(b<sup>d</sup>) nodes.</small>
                         </div>
                         <div class="bs-edge-card">
-                            <strong>✂️ Alpha-Beta</strong>
+                            <strong><Scissors :size="14" class="bs-lucide" /> Alpha-Beta</strong>
                             <small>Same result, fewer nodes. Prunes safe-to-ignore branches. Up to O(b<sup>d/2</sup>).</small>
                         </div>
                         <div class="bs-edge-card">
-                            <strong>⚡ Move Ordering</strong>
+                            <strong><Zap :size="14" class="bs-lucide" /> Move Ordering</strong>
                             <small>Better ordering = more pruning. Check best moves first for maximum efficiency.</small>
                         </div>
                         <div class="bs-edge-card">
-                            <strong>🎯 Same Optimality</strong>
+                            <strong><Target :size="14" class="bs-lucide" /> Same Optimality</strong>
                             <small>Alpha-Beta never changes the result — only the speed. Guaranteed optimal.</small>
                         </div>
                     </div>
@@ -338,7 +338,7 @@
                         <li>Alpha-Beta was independently discovered by multiple researchers in the 1950s-60s</li>
                         <li>Deep Blue (chess computer) used Alpha-Beta with advanced move ordering</li>
                         <li>With perfect ordering, it effectively doubles the search depth</li>
-                        <li>Watch for the ✂️ prune events — those are saved computations!</li>
+                        <li>Watch for the prune events — those are saved computations!</li>
                     </ul>
                 </div>
             </section>
@@ -352,6 +352,7 @@ import { useRouter } from 'vue-router'
 import AuthNavbar from '@/components/Navbar/AuthNavbar.vue'
 import arrowLeft from '@/assets/arrow-left.svg'
 import { alphaBetaSteps } from '@/algorithms/aiProblems/alphaBetaSteps'
+import { Gamepad2, TrendingUp, TrendingDown, Scissors, CheckCircle2, Calculator, Zap, Target, Play, SkipForward, RotateCcw, Settings2, Info, ArrowRight, ArrowLeft, X, Circle } from 'lucide-vue-next'
 
 const router = useRouter()
 
@@ -415,7 +416,7 @@ const evalLog = computed(() => {
             let label = ''
             if (s.status === 'maximizing') label = `MAX d${s.depth} α=${formatAB(s.alpha)}`
             else if (s.status === 'minimizing') label = `MIN d${s.depth} β=${formatAB(s.beta)}`
-            else if (s.status === 'pruned') label = `✂️ PRUNE β≤α`
+            else if (s.status === 'pruned') label = `PRUNE β≤α`
             log.push({ label, status: s.status })
         }
     }
@@ -503,7 +504,8 @@ onUnmounted(() => {
 .back-btn-compact { display: flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #e0e7ff; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
 .back-btn-compact:hover { background: rgba(99,102,241,0.25); transform: translateX(-2px); }
 .arrow { width: 16px; height: 16px; }
-.bs-title { font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin: 0 0 16px; }
+.bs-title { font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin: 16px 0 16px; }
+.bs-lucide { display: inline-block; vertical-align: -2px; margin-right: 2px; }
 
 /* ════════ THREE-COL ════════ */
 .bs-three-col { display: grid; grid-template-columns: 240px 1fr 280px; gap: 16px; margin-bottom: 24px; }
@@ -660,10 +662,20 @@ onUnmounted(() => {
 .bs-tips li { margin-bottom: 4px; }
 
 /* ════════ RESPONSIVE ════════ */
-@media (max-width: 1100px) { .bs-three-col { grid-template-columns: 1fr; } }
+@media (max-width: 1100px) {
+    .bs-three-col { grid-template-columns: 1fr; gap: 16px; }
+    .bs-chart-area { order: -1; }
+    .bs-controls-panel { order: 1; }
+    .bs-inspector { order: 2; max-height: none; }
+}
+@media (max-width: 768px) {
+    .bs-shortcuts { display: none; }
+    .bs-legend { display: none; }
+    .bs-controls-panel { padding: 10px; }
+}
 @media (max-width: 640px) {
     .bs-edge-grid { grid-template-columns: 1fr; }
-    .bs-page { padding: 12px; }
+    .bs-page { padding: 10px 12px 24px; }
     .ab-cell { width: 70px; height: 70px; }
     .ab-mark { font-size: 1.8rem; }
     .ab-values-panel { flex-direction: column; gap: 8px; }

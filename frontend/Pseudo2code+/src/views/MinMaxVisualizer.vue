@@ -20,24 +20,24 @@
                     <!-- Playback -->
                     <div class="bs-btn-group">
                         <button class="bs-btn" :class="{ active: playing }" @click="playing ? pause() : play()">
-                            <span class="bs-icon">▶</span> {{ playing ? 'Pause' : 'Play' }}
+                            <span class="bs-icon"><Play :size="14" /></span> {{ playing ? 'Pause' : 'Play' }}
                         </button>
                         <button class="bs-btn" @click="next" :disabled="stepIndex === steps.length - 1">
-                            <span class="bs-icon">⏭</span> Step
+                            <span class="bs-icon"><SkipForward :size="14" /></span> Step
                         </button>
                     </div>
                     <div class="bs-btn-group">
                         <button class="bs-btn" @click="reset">
-                            <span class="bs-icon">↺</span> Reset
+                            <span class="bs-icon"><RotateCcw :size="14" /></span> Reset
                         </button>
                         <button class="bs-btn" @click="generateNew">
-                            <span class="bs-icon">⤮</span> New Game
+                            <span class="bs-icon"><Shuffle :size="14" /></span> New Game
                         </button>
                     </div>
 
                     <!-- Settings toggle -->
                     <button class="bs-btn bs-settings-toggle" @click="showSettings = !showSettings">
-                        <span class="bs-icon">⚙</span> Settings
+                        <span class="bs-icon"><Settings2 :size="14" /></span> Settings
                     </button>
 
                     <div v-if="showSettings" class="bs-settings-body">
@@ -63,8 +63,8 @@
                         <h4>Keyboard Shortcuts:</h4>
                         <div class="bs-shortcut-grid">
                             <span class="bs-key">Space</span><span>Play/Pause</span>
-                            <span class="bs-key">→</span><span>Step Forward</span>
-                            <span class="bs-key">←</span><span>Step Back</span>
+                            <span class="bs-key"><ArrowRight :size="12" /></span><span>Step Forward</span>
+                            <span class="bs-key"><ArrowLeft :size="12" /></span><span>Step Back</span>
                             <span class="bs-key">R</span><span>Reset</span>
                         </div>
                     </div>
@@ -121,12 +121,12 @@
                                     'mm-badge-min': currentStep.player === 'O',
                                     'mm-badge-done': currentStep.status === 'success',
                                 }">
-                                    <span v-if="currentStep.status === 'maximizing'">🔺 Maximizer (X) playing</span>
-                                    <span v-else-if="currentStep.status === 'minimizing'">🔻 Minimizer (O) playing</span>
-                                    <span v-else-if="currentStep.status === 'terminal'">📊 Terminal: Score = {{ currentStep.score }}</span>
-                                    <span v-else-if="currentStep.status === 'success'">✅ Analysis Complete</span>
-                                    <span v-else-if="currentStep.status === 'analyzing'">🔍 Analyzing position...</span>
-                                    <span v-else>🎮 Game Start</span>
+                                    <span v-if="currentStep.status === 'maximizing'"><TrendingUp :size="14" class="bs-lucide" /> Maximizer (X) playing</span>
+                                    <span v-else-if="currentStep.status === 'minimizing'"><TrendingDown :size="14" class="bs-lucide" /> Minimizer (O) playing</span>
+                                    <span v-else-if="currentStep.status === 'terminal'"><BarChart3 :size="14" class="bs-lucide" /> Terminal: Score = {{ currentStep.score }}</span>
+                                    <span v-else-if="currentStep.status === 'success'"><CheckCircle2 :size="14" class="bs-lucide" /> Analysis Complete</span>
+                                    <span v-else-if="currentStep.status === 'analyzing'"><Search :size="14" class="bs-lucide" /> Analyzing position...</span>
+                                    <span v-else><Gamepad2 :size="14" class="bs-lucide" /> Game Start</span>
                                 </div>
                                 <div class="mm-depth-badge" v-if="currentStep.depth !== undefined">
                                     Depth: {{ currentStep.depth }}
@@ -243,7 +243,7 @@
             <!-- ═══════ HOW IT WORKS ═══════ -->
             <section class="bs-section">
                 <button class="bs-section-toggle" @click="showHowItWorks = !showHowItWorks">
-                    <span class="bs-info-circle">ⓘ</span>
+                    <span class="bs-info-circle"><Info :size="14" /></span>
                     How MinMax Algorithm Works
                 </button>
                 <div v-if="showHowItWorks" class="bs-section-body">
@@ -283,7 +283,7 @@
             <!-- ═══════ EXAMPLES ═══════ -->
             <section class="bs-section">
                 <button class="bs-section-toggle" @click="showExamples = !showExamples">
-                    <span class="bs-info-circle">ⓘ</span>
+                    <span class="bs-info-circle"><Info :size="14" /></span>
                     Game Scenarios &amp; Examples
                 </button>
                 <div v-if="showExamples" class="bs-section-body">
@@ -326,6 +326,7 @@ import { useRouter } from 'vue-router'
 import AuthNavbar from '@/components/Navbar/AuthNavbar.vue'
 import arrowLeft from '@/assets/arrow-left.svg'
 import { minimaxSteps } from '@/algorithms/aiProblems/minimaxSteps'
+import { TrendingUp, TrendingDown, BarChart3, CheckCircle2, Search, Gamepad2, Play, SkipForward, RotateCcw, Shuffle, Settings2, Info, ArrowRight, ArrowLeft, X, Circle } from 'lucide-vue-next'
 
 const router = useRouter()
 
@@ -479,7 +480,8 @@ onUnmounted(() => {
 .back-btn-compact { display: flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #e0e7ff; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
 .back-btn-compact:hover { background: rgba(99,102,241,0.25); transform: translateX(-2px); }
 .arrow { width: 16px; height: 16px; }
-.bs-title { font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin: 0 0 16px; }
+.bs-title { font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin: 16px 0 16px; }
+.bs-lucide { display: inline-block; vertical-align: -2px; margin-right: 2px; }
 
 /* ════════ THREE-COL ════════ */
 .bs-three-col { display: grid; grid-template-columns: 240px 1fr 280px; gap: 16px; margin-bottom: 24px; }
@@ -616,10 +618,20 @@ onUnmounted(() => {
 .bs-tips li { margin-bottom: 4px; }
 
 /* ════════ RESPONSIVE ════════ */
-@media (max-width: 1100px) { .bs-three-col { grid-template-columns: 1fr; } }
+@media (max-width: 1100px) {
+    .bs-three-col { grid-template-columns: 1fr; gap: 16px; }
+    .bs-chart-area { order: -1; }
+    .bs-controls-panel { order: 1; }
+    .bs-inspector { order: 2; max-height: none; }
+}
+@media (max-width: 768px) {
+    .bs-shortcuts { display: none; }
+    .bs-legend { display: none; }
+    .bs-controls-panel { padding: 10px; }
+}
 @media (max-width: 640px) {
     .bs-edge-grid { grid-template-columns: 1fr; }
-    .bs-page { padding: 12px; }
+    .bs-page { padding: 10px 12px 24px; }
     .mm-cell { width: 70px; height: 70px; }
     .mm-mark { font-size: 1.8rem; }
 }

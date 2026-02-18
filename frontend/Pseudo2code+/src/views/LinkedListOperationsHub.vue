@@ -14,7 +14,7 @@
       <div class="ll-type-bar">
         <button v-for="t in LINKED_LIST_TYPES" :key="t.key" class="ll-type-btn"
           :class="{ active: selectedType === t.key }" @click="switchType(t.key)">
-          <span class="ll-type-icon">{{ t.icon }}</span> {{ t.label }}
+           {{ t.label }}
         </button>
       </div>
 
@@ -24,23 +24,23 @@
           :class="{ active: selectedOp === key }" @click="selectOperation(key)">{{ op.label }}</button>
       </div>
 
-      <!-- ═══════ THREE-COLUMN LAYOUT ═══════ -->
+      <!-- ======= THREE-COLUMN LAYOUT ======= -->
       <div class="ll-three-col">
         <!-- LEFT: Controls -->
         <aside class="ll-controls-panel">
           <div class="ll-btn-group">
             <button class="ll-btn" :class="{ active: playing }" @click="playing ? pause() : play()"
-              :disabled="!isPlayable"><span class="ll-icon">▶</span> {{ playing ? 'Pause' : 'Play' }}</button>
+              :disabled="!isPlayable"> {{ playing ? 'Pause' : 'Play' }}</button>
             <button class="ll-btn" @click="next" :disabled="stepIndex === steps.length - 1"><span
-                class="ll-icon">⏭</span> Step</button>
+                class="ll-icon"></span> Step</button>
           </div>
           <div class="ll-btn-group">
-            <button class="ll-btn" @click="reset"><span class="ll-icon">↺</span> Reset</button>
-            <button class="ll-btn" @click="generateRandom"><span class="ll-icon">⤮</span> Randomize</button>
+            <button class="ll-btn" @click="reset"> Reset</button>
+            <button class="ll-btn" @click="generateRandom"> Randomize</button>
           </div>
 
           <button class="ll-btn ll-settings-toggle" @click="showSettings = !showSettings"><span
-              class="ll-icon">⚙</span> Settings</button>
+              class="ll-icon"></span> Settings</button>
           <div v-if="showSettings" class="ll-settings-body">
             <div class="ll-setting-row"><label>Speed: <strong>{{ speedPercent }}%</strong></label><input type="range"
                 min="1" max="5" v-model.number="speedLevel" class="ll-slider" /></div>
@@ -70,13 +70,13 @@
               :min="0" :max="baseList.length" />
           </div>
 
-          <button class="ll-btn ll-code-btn" @click="goToGenerateCode"><span class="ll-icon">{ }</span> Generate
+          <button class="ll-btn ll-code-btn" @click="goToGenerateCode"> Generate
             Code</button>
 
           <div class="ll-shortcuts">
             <h4>Keyboard Shortcuts:</h4>
             <div class="ll-shortcut-grid"><span class="ll-key">Space</span><span>Play/Pause</span><span
-                class="ll-key">→</span><span>Step Forward</span><span class="ll-key">←</span><span>Step
+                class="ll-key">-></span><span>Step Forward</span><span class="ll-key"><-</span><span>Step
                 Back</span><span class="ll-key">R</span><span>Reset</span></div>
           </div>
           <div class="ll-legend">
@@ -105,22 +105,22 @@
                 <template v-for="(value, i) in currentStep.list" :key="i">
                   <div class="ll-node-group">
                     <div class="ll-node" :class="nodeClass(i)">
-                      <div v-if="selectedType === 'doubly'" class="ll-node-prev">{{ i > 0 ? '←' : '∅' }}</div>
+                      <div v-if="selectedType === 'doubly'" class="ll-node-prev">{{ i > 0 ? '<-' : 'NULL' }}</div>
                       <div class="ll-node-data">{{ value }}</div>
-                      <div class="ll-node-next">{{ selectedType === 'circular' ? '→' : (i < currentStep.list.length - 1 ? '→' : '∅') }}</div>
+                      <div class="ll-node-next">{{ selectedType === 'circular' ? '->' : (i < currentStep.list.length - 1 ? '->' : 'NULL') }}</div>
                     </div>
                     <span class="ll-node-index">{{ i }}</span>
                   </div>
                   <div v-if="i < currentStep.list.length - 1" class="ll-arrow">
-                    {{ selectedType === 'doubly' ? '⇄' : '→' }}
+                    {{ selectedType === 'doubly' ? '<->' : '->' }}
                   </div>
                 </template>
-                <div v-if="selectedType === 'circular'" class="ll-circular-arrow">↩ HEAD</div>
+                <div v-if="selectedType === 'circular'" class="ll-circular-arrow">-> HEAD</div>
                 <div v-else class="ll-null-label">NULL</div>
               </template>
             </div>
             <div class="ll-chart-footer">
-              <span>{{ typeLabel }} · {{ currentOperation.label }} — {{ currentStep.list.length }} node(s)</span>
+              <span>{{ typeLabel }}  -  {{ currentOperation.label }}  -  {{ currentStep.list.length }} node(s)</span>
             </div>
             <input type="range" class="ll-scrubber" min="0" :max="steps.length - 1" v-model.number="stepIndex" />
           </div>
@@ -167,28 +167,40 @@
       <!-- How It Works -->
       <section class="ll-section">
         <button class="ll-section-toggle" @click="showHowItWorks = !showHowItWorks"><span
-            class="ll-info-circle">ⓘ</span> How {{ currentOperation.label }} Works</button>
+            class="ll-info-circle">i</span> How {{ currentOperation.label }} Works</button>
         <div v-if="showHowItWorks" class="ll-section-body">
-          <h2>{{ currentOperation.label }} — {{ typeLabel }}</h2>
-          <p>{{ currentOperation.description }}</p>
-          <h3>Complexity:</h3>
-          <ul>
-            <li><strong>Best Case:</strong> {{ currentOperation.best }}</li>
-            <li><strong>Average Case:</strong> {{ currentOperation.average }}</li>
-            <li><strong>Worst Case:</strong> {{ currentOperation.worst }}</li>
-            <li><strong>Space:</strong> {{ currentOperation.space }}</li>
-          </ul>
+          <p class="ll-section-intro">Linked lists rely on pointer surgery. The cards below explain the control flow and complexity for each {{ typeLabel.toLowerCase() }} operation so mobile learners can skim quickly.</p>
+          <div class="ll-how-grid">
+            <article v-for="card in howItWorksCards" :key="card.key" class="ll-how-card" :class="{ active: card.key === selectedOp }">
+              <header class="ll-how-header">
+                <div>
+                  <h3>{{ card.label }}</h3>
+                  <p>{{ card.summary }}</p>
+                </div>
+                <span class="ll-chip" v-if="card.key === selectedOp">Active</span>
+              </header>
+              <ol class="ll-step-list">
+                <li v-for="(step, idx) in card.steps" :key="idx">{{ step }}</li>
+              </ol>
+              <div class="ll-how-meta">
+                <span>Best: <strong>{{ card.best }}</strong></span>
+                <span>Avg: <strong>{{ card.average }}</strong></span>
+                <span>Worst: <strong>{{ card.worst }}</strong></span>
+                <span>Space: <strong>{{ card.space }}</strong></span>
+              </div>
+            </article>
+          </div>
           <h3>{{ typeLabel }} Properties:</h3>
           <ul v-if="selectedType === 'singly'">
             <li>Each <strong>node</strong> contains data and a <strong>next</strong> pointer</li>
             <li>The <strong>head</strong> pointer points to the first node</li>
             <li>The last node's next points to <strong>NULL</strong></li>
-            <li>Traversal is <strong>one-directional</strong> (head → tail)</li>
+            <li>Traversal is <strong>one-directional</strong> (head -> tail)</li>
           </ul>
           <ul v-else-if="selectedType === 'doubly'">
             <li>Each <strong>node</strong> has <strong>prev</strong>, data, and <strong>next</strong> pointers</li>
-            <li>Can traverse <strong>both directions</strong> (head ↔ tail)</li>
-            <li>Delete at tail is <strong>O(1)</strong> — no need to find predecessor</li>
+            <li>Can traverse <strong>both directions</strong> (head <-> tail)</li>
+            <li>Delete at tail is <strong>O(1)</strong>  -  no need to find predecessor</li>
             <li>Costs extra memory for the <strong>prev</strong> pointer per node</li>
           </ul>
           <ul v-else>
@@ -203,19 +215,19 @@
       <!-- Edge Cases -->
       <section class="ll-section">
         <button class="ll-section-toggle" @click="showEdgeCases = !showEdgeCases"><span
-            class="ll-info-circle">ⓘ</span> Edge Cases &amp; Examples</button>
+            class="ll-info-circle">i</span> Edge Cases &amp; Examples</button>
         <div v-if="showEdgeCases" class="ll-section-body">
           <h3>Try These:</h3>
           <div class="ll-edge-grid">
-            <div class="ll-edge-card" @click="loadEdgeCase([1, 2, 3, 4, 5])"><strong>Sequential: 1→2→3→4→5</strong><small>Ordered linked list</small></div>
-            <div class="ll-edge-card" @click="loadEdgeCase([10, 20, 30])"><strong>Small: 10→20→30</strong><small>Three-node list</small></div>
+            <div class="ll-edge-card" @click="loadEdgeCase([1, 2, 3, 4, 5])"><strong>Sequential: 1->2->3->4->5</strong><small>Ordered linked list</small></div>
+            <div class="ll-edge-card" @click="loadEdgeCase([10, 20, 30])"><strong>Small: 10->20->30</strong><small>Three-node list</small></div>
             <div class="ll-edge-card" @click="loadEdgeCase([42])"><strong>Single: 42</strong><small>List with one node</small></div>
-            <div class="ll-edge-card" @click="loadEdgeCase([])"><strong>Empty: NULL</strong><small>Empty list — test edge cases</small></div>
+            <div class="ll-edge-card" @click="loadEdgeCase([])"><strong>Empty: NULL</strong><small>Empty list  -  test edge cases</small></div>
           </div>
           <h3>Tips:</h3>
           <ul class="ll-tips">
             <li>Switch between <strong>Singly</strong>, <strong>Doubly</strong>, and <strong>Circular</strong> to compare</li>
-            <li><strong>Doubly</strong> lists show ← prev pointers and ⇄ bidirectional arrows</li>
+            <li><strong>Doubly</strong> lists show <- prev pointers and <-> bidirectional arrows</li>
             <li><strong>Circular</strong> lists show the loop back to HEAD at the end</li>
             <li>Try <strong>Insert at Head</strong> vs <strong>Insert at Tail</strong> to compare complexity</li>
             <li>Use the <strong>custom list</strong> input to test any configuration</li>
@@ -246,9 +258,98 @@ const playing = ref(false)
 const baseList = ref([5, 12, 7, 3, 9])
 const opParams = reactive({ value: 10, position: 2 })
 
+const linkedListWriteups = {
+  traverse: {
+    summary: 'Walk through each node starting at HEAD to understand ordering.',
+    steps: [
+      'Initialize a pointer at HEAD and mark it as current.',
+      'Visit the node, emit its value, then advance to next (and prev for doubly).',
+      'Repeat until NULL (or the head again for circular lists).',
+      'Collect the visit order so users can verify traversal correctness.'
+    ]
+  },
+  insertHead: {
+    summary: 'Push a new node before the current head pointer.',
+    steps: [
+      'Allocate a node with the requested value.',
+      'Point its next pointer to the current head (and prev to NULL/dummy).',
+      'Update the old head prev pointer when working with doubly lists.',
+      'Move HEAD to the new node and refresh the visualization links.'
+    ]
+  },
+  insertTail: {
+    summary: 'Attach a node at the tail so it becomes the last element.',
+    steps: [
+      'Traverse until the pointer reaches the final node.',
+      'Create the new node and connect it after the tail.',
+      'For doubly lists, wire both next and prev pointers.',
+      'Update TAIL (or reconnect to HEAD for circular lists).'
+    ]
+  },
+  insertAtIndex: {
+    summary: 'Splice a node into a given position inside the chain.',
+    steps: [
+      'Iterate until you reach the predecessor of the target index.',
+      'Create a node with the incoming value.',
+      'Redirect pointers so predecessor.next points to the new node.',
+      'Link the new node to the successor and maintain prev pointers if needed.'
+    ]
+  },
+  deleteHead: {
+    summary: 'Drop the current head node and promote the next node.',
+    steps: [
+      'Ensure the list is not empty.',
+      'Store a reference to head.next (or NULL).',
+      'Detach the head node and adjust prev pointers.',
+      'Move HEAD to the stored reference and tidy circular links.'
+    ]
+  },
+  deleteTail: {
+    summary: 'Remove the terminal node and update the tail pointer.',
+    steps: [
+      'Walk until the pointer sits on the last node.',
+      'Capture the predecessor to keep the chain intact.',
+      'Detach the tail node, clearing references for GC.',
+      'Set TAIL to the predecessor (or NULL if list becomes empty).'
+    ]
+  },
+  deleteAtIndex: {
+    summary: 'Remove the node residing at a specific index.',
+    steps: [
+      'Traverse until you reach the target node.',
+      'Hook its predecessor next to its successor.',
+      'Update prev pointers when in doubly mode.',
+      'If removing HEAD or TAIL, update those labels accordingly.'
+    ]
+  },
+  search: {
+    summary: 'Scan sequentially until the target value is found.',
+    steps: [
+      'Start at HEAD and compare each node value to the query.',
+      'Stop once a match is encountered or NULL is reached.',
+      'Highlight the found node and expose its index.',
+      'If not found, explain that traversal exhausted the structure.'
+    ]
+  }
+}
+
 const currentOps = computed(() => linkedListOperationsMap[selectedType.value])
 const currentOperation = computed(() => currentOps.value[selectedOp.value])
 const typeLabel = computed(() => LINKED_LIST_TYPES.find(t => t.key === selectedType.value)?.label || '')
+
+const howItWorksCards = computed(() => Object.entries(currentOps.value).map(([key, op]) => {
+  const writeup = linkedListWriteups[key] || { summary: op.description, steps: [] }
+  return {
+    key,
+    label: op.label,
+    summary: writeup.summary,
+    steps: writeup.steps,
+    best: op.best,
+    average: op.average,
+    worst: op.worst,
+    space: op.space
+  }
+}))
 
 const isPlayable = computed(() => {
   const pt = currentOperation.value.paramType
@@ -279,9 +380,9 @@ const speedDelay = computed(() => ({ 1: 1200, 2: 900, 3: 700, 4: 400, 5: 200 }[s
 const listStateDisplay = computed(() => {
   const s = currentStep.value
   if (s.list.length === 0) return 'NULL (empty)'
-  const chain = s.list.join(' → ')
-  if (selectedType.value === 'circular') return chain + ' → (HEAD)'
-  return chain + ' → NULL'
+  const chain = s.list.join(' -> ')
+  if (selectedType.value === 'circular') return chain + ' -> (HEAD)'
+  return chain + ' -> NULL'
 })
 
 function nodeClass(i) {
@@ -438,6 +539,17 @@ onUnmounted(() => { window.removeEventListener('keydown', handleKey); clearInter
 .ll-section-body h3{font-size:.95rem;color:#e0e7ff;margin:16px 0 6px}
 .ll-section-body ol,.ll-section-body ul{padding-left:20px;margin:4px 0}
 .ll-section-body li{margin-bottom:3px}
+.ll-section-intro{color:#94a3b8;margin:0 0 16px;font-size:.9rem}
+.ll-how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:12px}
+.ll-how-card{background:rgba(15,23,42,.6);border:1px solid rgba(100,116,139,.25);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;min-height:220px;transition:border .2s,transform .2s}
+.ll-how-card.active{border-color:rgba(99,102,241,.6);transform:translateY(-4px);box-shadow:0 8px 24px rgba(99,102,241,.2)}
+.ll-how-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.ll-how-header h3{margin:0;color:#f8fafc;font-size:1rem}
+.ll-how-header p{margin:4px 0 0;color:#cbd5e1;font-size:.85rem}
+.ll-chip{background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.5);border-radius:999px;padding:3px 10px;font-size:.7rem;color:#c7d2fe;font-weight:600}
+.ll-step-list{margin:0;padding-left:18px;color:#cbd5e1;font-size:.84rem;line-height:1.5}
+.ll-how-meta{display:flex;flex-wrap:wrap;gap:8px;font-size:.75rem;color:#94a3b8}
+.ll-how-meta strong{color:#f1f5f9}
 .ll-edge-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
 .ll-edge-card{background:rgba(15,23,42,.5);border:1px solid rgba(100,116,139,.3);border-radius:10px;padding:14px;cursor:pointer;transition:all .15s}
 .ll-edge-card:hover{border-color:rgba(99,102,241,.5);background:rgba(99,102,241,.08)}
@@ -446,6 +558,7 @@ onUnmounted(() => { window.removeEventListener('keydown', handleKey); clearInter
 .ll-tips{padding-left:20px}
 .ll-tips li{margin-bottom:4px}
 
-@media(max-width:1100px){.ll-three-col{grid-template-columns:1fr}}
-@media(max-width:640px){.ll-edge-grid{grid-template-columns:1fr}.ll-page{padding:12px}.ll-op-pills{gap:4px}.ll-pill{padding:5px 10px;font-size:.75rem}.ll-type-bar{gap:4px}.ll-type-btn{padding:6px 12px;font-size:.78rem}}
+@media(max-width:1100px){.ll-three-col{grid-template-columns:1fr;gap:16px}.ll-chart-area{order:-1}.ll-controls-panel{order:1}.ll-inspector{order:2;max-height:none}}
+@media(max-width:768px){.ll-shortcuts{display:none}.ll-legend{display:none}.ll-controls-panel{padding:10px}}
+@media(max-width:640px){.ll-edge-grid{grid-template-columns:1fr}.ll-page{padding:10px 12px 24px}.ll-op-pills{gap:4px}.ll-pill{padding:5px 10px;font-size:.75rem}.ll-type-bar{gap:4px}.ll-type-btn{padding:6px 12px;font-size:.78rem}.ll-how-card{min-height:auto}}
 </style>

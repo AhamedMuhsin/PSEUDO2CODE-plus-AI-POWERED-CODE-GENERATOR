@@ -18,18 +18,18 @@
         <aside class="bs-controls-panel">
           <div class="bs-btn-group">
             <button class="bs-btn" :class="{ active: playing }" @click="playing ? pause() : play()">
-              <span class="bs-icon">▶</span> {{ playing ? 'Pause' : 'Play' }}
+              <span class="bs-icon"><Play :size="14" /></span> {{ playing ? 'Pause' : 'Play' }}
             </button>
             <button class="bs-btn" @click="next" :disabled="stepIndex === steps.length - 1">
-              <span class="bs-icon">⏭</span> Step
+              <span class="bs-icon"><SkipForward :size="14" /></span> Step
             </button>
           </div>
           <div class="bs-btn-group">
-            <button class="bs-btn" @click="reset"><span class="bs-icon">↺</span> Reset</button>
+            <button class="bs-btn" @click="reset"><span class="bs-icon"><RotateCcw :size="14" /></span> Reset</button>
           </div>
 
           <button class="bs-btn bs-settings-toggle" @click="showSettings = !showSettings">
-            <span class="bs-icon">⚙</span> Settings
+            <span class="bs-icon"><Settings2 :size="14" /></span> Settings
           </button>
           <div v-if="showSettings" class="bs-settings-body">
             <div class="bs-setting-row">
@@ -51,8 +51,8 @@
             <h4>Keyboard Shortcuts:</h4>
             <div class="bs-shortcut-grid">
               <span class="bs-key">Space</span><span>Play / Pause</span>
-              <span class="bs-key">→</span><span>Step Forward</span>
-              <span class="bs-key">←</span><span>Step Back</span>
+              <span class="bs-key"><ArrowRight :size="12" /></span><span>Step Forward</span>
+              <span class="bs-key"><ArrowLeft :size="12" /></span><span>Step Back</span>
               <span class="bs-key">R</span><span>Reset</span>
             </div>
           </div>
@@ -112,18 +112,18 @@
                 <div class="sa-temp-gauge">
                   <div class="sa-temp-fill" :style="{ width: tempPercent + '%', background: tempColor }"></div>
                 </div>
-                <span class="sa-temp-label">🌡️ T = {{ cs.temperature }}</span>
+                <span class="sa-temp-label"><Thermometer :size="14" class="bs-lucide" /> T = {{ cs.temperature }}</span>
               </div>
 
               <!-- Status badge -->
               <div class="sa-status-badge" :class="'sa-sb-' + cs.status">
-                <span v-if="cs.status==='start'">🔥 Starting Simulated Annealing</span>
-                <span v-else-if="cs.status==='exploring'">🔍 Evaluating neighbor x={{ cs.neighborState }}</span>
-                <span v-else-if="cs.status==='accepted_better'">✅ Accepted — better energy!</span>
-                <span v-else-if="cs.status==='accepted_worse'">⚡ Accepted worse — P={{ cs.probability }}</span>
-                <span v-else-if="cs.status==='rejected'">❌ Rejected — P={{ cs.probability }} too low</span>
-                <span v-else-if="cs.status==='cooling'">❄️ Cooling… T → {{ cs.temperature }}</span>
-                <span v-else-if="cs.status==='success'">🏆 Annealing Complete!</span>
+                <span v-if="cs.status==='start'"><Flame :size="14" class="bs-lucide" /> Starting Simulated Annealing</span>
+                <span v-else-if="cs.status==='exploring'"><Search :size="14" class="bs-lucide" /> Evaluating neighbor x={{ cs.neighborState }}</span>
+                <span v-else-if="cs.status==='accepted_better'"><CheckCircle2 :size="14" class="bs-lucide" /> Accepted — better energy!</span>
+                <span v-else-if="cs.status==='accepted_worse'"><Zap :size="14" class="bs-lucide" /> Accepted worse — P={{ cs.probability }}</span>
+                <span v-else-if="cs.status==='rejected'"><XCircle :size="14" class="bs-lucide" /> Rejected — P={{ cs.probability }} too low</span>
+                <span v-else-if="cs.status==='cooling'"><Snowflake :size="14" class="bs-lucide" /> Cooling… T → {{ cs.temperature }}</span>
+                <span v-else-if="cs.status==='success'"><Trophy :size="14" class="bs-lucide" /> Annealing Complete!</span>
               </div>
 
               <!-- Acceptance probability bar (when exploring/accepting/rejecting) -->
@@ -168,8 +168,8 @@
 
           <h4 class="bs-inspector-label">DECISION</h4>
           <div class="sa-decision-box" :class="'sa-dec-'+cs.status">
-            <span v-if="cs.accepted===true">✓ Accepted</span>
-            <span v-else-if="cs.accepted===false">✗ Rejected</span>
+            <span v-if="cs.accepted===true"><Check :size="14" class="bs-lucide" /> Accepted</span>
+            <span v-else-if="cs.accepted===false"><X :size="14" class="bs-lucide" /> Rejected</span>
             <span v-else>—</span>
           </div>
 
@@ -187,7 +187,7 @@
               <span class="sa-hist-n">#{{ i+1 }}</span>
               <span>x={{ h.state }}</span>
               <span class="sa-hist-e">E={{ typeof h.energy==='number'?h.energy.toFixed(2):h.energy }}</span>
-              <span class="sa-hist-a" :class="h.accepted?'sa-ha-yes':'sa-ha-no'">{{ h.accepted?'✓':'✗' }}</span>
+              <span class="sa-hist-a" :class="h.accepted?'sa-ha-yes':'sa-ha-no'">{{ h.accepted?'Y':'N' }}</span>
             </div>
             <span v-if="historySlice.length===0" class="sa-no-hist">No history yet</span>
           </div>
@@ -199,7 +199,7 @@
 
       <!-- HOW IT WORKS -->
       <section class="bs-section">
-        <button class="bs-section-toggle" @click="showHow=!showHow"><span class="bs-info-circle">ⓘ</span> How Simulated Annealing Works</button>
+        <button class="bs-section-toggle" @click="showHow=!showHow"><span class="bs-info-circle"><Info :size="14" /></span> How Simulated Annealing Works</button>
         <div v-if="showHow" class="bs-section-body">
           <h2>Algorithm Overview</h2>
           <p>Simulated Annealing is inspired by the metallurgical process of annealing — heating and slowly cooling a material to reduce defects. It's a probabilistic optimization technique that can escape local optima.</p>
@@ -225,13 +225,13 @@
 
       <!-- EXAMPLES -->
       <section class="bs-section">
-        <button class="bs-section-toggle" @click="showEx=!showEx"><span class="bs-info-circle">ⓘ</span> SA vs Hill Climbing</button>
+        <button class="bs-section-toggle" @click="showEx=!showEx"><span class="bs-info-circle"><Info :size="14" /></span> SA vs Hill Climbing</button>
         <div v-if="showEx" class="bs-section-body">
           <div class="bs-edge-grid">
-            <div class="bs-edge-card"><strong>🏔️ Hill Climbing</strong><small>Greedy — only accepts improvements. Gets stuck at local optima easily.</small></div>
-            <div class="bs-edge-card"><strong>🔥 Simulated Annealing</strong><small>Accepts worse solutions early. Can escape local optima. Converges to global optimum.</small></div>
-            <div class="bs-edge-card"><strong>🌡️ Temperature</strong><small>Controls randomness. High T = explore, Low T = exploit. Cooling schedule matters.</small></div>
-            <div class="bs-edge-card"><strong>🎯 Applications</strong><small>TSP routing, VLSI design, scheduling, protein folding, machine learning.</small></div>
+            <div class="bs-edge-card"><strong><Mountain :size="14" class="bs-lucide" /> Hill Climbing</strong><small>Greedy — only accepts improvements. Gets stuck at local optima easily.</small></div>
+            <div class="bs-edge-card"><strong><Flame :size="14" class="bs-lucide" /> Simulated Annealing</strong><small>Accepts worse solutions early. Can escape local optima. Converges to global optimum.</small></div>
+            <div class="bs-edge-card"><strong><Thermometer :size="14" class="bs-lucide" /> Temperature</strong><small>Controls randomness. High T = explore, Low T = exploit. Cooling schedule matters.</small></div>
+            <div class="bs-edge-card"><strong><Target :size="14" class="bs-lucide" /> Applications</strong><small>TSP routing, VLSI design, scheduling, protein folding, machine learning.</small></div>
           </div>
         </div>
       </section>
@@ -244,6 +244,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthNavbar from '@/components/Navbar/AuthNavbar.vue'
 import arrowLeft from '@/assets/arrow-left.svg'
+import { Thermometer, Flame, Search, CheckCircle2, Zap, XCircle, Snowflake, Trophy, Mountain, Target, Check, X, Play, SkipForward, RotateCcw, Settings2, Info, ArrowRight, ArrowLeft } from 'lucide-vue-next'
 import { simulatedAnnealingSteps } from '@/algorithms/aiProblems/simulatedAnnealingSteps'
 
 const router = useRouter()
@@ -340,7 +341,8 @@ onUnmounted(() => { window.removeEventListener('keydown', handleKey); clearInter
 .back-btn-compact{display:flex;align-items:center;gap:6px;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);color:#e0e7ff;padding:6px 12px;border-radius:8px;cursor:pointer;transition:all .2s;font-size:.85rem}
 .back-btn-compact:hover{background:rgba(99,102,241,.25);transform:translateX(-2px)}
 .arrow{width:16px;height:16px}
-.bs-title{font-size:1.6rem;font-weight:700;color:#f1f5f9;margin:0 0 16px}
+.bs-title{font-size:1.6rem;font-weight:700;color:#f1f5f9;margin:16px 0 16px}
+.bs-lucide{display:inline-block;vertical-align:-2px;margin-right:2px}
 .bs-three-col{display:grid;grid-template-columns:240px 1fr 280px;gap:16px;margin-bottom:24px}
 .bs-controls-panel{background:rgba(30,41,59,.65);border:1px solid rgba(100,116,139,.25);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px}
 .bs-btn-group{display:grid;grid-template-columns:1fr 1fr;gap:6px}
@@ -443,6 +445,7 @@ onUnmounted(() => { window.removeEventListener('keydown', handleKey); clearInter
 .bs-edge-card:hover{border-color:rgba(99,102,241,.5);background:rgba(99,102,241,.08)}
 .bs-edge-card strong{display:block;color:#f1f5f9;font-size:.88rem;margin-bottom:4px}
 .bs-edge-card small{color:#64748b;font-size:.78rem}
-@media(max-width:1100px){.bs-three-col{grid-template-columns:1fr}}
-@media(max-width:640px){.bs-edge-grid{grid-template-columns:1fr}.bs-page{padding:12px}.sa-state-grid{grid-template-columns:1fr}}
+@media(max-width:1100px){.bs-three-col{grid-template-columns:1fr;gap:16px}.bs-chart-area{order:-1}.bs-controls-panel{order:1}.bs-inspector{order:2;max-height:none}}
+@media(max-width:768px){.bs-shortcuts{display:none}.bs-legend{display:none}.bs-controls-panel{padding:10px}}
+@media(max-width:640px){.bs-edge-grid{grid-template-columns:1fr}.bs-page{padding:10px 12px 24px}.sa-state-grid{grid-template-columns:1fr}}
 </style>

@@ -15,20 +15,17 @@
 <script setup>
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { isAuthenticated } from "@/services/authService";
 
 const router = useRouter();
-const auth = getAuth();
 
 onMounted(() => {
   setTimeout(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        router.replace("/dashboard");
-      } else {
-        router.replace("/login");
-      }
-    });
+    if (isAuthenticated()) {
+      router.replace("/dashboard");
+    } else {
+      router.replace("/login");
+    }
   }, 1500);
 });
 </script>

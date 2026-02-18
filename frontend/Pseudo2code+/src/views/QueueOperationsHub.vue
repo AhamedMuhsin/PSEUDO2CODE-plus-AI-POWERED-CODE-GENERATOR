@@ -16,23 +16,23 @@
           @click="selectOperation(key)">{{ op.label }}</button>
       </div>
 
-      <!-- ═══════ THREE-COLUMN LAYOUT ═══════ -->
+      <!-- ======= THREE-COLUMN LAYOUT ======= -->
       <div class="qo-three-col">
         <!-- LEFT: Controls -->
         <aside class="qo-controls-panel">
           <div class="qo-btn-group">
             <button class="qo-btn" :class="{ active: playing }" @click="playing ? pause() : play()"
-              :disabled="!isPlayable"><span class="qo-icon">▶</span> {{ playing ? 'Pause' : 'Play' }}</button>
+              :disabled="!isPlayable"> {{ playing ? 'Pause' : 'Play' }}</button>
             <button class="qo-btn" @click="next" :disabled="stepIndex === steps.length - 1"><span
-                class="qo-icon">⏭</span> Step</button>
+                class="qo-icon"></span> Step</button>
           </div>
           <div class="qo-btn-group">
-            <button class="qo-btn" @click="reset"><span class="qo-icon">↺</span> Reset</button>
-            <button class="qo-btn" @click="generateRandom"><span class="qo-icon">⤮</span> Randomize</button>
+            <button class="qo-btn" @click="reset"> Reset</button>
+            <button class="qo-btn" @click="generateRandom"> Randomize</button>
           </div>
 
           <button class="qo-btn qo-settings-toggle" @click="showSettings = !showSettings"><span
-              class="qo-icon">⚙</span> Settings</button>
+              class="qo-icon"></span> Settings</button>
           <div v-if="showSettings" class="qo-settings-body">
             <div class="qo-setting-row"><label>Speed: <strong>{{ speedPercent }}%</strong></label><input type="range"
                 min="1" max="5" v-model.number="speedLevel" class="qo-slider" /></div>
@@ -51,13 +51,13 @@
             <input v-model.number="enqueueValue" type="number" placeholder="Enter value" class="qo-text-input" />
           </div>
 
-          <button class="qo-btn qo-code-btn" @click="goToGenerateCode"><span class="qo-icon">{ }</span> Generate
+          <button class="qo-btn qo-code-btn" @click="goToGenerateCode"> Generate
             Code</button>
 
           <div class="qo-shortcuts">
             <h4>Keyboard Shortcuts:</h4>
             <div class="qo-shortcut-grid"><span class="qo-key">Space</span><span>Play/Pause</span><span
-                class="qo-key">→</span><span>Step Forward</span><span class="qo-key">←</span><span>Step
+                class="qo-key">-></span><span>Step Forward</span><span class="qo-key"><-</span><span>Step
                 Back</span><span class="qo-key">R</span><span>Reset</span></div>
           </div>
           <div class="qo-legend">
@@ -102,9 +102,9 @@
               </template>
             </div>
             <div class="qo-flow-arrow" v-if="currentStep.queue.length > 0">
-              <span>→ → → flow direction → → →</span>
+              <span>-> -> -> flow direction -> -> -></span>
             </div>
-            <div class="qo-chart-footer"><span>{{ currentOperation.label }} — {{ currentStep.queue.length }} elements</span></div>
+            <div class="qo-chart-footer"><span>{{ currentOperation.label }}  -  {{ currentStep.queue.length }} elements</span></div>
             <input type="range" class="qo-scrubber" min="0" :max="steps.length - 1" v-model.number="stepIndex" />
           </div>
           <div class="qo-status-bar">{{ currentStep.explanation }}</div>
@@ -141,43 +141,50 @@
           <h4 class="qo-inspector-label">QUEUE STATE</h4>
           <div class="qo-queue-state">[{{ currentStep.queue.join(', ') }}]</div>
           <div class="qo-queue-length">Size: {{ currentStep.queue.length }} elements</div>
-          <div class="qo-queue-pointers">Front: {{ currentStep.frontIndex >= 0 ? currentStep.frontIndex : '—' }} | Back: {{ currentStep.backIndex >= 0 ? currentStep.backIndex : '—' }}</div>
+          <div class="qo-queue-pointers">Front: {{ currentStep.frontIndex >= 0 ? currentStep.frontIndex : ' - ' }} | Back: {{ currentStep.backIndex >= 0 ? currentStep.backIndex : ' - ' }}</div>
         </aside>
       </div>
 
       <!-- How It Works -->
       <section class="qo-section">
         <button class="qo-section-toggle" @click="showHowItWorks = !showHowItWorks"><span
-            class="qo-info-circle">ⓘ</span> How {{ currentOperation.label }} Works</button>
+            class="qo-info-circle">i</span> How {{ currentOperation.label }} Works</button>
         <div v-if="showHowItWorks" class="qo-section-body">
-          <h2>{{ currentOperation.label }}</h2>
-          <p>{{ currentOperation.info.description }}</p>
-          <h3>Complexity:</h3>
-          <ul>
-            <li><strong>Best Case:</strong> {{ currentOperation.info.best }}</li>
-            <li><strong>Average Case:</strong> {{ currentOperation.info.average }}</li>
-            <li><strong>Worst Case:</strong> {{ currentOperation.info.worst }}</li>
-            <li><strong>Space:</strong> {{ currentOperation.info.space }}</li>
-          </ul>
-          <h3>Properties:</h3>
-          <ul>
-            <li><strong>Stable:</strong> {{ currentOperation.info.stable ? 'Yes' : 'No' }}</li>
-            <li><strong>In-Place:</strong> {{ currentOperation.info.inPlace ? 'Yes' : 'No' }}</li>
-          </ul>
+          <p class="qo-section-intro">Queues process tasks in arrival order. Use these cards to understand how each operation moves the front/back pointers and what that means for complexity.</p>
+          <div class="qo-how-grid">
+            <article v-for="card in howItWorksCards" :key="card.key" class="qo-how-card" :class="{ active: card.key === selectedOp }">
+              <header class="qo-how-header">
+                <div>
+                  <h3>{{ card.label }}</h3>
+                  <p>{{ card.summary }}</p>
+                </div>
+                <span class="qo-chip" v-if="card.key === selectedOp">Active</span>
+              </header>
+              <ol class="qo-step-list">
+                <li v-for="(step, idx) in card.steps" :key="idx">{{ step }}</li>
+              </ol>
+              <div class="qo-how-meta">
+                <span>Best: <strong>{{ card.best }}</strong></span>
+                <span>Avg: <strong>{{ card.average }}</strong></span>
+                <span>Worst: <strong>{{ card.worst }}</strong></span>
+                <span>Space: <strong>{{ card.space }}</strong></span>
+              </div>
+            </article>
+          </div>
         </div>
       </section>
 
       <!-- Edge Cases -->
       <section class="qo-section">
         <button class="qo-section-toggle" @click="showEdgeCases = !showEdgeCases"><span
-            class="qo-info-circle">ⓘ</span> Edge Cases &amp; Examples</button>
+            class="qo-info-circle">i</span> Edge Cases &amp; Examples</button>
         <div v-if="showEdgeCases" class="qo-section-body">
           <h3>Try These:</h3>
           <div class="qo-edge-grid">
             <div class="qo-edge-card" @click="loadEdgeCase([1, 2, 3, 4, 5])"><strong>Ordered: [1,2,3,4,5]</strong><small>Sequential queue</small></div>
             <div class="qo-edge-card" @click="loadEdgeCase([10, 20, 30])"><strong>Small: [10,20,30]</strong><small>Three-element queue</small></div>
             <div class="qo-edge-card" @click="loadEdgeCase([42])"><strong>Single: [42]</strong><small>Queue with one element</small></div>
-            <div class="qo-edge-card" @click="loadEdgeCase([])"><strong>Empty: []</strong><small>Empty queue — test dequeue/peek behavior</small></div>
+            <div class="qo-edge-card" @click="loadEdgeCase([])"><strong>Empty: []</strong><small>Empty queue  -  test dequeue/peek behavior</small></div>
           </div>
           <h3>Tips:</h3>
           <ul class="qo-tips">
@@ -211,6 +218,68 @@ const playing = ref(false)
 const enqueueValue = ref(10)
 
 const baseQueue = ref([4, 8, 2, 6, 1])
+
+const queueOperationWriteups = {
+  enqueue: {
+    summary: 'Append a value to the back of the queue while maintaining FIFO order.',
+    steps: [
+      'Confirm capacity or dynamic growth so the new value fits.',
+      'Move the back pointer forward to the next open slot.',
+      'Write the incoming value at the back index and flag it.',
+      'Update the pointer labels so FRONT/BACK indicators stay accurate.'
+    ]
+  },
+  dequeue: {
+    summary: 'Remove the oldest value by advancing the front pointer.',
+    steps: [
+      'Check whether the queue is empty to avoid underflow.',
+      'Read and highlight the current front element.',
+      'Clear the slot or mark it as processed.',
+      'Advance the front pointer to the next index and expose the new head.'
+    ]
+  },
+  peek: {
+    summary: 'Look at the element at the front pointer without removing it.',
+    steps: [
+      'Ensure at least one element is present.',
+      'Locate the front index and spotlight both the node and pointer badge.',
+      'Mirror the value inside the inspector so users can reference it.',
+      'Leave both front/back pointers untouched for future operations.'
+    ]
+  },
+  isEmpty: {
+    summary: 'Determine whether the queue currently holds anything.',
+    steps: [
+      'Compare front and back pointers or check length === 0.',
+      'Highlight the boolean evaluation in the explanation tray.',
+      'Return true when the structure has no payload, else false.',
+      'Surface guidance on what actions are valid for the outcome.'
+    ]
+  },
+  size: {
+    summary: 'Report how many elements sit between the front and back pointers.',
+    steps: [
+      'Compute the difference between pointers or read queue length.',
+      'Display the intermediate math so learners see the formula.',
+      'Emit the integer size to both the status bar and inspector.',
+      'Explain how the size influences throughput planning.'
+    ]
+  }
+}
+
+const howItWorksCards = computed(() => Object.entries(queueOperations).map(([key, op]) => {
+  const writeup = queueOperationWriteups[key] || { summary: op.description, steps: [] }
+  return {
+    key,
+    label: op.label,
+    summary: writeup.summary,
+    steps: writeup.steps,
+    best: op.info.best,
+    average: op.info.average,
+    worst: op.info.worst,
+    space: op.info.space
+  }
+}))
 
 const currentOperation = computed(() => queueOperations[selectedOp.value])
 
@@ -377,6 +446,17 @@ onUnmounted(() => { window.removeEventListener('keydown', handleKey); clearInter
 .qo-section-body h3{font-size:.95rem;color:#e0e7ff;margin:16px 0 6px}
 .qo-section-body ol,.qo-section-body ul{padding-left:20px;margin:4px 0}
 .qo-section-body li{margin-bottom:3px}
+.qo-section-intro{color:#94a3b8;margin:0 0 16px;font-size:.9rem}
+.qo-how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.qo-how-card{background:rgba(15,23,42,.6);border:1px solid rgba(100,116,139,.25);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;min-height:220px;transition:border .2s,transform .2s}
+.qo-how-card.active{border-color:rgba(99,102,241,.6);transform:translateY(-4px);box-shadow:0 8px 24px rgba(99,102,241,.2)}
+.qo-how-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.qo-how-header h3{margin:0;color:#f8fafc;font-size:1rem}
+.qo-how-header p{margin:4px 0 0;color:#cbd5e1;font-size:.85rem}
+.qo-chip{background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.5);border-radius:999px;padding:3px 10px;font-size:.7rem;color:#c7d2fe;font-weight:600}
+.qo-step-list{margin:0;padding-left:18px;color:#cbd5e1;font-size:.84rem;line-height:1.5}
+.qo-how-meta{display:flex;flex-wrap:wrap;gap:8px;font-size:.75rem;color:#94a3b8}
+.qo-how-meta strong{color:#f1f5f9}
 .qo-edge-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
 .qo-edge-card{background:rgba(15,23,42,.5);border:1px solid rgba(100,116,139,.3);border-radius:10px;padding:14px;cursor:pointer;transition:all .15s}
 .qo-edge-card:hover{border-color:rgba(99,102,241,.5);background:rgba(99,102,241,.08)}
@@ -385,6 +465,7 @@ onUnmounted(() => { window.removeEventListener('keydown', handleKey); clearInter
 .qo-tips{padding-left:20px}
 .qo-tips li{margin-bottom:4px}
 
-@media(max-width:1100px){.qo-three-col{grid-template-columns:1fr}}
-@media(max-width:640px){.qo-edge-grid{grid-template-columns:1fr}.qo-page{padding:12px}.qo-op-pills{gap:4px}.qo-pill{padding:5px 10px;font-size:.75rem}}
+@media(max-width:1100px){.qo-three-col{grid-template-columns:1fr;gap:16px}.qo-chart-area{order:-1}.qo-controls-panel{order:1}.qo-inspector{order:2;max-height:none}}
+@media(max-width:768px){.qo-shortcuts{display:none}.qo-legend{display:none}.qo-controls-panel{padding:10px}}
+@media(max-width:640px){.qo-edge-grid{grid-template-columns:1fr}.qo-page{padding:10px 12px 24px}.qo-op-pills{gap:4px}.qo-pill{padding:5px 10px;font-size:.75rem}.qo-how-card{min-height:auto}}
 </style>

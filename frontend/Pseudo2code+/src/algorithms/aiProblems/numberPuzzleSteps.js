@@ -1,13 +1,43 @@
 export function numberPuzzleSteps() {
   const steps = []
-  
-  // Starting configuration (solvable)
-  const start = [
-    [1, 2, 3],
-    [4, 0, 5],
-    [7, 8, 6]
-  ]
-  
+
+  // Generate a random solvable starting configuration
+  function generateRandomStart() {
+    const tiles = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    // Fisher-Yates shuffle
+    for (let i = tiles.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[tiles[i], tiles[j]] = [tiles[j], tiles[i]]
+    }
+    // Check solvability: inversion count must be even for 3x3 puzzle
+    let inversions = 0
+    for (let i = 0; i < tiles.length; i++) {
+      for (let j = i + 1; j < tiles.length; j++) {
+        if (tiles[i] !== 0 && tiles[j] !== 0 && tiles[i] > tiles[j]) {
+          inversions++
+        }
+      }
+    }
+    if (inversions % 2 !== 0) {
+      // Swap two non-zero tiles to fix parity
+      const a = tiles.indexOf(1)
+      const b = tiles.indexOf(2)
+      ;[tiles[a], tiles[b]] = [tiles[b], tiles[a]]
+    }
+    // Don't start at goal state — reshuffle if we land there
+    const goalFlat = [1, 2, 3, 4, 5, 6, 7, 8, 0]
+    if (tiles.every((v, i) => v === goalFlat[i])) {
+      return generateRandomStart()
+    }
+    return [
+      [tiles[0], tiles[1], tiles[2]],
+      [tiles[3], tiles[4], tiles[5]],
+      [tiles[6], tiles[7], tiles[8]]
+    ]
+  }
+
+  const start = generateRandomStart()
+
   // Goal configuration
   const goal = [
     [1, 2, 3],
@@ -93,7 +123,7 @@ export function numberPuzzleSteps() {
   const openSet = [[start, 0, []]] // [board, cost, path]
   const visited = new Set()
   let iterations = 0
-  const maxIterations = 30
+  const maxIterations = 200
 
   while (openSet.length > 0 && iterations < maxIterations) {
     iterations++

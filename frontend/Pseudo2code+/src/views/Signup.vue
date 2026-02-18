@@ -75,8 +75,17 @@ import {
   loginWithGoogle,
   loginWithGithub,
 } from "@/services/authService";
-import { getFirebaseErrorMessage } from "@/utils/firebaseErrors";
 import { isValidEmail, isValidPassword } from "@/utils/validators";
+
+function getErrorMessage(err) {
+  if (err?.response?.data?.detail) {
+    return err.response.data.detail;
+  }
+  if (err?.message) {
+    return err.message;
+  }
+  return "Something went wrong. Please try again.";
+}
 
 const router = useRouter();
 
@@ -121,18 +130,14 @@ const handleSignup = async () => {
     loading.value = true;
 
     await signupWithEmail(email.value, password.value, name.value);
-
-    // Small delay to ensure Firebase auth state is updated
-    await new Promise(resolve => setTimeout(resolve, 500));
     router.push("/dashboard");
   } catch (err) {
-    error.value = getFirebaseErrorMessage(err);
+    error.value = getErrorMessage(err);
   } finally {
     loading.value = false;
   }
 };
 
-// 🌐 Social logins with error handling
 const handleGoogle = async () => {
   try {
     error.value = "";
@@ -140,16 +145,13 @@ const handleGoogle = async () => {
     loading.value = true;
     
     await loginWithGoogle();
-    
-    // Small delay to ensure Firebase auth state is updated
-    await new Promise(resolve => setTimeout(resolve, 500));
     router.push("/dashboard");
   } catch (err) {
     console.error('Google signup error:', err);
     if (err.code === 'auth/popup-closed-by-user') {
       error.value = "Sign up was cancelled.";
     } else {
-      error.value = "Google sign-up failed. Please try again.";
+      error.value = getErrorMessage(err) || "Google sign-up failed. Please try again.";
     }
   } finally {
     loading.value = false;
@@ -163,18 +165,13 @@ const handleGithub = async () => {
     loading.value = true;
     
     await loginWithGithub();
-    
-    // Small delay to ensure Firebase auth state is updated
-    await new Promise(resolve => setTimeout(resolve, 500));
     router.push("/dashboard");
   } catch (err) {
     console.error('GitHub signup error:', err);
     if (err.code === 'auth/popup-closed-by-user') {
       error.value = "Sign up was cancelled.";
-    } else if (err.code === 'auth/account-exists-with-different-credential') {
-      error.value = "An account with this email already exists. Please try signing up with your original method.";
     } else {
-      error.value = "GitHub sign-up failed. Please try again.";
+      error.value = getErrorMessage(err) || "GitHub sign-up failed. Please try again.";
     }
   } finally {
     loading.value = false;

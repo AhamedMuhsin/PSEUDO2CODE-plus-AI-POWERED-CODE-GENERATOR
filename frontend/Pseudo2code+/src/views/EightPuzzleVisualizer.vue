@@ -20,21 +20,21 @@
                     <!-- Playback -->
                     <div class="bs-btn-group">
                         <button class="bs-btn" :class="{ active: playing }" @click="playing ? pause() : play()">
-                            <span class="bs-icon">▶</span> {{ playing ? 'Pause' : 'Play' }}
+                            <span class="bs-icon"><Play :size="14" /></span> {{ playing ? 'Pause' : 'Play' }}
                         </button>
                         <button class="bs-btn" @click="next" :disabled="stepIndex === steps.length - 1">
-                            <span class="bs-icon">⏭</span> Step
+                            <span class="bs-icon"><SkipForward :size="14" /></span> Step
                         </button>
                     </div>
                     <div class="bs-btn-group">
                         <button class="bs-btn" @click="reset">
-                            <span class="bs-icon">↺</span> Reset
+                            <span class="bs-icon"><RotateCcw :size="14" /></span> Reset
                         </button>
                     </div>
 
                     <!-- Settings toggle -->
                     <button class="bs-btn bs-settings-toggle" @click="showSettings = !showSettings">
-                        <span class="bs-icon">⚙</span> Settings
+                        <span class="bs-icon"><Settings2 :size="14" /></span> Settings
                     </button>
                     <div v-if="showSettings" class="bs-settings-body">
                         <div class="bs-setting-row">
@@ -59,8 +59,8 @@
                         <h4>Keyboard Shortcuts:</h4>
                         <div class="bs-shortcut-grid">
                             <span class="bs-key">Space</span><span>Play/Pause</span>
-                            <span class="bs-key">→</span><span>Step Forward</span>
-                            <span class="bs-key">←</span><span>Step Back</span>
+                            <span class="bs-key"><ArrowRight :size="12" /></span><span>Step Forward</span>
+                            <span class="bs-key"><ArrowLeft :size="12" /></span><span>Step Back</span>
                             <span class="bs-key">R</span><span>Reset</span>
                         </div>
                     </div>
@@ -109,7 +109,7 @@
                             </div>
 
                             <!-- Arrow between boards -->
-                            <div class="pz-arrow">→</div>
+                            <div class="pz-arrow"><ArrowRight :size="24" /></div>
 
                             <!-- Goal State -->
                             <div class="pz-board-wrapper">
@@ -131,10 +131,10 @@
                                 'pz-badge-exploring': currentStep.status === 'exploring' || currentStep.status === 'generated',
                                 'pz-badge-solved': currentStep.status === 'success' || currentStep.status === 'finished',
                             }">
-                                <span v-if="currentStep.status === 'start'">🎯 Initial Puzzle State</span>
-                                <span v-else-if="currentStep.status === 'exploring'">🔍 Exploring node...</span>
-                                <span v-else-if="currentStep.status === 'generated'">📝 Generated neighbor ({{ currentStep.move }})</span>
-                                <span v-else-if="currentStep.status === 'success' || currentStep.status === 'finished'">✅ Puzzle Solved!</span>
+                                <span v-if="currentStep.status === 'start'"><Target :size="14" class="bs-lucide" /> Initial Puzzle State</span>
+                                <span v-else-if="currentStep.status === 'exploring'"><Search :size="14" class="bs-lucide" /> Exploring node...</span>
+                                <span v-else-if="currentStep.status === 'generated'"><FileText :size="14" class="bs-lucide" /> Generated neighbor ({{ currentStep.move }})</span>
+                                <span v-else-if="currentStep.status === 'success' || currentStep.status === 'finished'"><CheckCircle2 :size="14" class="bs-lucide" /> Puzzle Solved!</span>
                                 <span v-else>Processing...</span>
                             </div>
                             <div class="pz-cost-badges">
@@ -260,7 +260,7 @@
             <!-- ═══════ HOW IT WORKS ═══════ -->
             <section class="bs-section">
                 <button class="bs-section-toggle" @click="showHowItWorks = !showHowItWorks">
-                    <span class="bs-info-circle">ⓘ</span>
+                    <span class="bs-info-circle"><Info :size="14" /></span>
                     How the 8-Puzzle A* Algorithm Works
                 </button>
                 <div v-if="showHowItWorks" class="bs-section-body">
@@ -309,26 +309,26 @@
             <!-- ═══════ EXAMPLES ═══════ -->
             <section class="bs-section">
                 <button class="bs-section-toggle" @click="showExamples = !showExamples">
-                    <span class="bs-info-circle">ⓘ</span>
+                    <span class="bs-info-circle"><Info :size="14" /></span>
                     Puzzle Facts &amp; Tips
                 </button>
                 <div v-if="showExamples" class="bs-section-body">
                     <h3>Key Concepts:</h3>
                     <div class="bs-edge-grid">
                         <div class="bs-edge-card">
-                            <strong>📐 Manhattan Distance</strong>
+                            <strong><Ruler :size="14" class="bs-lucide" /> Manhattan Distance</strong>
                             <small>Sum of |x₁-x₂| + |y₁-y₂| for each tile to its goal position</small>
                         </div>
                         <div class="bs-edge-card">
-                            <strong>🎯 Admissible Heuristic</strong>
+                            <strong><Target :size="14" class="bs-lucide" /> Admissible Heuristic</strong>
                             <small>Never overestimates the true cost — guarantees optimal solution</small>
                         </div>
                         <div class="bs-edge-card">
-                            <strong>📊 Priority Queue</strong>
+                            <strong><BarChart3 :size="14" class="bs-lucide" /> Priority Queue</strong>
                             <small>Always expands the most promising node (lowest f value) first</small>
                         </div>
                         <div class="bs-edge-card">
-                            <strong>🔄 State Space</strong>
+                            <strong><RefreshCw :size="14" class="bs-lucide" /> State Space</strong>
                             <small>9!/2 = 181,440 reachable states for the 8-Puzzle</small>
                         </div>
                     </div>
@@ -352,6 +352,7 @@ import { useRouter } from 'vue-router'
 import AuthNavbar from '@/components/Navbar/AuthNavbar.vue'
 import arrowLeft from '@/assets/arrow-left.svg'
 import { numberPuzzleSteps } from '@/algorithms/aiProblems/numberPuzzleSteps'
+import { Target, Search, FileText, CheckCircle2, Ruler, BarChart3, RefreshCw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Play, SkipForward, RotateCcw, Settings2, Info } from 'lucide-vue-next'
 
 const router = useRouter()
 
@@ -370,7 +371,7 @@ const totalSteps = computed(() => steps.value.length)
 const currentStepNumber = computed(() => stepIndex.value + 1)
 const currentStep = computed(() =>
     steps.value[stepIndex.value] || {
-        board: [[1, 2, 3], [4, 0, 5], [7, 8, 6]],
+        board: steps.value[0]?.board || [[1, 2, 3], [4, 5, 6], [7, 8, 0]],
         goal: [[1, 2, 3], [4, 5, 6], [7, 8, 0]],
         move: null,
         cost: 0,
@@ -409,10 +410,10 @@ const misplacedCount = computed(() => {
 // ─── Move arrow ──────────────────────────────
 const moveArrow = computed(() => {
     const m = currentStep.value.move
-    if (m === 'UP') return '⬆'
-    if (m === 'DOWN') return '⬇'
-    if (m === 'LEFT') return '⬅'
-    if (m === 'RIGHT') return '➡'
+    if (m === 'UP') return 'UP'
+    if (m === 'DOWN') return 'DN'
+    if (m === 'LEFT') return 'LT'
+    if (m === 'RIGHT') return 'RT'
     return ''
 })
 
@@ -514,7 +515,8 @@ onUnmounted(() => {
 .back-btn-compact { display: flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #e0e7ff; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
 .back-btn-compact:hover { background: rgba(99,102,241,0.25); transform: translateX(-2px); }
 .arrow { width: 16px; height: 16px; }
-.bs-title { font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin: 0 0 16px; }
+.bs-title { font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin: 16px 0 16px; }
+.bs-lucide { display: inline-block; vertical-align: -2px; margin-right: 2px; }
 
 /* ════════ THREE-COL ════════ */
 .bs-three-col { display: grid; grid-template-columns: 240px 1fr 280px; gap: 16px; margin-bottom: 24px; }
@@ -658,10 +660,20 @@ onUnmounted(() => {
 .bs-tips li { margin-bottom: 4px; }
 
 /* ════════ RESPONSIVE ════════ */
-@media (max-width: 1100px) { .bs-three-col { grid-template-columns: 1fr; } }
+@media (max-width: 1100px) {
+    .bs-three-col { grid-template-columns: 1fr; gap: 16px; }
+    .bs-chart-area { order: -1; }
+    .bs-controls-panel { order: 1; }
+    .bs-inspector { order: 2; max-height: none; }
+}
+@media (max-width: 768px) {
+    .bs-shortcuts { display: none; }
+    .bs-legend { display: none; }
+    .bs-controls-panel { padding: 10px; }
+}
 @media (max-width: 640px) {
     .bs-edge-grid { grid-template-columns: 1fr; }
-    .bs-page { padding: 12px; }
+    .bs-page { padding: 10px 12px 24px; }
     .pz-cell { width: 60px; height: 60px; }
     .pz-num { font-size: 1.2rem; }
     .pz-container { gap: 12px; }

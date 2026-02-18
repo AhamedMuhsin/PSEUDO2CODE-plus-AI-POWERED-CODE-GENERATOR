@@ -20,24 +20,24 @@
                     <!-- Playback -->
                     <div class="bs-btn-group">
                         <button class="bs-btn" :class="{ active: playing }" @click="playing ? pause() : play()">
-                            <span class="bs-icon">▶</span> {{ playing ? 'Pause' : 'Play' }}
+                            <span class="bs-icon"><Play :size="14" /></span> {{ playing ? 'Pause' : 'Play' }}
                         </button>
                         <button class="bs-btn" @click="next" :disabled="stepIndex === steps.length - 1">
-                            <span class="bs-icon">⏭</span> Step
+                            <span class="bs-icon"><SkipForward :size="14" /></span> Step
                         </button>
                     </div>
                     <div class="bs-btn-group">
                         <button class="bs-btn" @click="reset">
-                            <span class="bs-icon">↺</span> Reset
+                            <span class="bs-icon"><RotateCcw :size="14" /></span> Reset
                         </button>
                         <button class="bs-btn" @click="generateNew">
-                            <span class="bs-icon">⤮</span> New Puzzle
+                            <span class="bs-icon"><Shuffle :size="14" /></span> New Puzzle
                         </button>
                     </div>
 
                     <!-- Settings toggle -->
                     <button class="bs-btn bs-settings-toggle" @click="showSettings = !showSettings">
-                        <span class="bs-icon">⚙</span> Settings
+                        <span class="bs-icon"><Settings2 :size="14" /></span> Settings
                     </button>
 
                     <div v-if="showSettings" class="bs-settings-body">
@@ -89,8 +89,8 @@
                         <h4>Keyboard Shortcuts:</h4>
                         <div class="bs-shortcut-grid">
                             <span class="bs-key">Space</span><span>Play/Pause</span>
-                            <span class="bs-key">→</span><span>Step Forward</span>
-                            <span class="bs-key">←</span><span>Step Back</span>
+                            <span class="bs-key"><ArrowRight :size="14" /></span><span>Step Forward</span>
+                            <span class="bs-key"><ArrowLeft :size="14" /></span><span>Step Back</span>
                             <span class="bs-key">R</span><span>Reset</span>
                         </div>
                     </div>
@@ -162,7 +162,7 @@
                             <!-- Operation Arrow (between Jug 1 & 2, or center for 3 jugs) -->
                             <div class="wj-operation-display">
                                 <div class="wj-target-badge">
-                                    <span class="wj-target-icon">🎯</span>
+                                    <span class="wj-target-icon"><Target :size="16" /></span>
                                     <span>Target: {{ targetAmount }}L</span>
                                 </div>
                                 <div v-if="currentStep.operation && currentStep.operation !== 'start'"
@@ -356,7 +356,7 @@
             <!-- ═══════ HOW IT WORKS ═══════ -->
             <section class="bs-section">
                 <button class="bs-section-toggle" @click="showHowItWorks = !showHowItWorks">
-                    <span class="bs-info-circle">ⓘ</span>
+                    <span class="bs-info-circle"><Info :size="16" /></span>
                     How Water Jug Problem Works
                 </button>
                 <div v-if="showHowItWorks" class="bs-section-body">
@@ -405,7 +405,7 @@
             <!-- ═══════ EDGE CASES & EXAMPLES ═══════ -->
             <section class="bs-section">
                 <button class="bs-section-toggle" @click="showEdgeCases = !showEdgeCases">
-                    <span class="bs-info-circle">ⓘ</span>
+                    <span class="bs-info-circle"><Info :size="16" /></span>
                     Configurations &amp; Examples
                 </button>
                 <div v-if="showEdgeCases" class="bs-section-body">
@@ -468,6 +468,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthNavbar from '@/components/Navbar/AuthNavbar.vue'
 import arrowLeft from '@/assets/arrow-left.svg'
+import { Target, CheckCircle2, Droplets, Trash2, RefreshCw, Play, SkipForward, RotateCcw, Shuffle, Settings2, Info, ArrowRight, ArrowLeft } from 'lucide-vue-next'
 import { waterJugSteps } from '@/algorithms/aiProblems/waterJugSteps'
 
 const router = useRouter()
@@ -532,11 +533,11 @@ const metrics = computed(() => {
 // ─── Helpers ────────────────────────────────
 function getOperationLabel(step) {
     if (step.status === 'exploring') return 'Exploring State'
-    if (step.status === 'success') return '✅ Solution Found!'
+    if (step.status === 'success') return 'Solution Found!'
     if (step.operation && typeof step.operation === 'string') {
-        if (step.operation.includes('Fill')) return '💧 ' + step.operation
-        if (step.operation.includes('Empty')) return '🪣 ' + step.operation
-        if (step.operation.includes('Pour')) return '🔄 ' + step.operation
+        if (step.operation.includes('Fill')) return step.operation
+        if (step.operation.includes('Empty')) return step.operation
+        if (step.operation.includes('Pour')) return step.operation
     }
     return step.operation || ''
 }
@@ -706,7 +707,13 @@ onUnmounted(() => {
     font-size: 1.6rem;
     font-weight: 700;
     color: #f1f5f9;
-    margin: 0 0 16px;
+    margin: 16px 0 16px;
+}
+
+.bs-lucide {
+    display: inline-block;
+    vertical-align: -2px;
+    margin-right: 2px;
 }
 
 /* ════════ THREE-COL ════════ */
@@ -1592,36 +1599,22 @@ onUnmounted(() => {
 
 /* ════════ RESPONSIVE ════════ */
 @media (max-width: 1100px) {
-    .bs-three-col {
-        grid-template-columns: 1fr;
-    }
+    .bs-three-col { grid-template-columns: 1fr; gap: 16px; }
+    .bs-chart-area { order: -1; }
+    .bs-controls-panel { order: 1; }
+    .bs-inspector { order: 2; max-height: none; }
 }
-
+@media (max-width: 768px) {
+    .bs-shortcuts { display: none; }
+    .bs-legend { display: none; }
+    .bs-controls-panel { padding: 10px; }
+}
 @media (max-width: 640px) {
-    .bs-edge-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .bs-page {
-        padding: 12px;
-    }
-
-    .wj-jugs-container {
-        gap: 8px;
-    }
-
-    .wj-jugs-container.wj-three-jugs {
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-    }
-
-    .wj-jug {
-        width: 90px;
-        height: 160px;
-    }
-
-    .wj-operation-display {
-        min-width: 100px;
-    }
+    .bs-edge-grid { grid-template-columns: 1fr; }
+    .bs-page { padding: 10px 12px 24px; }
+    .wj-jugs-container { gap: 8px; }
+    .wj-jugs-container.wj-three-jugs { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .wj-jug { width: 90px; height: 160px; }
+    .wj-operation-display { min-width: 100px; }
 }
 </style>

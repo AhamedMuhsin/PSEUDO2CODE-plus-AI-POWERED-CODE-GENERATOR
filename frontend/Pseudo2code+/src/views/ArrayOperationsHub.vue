@@ -16,23 +16,23 @@
           @click="selectOperation(key)">{{ op.label }}</button>
       </div>
 
-      <!-- ═══════ THREE-COLUMN LAYOUT ═══════ -->
+      <!-- ======= THREE-COLUMN LAYOUT ======= -->
       <div class="ao-three-col">
         <!-- LEFT: Controls -->
         <aside class="ao-controls-panel">
           <div class="ao-btn-group">
             <button class="ao-btn" :class="{ active: playing }" @click="playing ? pause() : play()"
-              :disabled="!isPlayable"><span class="ao-icon">▶</span> {{ playing ? 'Pause' : 'Play' }}</button>
+              :disabled="!isPlayable"> {{ playing ? 'Pause' : 'Play' }}</button>
             <button class="ao-btn" @click="next" :disabled="stepIndex === steps.length - 1"><span
-                class="ao-icon">⏭</span> Step</button>
+                class="ao-icon"></span> Step</button>
           </div>
           <div class="ao-btn-group">
-            <button class="ao-btn" @click="reset"><span class="ao-icon">↺</span> Reset</button>
-            <button class="ao-btn" @click="generateRandom"><span class="ao-icon">⤮</span> Randomize</button>
+            <button class="ao-btn" @click="reset"> Reset</button>
+            <button class="ao-btn" @click="generateRandom"> Randomize</button>
           </div>
 
           <button class="ao-btn ao-settings-toggle" @click="showSettings = !showSettings"><span
-              class="ao-icon">⚙</span> Settings</button>
+              class="ao-icon"></span> Settings</button>
           <div v-if="showSettings" class="ao-settings-body">
             <div class="ao-setting-row"><label>Speed: <strong>{{ speedPercent }}%</strong></label><input type="range"
                 min="1" max="5" v-model.number="speedLevel" class="ao-slider" /></div>
@@ -63,13 +63,13 @@
               placeholder="Index to delete" class="ao-text-input" />
           </div>
 
-          <button class="ao-btn ao-code-btn" @click="goToGenerateCode"><span class="ao-icon">{ }</span> Generate
+          <button class="ao-btn ao-code-btn" @click="goToGenerateCode"> Generate
             Code</button>
 
           <div class="ao-shortcuts">
             <h4>Keyboard Shortcuts:</h4>
             <div class="ao-shortcut-grid"><span class="ao-key">Space</span><span>Play/Pause</span><span
-                class="ao-key">→</span><span>Step Forward</span><span class="ao-key">←</span><span>Step
+                class="ao-key">-></span><span>Step Forward</span><span class="ao-key"><-</span><span>Step
                 Back</span><span class="ao-key">R</span><span>Reset</span></div>
           </div>
           <div class="ao-legend">
@@ -101,7 +101,7 @@
                 <span class="ao-cell-index">{{ i }}</span>
               </div>
             </div>
-            <div class="ao-chart-footer"><span>{{ currentOperation.label }} — {{ currentStep.array.length }}
+            <div class="ao-chart-footer"><span>{{ currentOperation.label }}  -  {{ currentStep.array.length }}
                 elements</span></div>
             <input type="range" class="ao-scrubber" min="0" :max="steps.length - 1" v-model.number="stepIndex" />
           </div>
@@ -149,29 +149,36 @@
       <!-- How It Works -->
       <section class="ao-section">
         <button class="ao-section-toggle" @click="showHowItWorks = !showHowItWorks"><span
-            class="ao-info-circle">ⓘ</span> How {{ currentOperation.label }} Works</button>
+            class="ao-info-circle">i</span> How {{ currentOperation.label }} Works</button>
         <div v-if="showHowItWorks" class="ao-section-body">
-          <h2>{{ currentOperation.label }}</h2>
-          <p>{{ currentOperation.info.description }}</p>
-          <h3>Complexity:</h3>
-          <ul>
-            <li><strong>Best Case:</strong> {{ currentOperation.info.best }}</li>
-            <li><strong>Average Case:</strong> {{ currentOperation.info.average }}</li>
-            <li><strong>Worst Case:</strong> {{ currentOperation.info.worst }}</li>
-            <li><strong>Space:</strong> {{ currentOperation.info.space }}</li>
-          </ul>
-          <h3>Properties:</h3>
-          <ul>
-            <li><strong>Stable:</strong> {{ currentOperation.info.stable ? 'Yes' : 'No' }}</li>
-            <li><strong>In-Place:</strong> {{ currentOperation.info.inPlace ? 'Yes' : 'No' }}</li>
-          </ul>
+          <p class="ao-section-intro">Each array action either scans, shifts, or overwrites memory. The cards outline those mechanics plus complexity so the content stays readable on smaller screens.</p>
+          <div class="ao-how-grid">
+            <article v-for="card in howItWorksCards" :key="card.key" class="ao-how-card" :class="{ active: card.key === selectedOp }">
+              <header class="ao-how-header">
+                <div>
+                  <h3>{{ card.label }}</h3>
+                  <p>{{ card.summary }}</p>
+                </div>
+                <span class="ao-chip" v-if="card.key === selectedOp">Active</span>
+              </header>
+              <ol class="ao-step-list">
+                <li v-for="(step, idx) in card.steps" :key="idx">{{ step }}</li>
+              </ol>
+              <div class="ao-how-meta">
+                <span>Best: <strong>{{ card.best }}</strong></span>
+                <span>Avg: <strong>{{ card.average }}</strong></span>
+                <span>Worst: <strong>{{ card.worst }}</strong></span>
+                <span>Space: <strong>{{ card.space }}</strong></span>
+              </div>
+            </article>
+          </div>
         </div>
       </section>
 
       <!-- Edge Cases -->
       <section class="ao-section">
         <button class="ao-section-toggle" @click="showEdgeCases = !showEdgeCases"><span
-            class="ao-info-circle">ⓘ</span> Edge Cases &amp; Examples</button>
+            class="ao-info-circle">i</span> Edge Cases &amp; Examples</button>
         <div v-if="showEdgeCases" class="ao-section-body">
           <h3>Try These:</h3>
           <div class="ao-edge-grid">
@@ -185,7 +192,7 @@
             <li>Use the <strong>custom array</strong> input to test any data</li>
             <li>Switch operations with the <strong>pills above</strong> to compare behaviors</li>
             <li>Binary Search requires the array to be <strong>sorted first</strong></li>
-            <li>Insert/Delete operations change the array — use <strong>Reset</strong> to restore</li>
+            <li>Insert/Delete operations change the array  -  use <strong>Reset</strong> to restore</li>
           </ul>
         </div>
       </section>
@@ -211,6 +218,95 @@ const playing = ref(false)
 
 const baseArray = ref([5, 2, 8, 1, 9, 3])
 const opParams = reactive({ target: null, index: null, value: null })
+
+const arrayOperationWriteups = {
+  traverse: {
+    summary: 'Iterate through every index from left to right.',
+    steps: [
+      'Initialize an index pointer at 0.',
+      'Visit the element, emit it in the explanation feed.',
+      'Increment the pointer and repeat until the end.',
+      'Highlight the final pass so learners see completion conditions.'
+    ]
+  },
+  linearSearch: {
+    summary: 'Scan each item sequentially until the target appears.',
+    steps: [
+      'Start at index 0 and compare against the target.',
+      'If mismatch, advance to the next index.',
+      'Stop when a match is found and capture the index.',
+      'If the pointer reaches the end, report that the target is absent.'
+    ]
+  },
+  binarySearch: {
+    summary: 'Divide the sorted array in half to locate the target quickly.',
+    steps: [
+      'Sort a copy of the array and set low/high bounds.',
+      'Check the midpoint and compare it with the target.',
+      'Discard half of the search space depending on the comparison.',
+      'Repeat until the value is found or the range collapses.'
+    ]
+  },
+  insertEnd: {
+    summary: 'Append a value at the final index.',
+    steps: [
+      'Read the current length to know the write location.',
+      'Place the new value at arr[length].',
+      'Increase the logical size by one.',
+      'Show the updated array and mark the inserted index.'
+    ]
+  },
+  insertIndex: {
+    summary: 'Shift elements to make room and insert at a given position.',
+    steps: [
+      'Validate the index bounds.',
+      'Shift elements right starting from the tail down to the index.',
+      'Write the new value into the freed slot.',
+      'Update length and highlight the inserted location.'
+    ]
+  },
+  deleteEnd: {
+    summary: 'Remove the last element of the array.',
+    steps: [
+      'Check that the array is not empty.',
+      'Capture the value at length - 1 for reporting.',
+      'Reduce the logical length and optionally clear the slot.',
+      'Show the shortened array and mention the removed value.'
+    ]
+  },
+  deleteIndex: {
+    summary: 'Remove a value at the specified index and close the gap.',
+    steps: [
+      'Validate index bounds.',
+      'Shift subsequent elements left by one position.',
+      'Decrease length and update indexes displayed in the UI.',
+      'Explain that this is an O(n) operation because of shifting.'
+    ]
+  },
+  updateIndex: {
+    summary: 'Overwrite an existing slot with a new value.',
+    steps: [
+      'Ensure the index exists.',
+      'Read the old value for comparison.',
+      'Assign the new value to the array at that index.',
+      'Highlight the cell so learners can see the change.'
+    ]
+  }
+}
+
+const howItWorksCards = computed(() => Object.entries(arrayOperations).map(([key, op]) => {
+  const writeup = arrayOperationWriteups[key] || { summary: op.description, steps: [] }
+  return {
+    key,
+    label: op.label,
+    summary: writeup.summary,
+    steps: writeup.steps,
+    best: op.info.best,
+    average: op.info.average,
+    worst: op.info.worst,
+    space: op.info.space
+  }
+}))
 
 const currentOperation = computed(() => arrayOperations[selectedOp.value])
 
@@ -391,6 +487,17 @@ onUnmounted(() => { window.removeEventListener('keydown', handleKey); clearInter
 .ao-section-body h3{font-size:.95rem;color:#e0e7ff;margin:16px 0 6px}
 .ao-section-body ol,.ao-section-body ul{padding-left:20px;margin:4px 0}
 .ao-section-body li{margin-bottom:3px}
+.ao-section-intro{color:#94a3b8;margin:0 0 16px;font-size:.9rem}
+.ao-how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.ao-how-card{background:rgba(15,23,42,.6);border:1px solid rgba(100,116,139,.25);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;min-height:220px;transition:border .2s,transform .2s}
+.ao-how-card.active{border-color:rgba(99,102,241,.6);transform:translateY(-4px);box-shadow:0 8px 24px rgba(99,102,241,.2)}
+.ao-how-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.ao-how-header h3{margin:0;color:#f8fafc;font-size:1rem}
+.ao-how-header p{margin:4px 0 0;color:#cbd5e1;font-size:.85rem}
+.ao-chip{background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.5);border-radius:999px;padding:3px 10px;font-size:.7rem;color:#c7d2fe;font-weight:600}
+.ao-step-list{margin:0;padding-left:18px;color:#cbd5e1;font-size:.84rem;line-height:1.5}
+.ao-how-meta{display:flex;flex-wrap:wrap;gap:8px;font-size:.75rem;color:#94a3b8}
+.ao-how-meta strong{color:#f1f5f9}
 .ao-edge-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
 .ao-edge-card{background:rgba(15,23,42,.5);border:1px solid rgba(100,116,139,.3);border-radius:10px;padding:14px;cursor:pointer;transition:all .15s}
 .ao-edge-card:hover{border-color:rgba(99,102,241,.5);background:rgba(99,102,241,.08)}
@@ -399,6 +506,7 @@ onUnmounted(() => { window.removeEventListener('keydown', handleKey); clearInter
 .ao-tips{padding-left:20px}
 .ao-tips li{margin-bottom:4px}
 
-@media(max-width:1100px){.ao-three-col{grid-template-columns:1fr}}
-@media(max-width:640px){.ao-edge-grid{grid-template-columns:1fr}.ao-page{padding:12px}.ao-op-pills{gap:4px}.ao-pill{padding:5px 10px;font-size:.75rem}}
+@media(max-width:1100px){.ao-three-col{grid-template-columns:1fr;gap:16px}.ao-chart-area{order:-1}.ao-controls-panel{order:1}.ao-inspector{order:2;max-height:none}}
+@media(max-width:768px){.ao-shortcuts{display:none}.ao-legend{display:none}.ao-controls-panel{padding:10px}}
+@media(max-width:640px){.ao-edge-grid{grid-template-columns:1fr}.ao-page{padding:10px 12px 24px}.ao-op-pills{gap:4px}.ao-pill{padding:5px 10px;font-size:.75rem}.ao-how-card{min-height:auto}}
 </style>

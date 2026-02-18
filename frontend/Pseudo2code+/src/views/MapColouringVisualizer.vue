@@ -15,14 +15,14 @@
         <!-- LEFT -->
         <aside class="bs-controls-panel">
           <div class="bs-btn-group">
-            <button class="bs-btn" :class="{active:playing}" @click="playing?pause():play()"><span class="bs-icon">▶</span>{{ playing?'Pause':'Play' }}</button>
-            <button class="bs-btn" @click="next" :disabled="stepIndex===steps.length-1"><span class="bs-icon">⏭</span>Step</button>
+            <button class="bs-btn" :class="{active:playing}" @click="playing?pause():play()"><span class="bs-icon"><Play :size="14" /></span>{{ playing?'Pause':'Play' }}</button>
+            <button class="bs-btn" @click="next" :disabled="stepIndex===steps.length-1"><span class="bs-icon"><SkipForward :size="14" /></span>Step</button>
           </div>
           <div class="bs-btn-group">
-            <button class="bs-btn" @click="reset"><span class="bs-icon">↺</span>Reset</button>
+            <button class="bs-btn" @click="reset"><span class="bs-icon"><RotateCcw :size="14" /></span>Reset</button>
           </div>
 
-          <button class="bs-btn bs-settings-toggle" @click="showSettings=!showSettings"><span class="bs-icon">⚙</span>Settings</button>
+          <button class="bs-btn bs-settings-toggle" @click="showSettings=!showSettings"><span class="bs-icon"><Settings2 :size="14" /></span>Settings</button>
           <div v-if="showSettings" class="bs-settings-body">
             <div class="bs-setting-row"><label>Speed: <strong>{{ speedPercent }}%</strong></label><input type="range" min="1" max="5" v-model.number="speedLevel" class="bs-slider"/></div>
           </div>
@@ -38,8 +38,8 @@
             <h4>Keyboard Shortcuts:</h4>
             <div class="bs-shortcut-grid">
               <span class="bs-key">Space</span><span>Play / Pause</span>
-              <span class="bs-key">→</span><span>Step Forward</span>
-              <span class="bs-key">←</span><span>Step Back</span>
+              <span class="bs-key"><ArrowRight :size="12" /></span><span>Step Forward</span>
+              <span class="bs-key"><ArrowLeft :size="12" /></span><span>Step Back</span>
               <span class="bs-key">R</span><span>Reset</span>
             </div>
           </div>
@@ -87,13 +87,13 @@
 
               <!-- Status -->
               <div class="mc-status-badge" :class="'mc-sb-'+cs.status">
-                <span v-if="cs.status==='start'">🗺️ Starting Map Colouring CSP</span>
-                <span v-else-if="cs.status==='selecting'">📍 Selecting region: {{ cs.currentRegion }}</span>
-                <span v-else-if="cs.status==='trying'">🎨 Trying {{ cs.tryingColor }} for {{ cs.currentRegion }}</span>
-                <span v-else-if="cs.status==='assigned'">✅ {{ cs.tryingColor }} assigned to {{ cs.currentRegion }}</span>
-                <span v-else-if="cs.status==='conflict'">⚠️ Conflict! {{ cs.tryingColor }} clashes with {{ cs.conflicts?.join(', ') }}</span>
-                <span v-else-if="cs.status==='backtrack'">↩️ Backtracking from {{ cs.currentRegion }}</span>
-                <span v-else-if="cs.status==='success'">🏆 All regions coloured — no conflicts!</span>
+                <span v-if="cs.status==='start'"><Globe :size="14" class="bs-lucide" /> Starting Map Colouring CSP</span>
+                <span v-else-if="cs.status==='selecting'"><MapPin :size="14" class="bs-lucide" /> Selecting region: {{ cs.currentRegion }}</span>
+                <span v-else-if="cs.status==='trying'"><Palette :size="14" class="bs-lucide" /> Trying {{ cs.tryingColor }} for {{ cs.currentRegion }}</span>
+                <span v-else-if="cs.status==='assigned'"><CheckCircle2 :size="14" class="bs-lucide" /> {{ cs.tryingColor }} assigned to {{ cs.currentRegion }}</span>
+                <span v-else-if="cs.status==='conflict'"><AlertTriangle :size="14" class="bs-lucide" /> Conflict! {{ cs.tryingColor }} clashes with {{ cs.conflicts?.join(', ') }}</span>
+                <span v-else-if="cs.status==='backtrack'"><Undo2 :size="14" class="bs-lucide" /> Backtracking from {{ cs.currentRegion }}</span>
+                <span v-else-if="cs.status==='success'"><Trophy :size="14" class="bs-lucide" /> All regions coloured — no conflicts!</span>
               </div>
 
               <!-- Colour palette -->
@@ -164,7 +164,7 @@
 
       <!-- HOW IT WORKS -->
       <section class="bs-section">
-        <button class="bs-section-toggle" @click="showHow=!showHow"><span class="bs-info-circle">ⓘ</span>How Map Colouring CSP Works</button>
+        <button class="bs-section-toggle" @click="showHow=!showHow"><span class="bs-info-circle"><Info :size="14" /></span>How Map Colouring CSP Works</button>
         <div v-if="showHow" class="bs-section-body">
           <h2>Constraint Satisfaction Problem</h2>
           <p>Map Colouring is a classic CSP. The goal is to assign colours to regions such that no two adjacent regions share the same colour. The Australia map with 3 colours is a well-known example.</p>
@@ -188,13 +188,13 @@
       </section>
 
       <section class="bs-section">
-        <button class="bs-section-toggle" @click="showEx=!showEx"><span class="bs-info-circle">ⓘ</span>Applications & Variants</button>
+        <button class="bs-section-toggle" @click="showEx=!showEx"><span class="bs-info-circle"><Info :size="14" /></span>Applications & Variants</button>
         <div v-if="showEx" class="bs-section-body">
           <div class="bs-edge-grid">
-            <div class="bs-edge-card"><strong>📡 Frequency Assignment</strong><small>Assign radio frequencies to towers — adjacent towers can't share frequencies.</small></div>
-            <div class="bs-edge-card"><strong>📅 Scheduling</strong><small>Exam timetabling — no student has two exams at the same time.</small></div>
-            <div class="bs-edge-card"><strong>🧩 Sudoku</strong><small>Each row, column, and box is a constraint — classic CSP.</small></div>
-            <div class="bs-edge-card"><strong>🗺️ Graph Colouring</strong><small>Generalized map colouring — minimum chromatic number problem.</small></div>
+            <div class="bs-edge-card"><strong><Radio :size="14" class="bs-lucide" /> Frequency Assignment</strong><small>Assign radio frequencies to towers — adjacent towers can't share frequencies.</small></div>
+            <div class="bs-edge-card"><strong><CalendarDays :size="14" class="bs-lucide" /> Scheduling</strong><small>Exam timetabling — no student has two exams at the same time.</small></div>
+            <div class="bs-edge-card"><strong><Puzzle :size="14" class="bs-lucide" /> Sudoku</strong><small>Each row, column, and box is a constraint — classic CSP.</small></div>
+            <div class="bs-edge-card"><strong><Globe :size="14" class="bs-lucide" /> Graph Colouring</strong><small>Generalized map colouring — minimum chromatic number problem.</small></div>
           </div>
         </div>
       </section>
@@ -207,6 +207,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthNavbar from '@/components/Navbar/AuthNavbar.vue'
 import arrowLeft from '@/assets/arrow-left.svg'
+import { Globe, MapPin, Palette, CheckCircle2, AlertTriangle, Undo2, Trophy, Radio, CalendarDays, Puzzle, Play, SkipForward, RotateCcw, Settings2, Info, ArrowRight, ArrowLeft } from 'lucide-vue-next'
 import { mapColoringSteps } from '@/algorithms/aiProblems/mapColoringSteps'
 
 const router = useRouter()
@@ -309,7 +310,8 @@ onUnmounted(() => { window.removeEventListener('keydown', handleKey); clearInter
 .bs-container{max-width:1440px;margin:0 auto}.bs-top-bar{flex-shrink:0}
 .back-btn-compact{display:flex;align-items:center;gap:6px;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);color:#e0e7ff;padding:6px 12px;border-radius:8px;cursor:pointer;transition:all .2s;font-size:.85rem}
 .back-btn-compact:hover{background:rgba(99,102,241,.25);transform:translateX(-2px)}.arrow{width:16px;height:16px}
-.bs-title{font-size:1.6rem;font-weight:700;color:#f1f5f9;margin:0 0 16px}
+.bs-title{font-size:1.6rem;font-weight:700;color:#f1f5f9;margin:16px 0 16px}
+.bs-lucide{display:inline-block;vertical-align:-2px;margin-right:2px}
 .bs-three-col{display:grid;grid-template-columns:240px 1fr 280px;gap:16px;margin-bottom:24px}
 .bs-controls-panel{background:rgba(30,41,59,.65);border:1px solid rgba(100,116,139,.25);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px}
 .bs-btn-group{display:grid;grid-template-columns:1fr 1fr;gap:6px}
@@ -402,6 +404,7 @@ onUnmounted(() => { window.removeEventListener('keydown', handleKey); clearInter
 .bs-edge-card:hover{border-color:rgba(99,102,241,.5);background:rgba(99,102,241,.08)}
 .bs-edge-card strong{display:block;color:#f1f5f9;font-size:.88rem;margin-bottom:4px}
 .bs-edge-card small{color:#64748b;font-size:.78rem}
-@media(max-width:1100px){.bs-three-col{grid-template-columns:1fr}}
-@media(max-width:640px){.bs-edge-grid{grid-template-columns:1fr}.bs-page{padding:12px}.mc-assign-grid{grid-template-columns:1fr}}
+@media(max-width:1100px){.bs-three-col{grid-template-columns:1fr;gap:16px}.bs-chart-area{order:-1}.bs-controls-panel{order:1}.bs-inspector{order:2;max-height:none}}
+@media(max-width:768px){.bs-shortcuts{display:none}.bs-legend{display:none}.bs-controls-panel{padding:10px}}
+@media(max-width:640px){.bs-edge-grid{grid-template-columns:1fr}.bs-page{padding:10px 12px 24px}.mc-assign-grid{grid-template-columns:1fr}}
 </style>

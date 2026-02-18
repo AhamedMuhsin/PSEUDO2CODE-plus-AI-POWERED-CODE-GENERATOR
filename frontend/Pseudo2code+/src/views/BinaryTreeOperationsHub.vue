@@ -16,23 +16,23 @@
           :class="{ active: selectedOp === key }" @click="selectOperation(key)">{{ op.label }}</button>
       </div>
 
-      <!-- ═══════ THREE-COLUMN LAYOUT ═══════ -->
+      <!-- ======= THREE-COLUMN LAYOUT ======= -->
       <div class="bt-three-col">
         <!-- LEFT: Controls -->
         <aside class="bt-controls-panel">
           <div class="bt-btn-group">
             <button class="bt-btn" :class="{ active: playing }" @click="playing ? pause() : play()"
-              :disabled="!isPlayable"><span class="bt-icon">▶</span> {{ playing ? 'Pause' : 'Play' }}</button>
+              :disabled="!isPlayable"> {{ playing ? 'Pause' : 'Play' }}</button>
             <button class="bt-btn" @click="next" :disabled="stepIndex === steps.length - 1"><span
-                class="bt-icon">⏭</span> Step</button>
+                class="bt-icon"></span> Step</button>
           </div>
           <div class="bt-btn-group">
-            <button class="bt-btn" @click="reset"><span class="bt-icon">↺</span> Reset</button>
-            <button class="bt-btn" @click="generateRandom"><span class="bt-icon">⤮</span> Randomize</button>
+            <button class="bt-btn" @click="reset"> Reset</button>
+            <button class="bt-btn" @click="generateRandom"> Randomize</button>
           </div>
 
           <button class="bt-btn bt-settings-toggle" @click="showSettings = !showSettings"><span
-              class="bt-icon">⚙</span> Settings</button>
+              class="bt-icon"></span> Settings</button>
           <div v-if="showSettings" class="bt-settings-body">
             <div class="bt-setting-row"><label>Speed: <strong>{{ speedPercent }}%</strong></label><input type="range"
                 min="1" max="5" v-model.number="speedLevel" class="bt-slider" /></div>
@@ -51,13 +51,13 @@
             <input v-model.number="opParams.value" type="number" placeholder="Enter value" class="bt-text-input" />
           </div>
 
-          <button class="bt-btn bt-code-btn" @click="goToGenerateCode"><span class="bt-icon">{ }</span> Generate
+          <button class="bt-btn bt-code-btn" @click="goToGenerateCode"> Generate
             Code</button>
 
           <div class="bt-shortcuts">
             <h4>Keyboard Shortcuts:</h4>
             <div class="bt-shortcut-grid"><span class="bt-key">Space</span><span>Play/Pause</span><span
-                class="bt-key">→</span><span>Step Forward</span><span class="bt-key">←</span><span>Step
+                class="bt-key">-></span><span>Step Forward</span><span class="bt-key"><-</span><span>Step
                 Back</span><span class="bt-key">R</span><span>Reset</span></div>
           </div>
           <div class="bt-legend">
@@ -97,7 +97,7 @@
                 </svg>
               </template>
             </div>
-            <div class="bt-chart-footer"><span>{{ currentOperation.label }} — {{ currentTreeArray.length }} node(s)</span></div>
+            <div class="bt-chart-footer"><span>{{ currentOperation.label }}  -  {{ currentTreeArray.length }} node(s)</span></div>
             <input type="range" class="bt-scrubber" min="0" :max="steps.length - 1" v-model.number="stepIndex" />
           </div>
           <div class="bt-status-bar">{{ currentStep.explanation }}</div>
@@ -107,7 +107,7 @@
           </div>
           <!-- Traversal result display -->
           <div v-if="currentStep.traversalOrder && currentStep.traversalOrder.length > 0" class="bt-traversal-result">
-            <strong>Result:</strong> [{{ currentStep.traversalOrder.join(' → ') }}]
+            <strong>Result:</strong> [{{ currentStep.traversalOrder.join(' -> ') }}]
           </div>
           <div v-if="currentStep.result !== undefined && typeof currentStep.result !== 'object' && !Array.isArray(currentStep.result)" class="bt-traversal-result">
             <strong>Result:</strong> {{ currentStep.result }}
@@ -148,17 +148,29 @@
       <!-- How It Works -->
       <section class="bt-section">
         <button class="bt-section-toggle" @click="showHowItWorks = !showHowItWorks"><span
-            class="bt-info-circle">ⓘ</span> How {{ currentOperation.label }} Works</button>
+            class="bt-info-circle">i</span> How {{ currentOperation.label }} Works</button>
         <div v-if="showHowItWorks" class="bt-section-body">
-          <h2>{{ currentOperation.label }}</h2>
-          <p>{{ currentOperation.info.description }}</p>
-          <h3>Complexity:</h3>
-          <ul>
-            <li><strong>Best Case:</strong> {{ currentOperation.info.best }}</li>
-            <li><strong>Average Case:</strong> {{ currentOperation.info.average }}</li>
-            <li><strong>Worst Case:</strong> {{ currentOperation.info.worst }}</li>
-            <li><strong>Space:</strong> {{ currentOperation.info.space }}</li>
-          </ul>
+          <p class="bt-section-intro">Tree algorithms mix traversal patterns with structural edits. These cards summarize the play-by-play for each operation plus the associated complexity.</p>
+          <div class="bt-how-grid">
+            <article v-for="card in howItWorksCards" :key="card.key" class="bt-how-card" :class="{ active: selectedOp === card.key }">
+              <header class="bt-how-header">
+                <div>
+                  <h3>{{ card.label }}</h3>
+                  <p>{{ card.summary }}</p>
+                </div>
+                <span class="bt-chip" v-if="card.key === selectedOp">Active</span>
+              </header>
+              <ol class="bt-step-list">
+                <li v-for="(step, idx) in card.steps" :key="idx">{{ step }}</li>
+              </ol>
+              <div class="bt-how-meta">
+                <span>Best: <strong>{{ card.best }}</strong></span>
+                <span>Avg: <strong>{{ card.average }}</strong></span>
+                <span>Worst: <strong>{{ card.worst }}</strong></span>
+                <span>Space: <strong>{{ card.space }}</strong></span>
+              </div>
+            </article>
+          </div>
           <h3>Binary Tree Properties:</h3>
           <ul>
             <li>Each node has at most <strong>two children</strong> (left and right)</li>
@@ -173,20 +185,20 @@
       <!-- Edge Cases -->
       <section class="bt-section">
         <button class="bt-section-toggle" @click="showEdgeCases = !showEdgeCases"><span
-            class="bt-info-circle">ⓘ</span> Edge Cases &amp; Examples</button>
+            class="bt-info-circle">i</span> Edge Cases &amp; Examples</button>
         <div v-if="showEdgeCases" class="bt-section-body">
           <h3>Try These:</h3>
           <div class="bt-edge-grid">
             <div class="bt-edge-card" @click="loadEdgeCase([10, 5, 15, 3, 7, 12, 20])"><strong>Balanced: 10,5,15,3,7,12,20</strong><small>Complete binary tree</small></div>
             <div class="bt-edge-card" @click="loadEdgeCase([1, 2, 3])"><strong>Small: 1,2,3</strong><small>Three-node tree</small></div>
             <div class="bt-edge-card" @click="loadEdgeCase([42])"><strong>Single: 42</strong><small>Tree with one node</small></div>
-            <div class="bt-edge-card" @click="loadEdgeCase([])"><strong>Empty</strong><small>Empty tree — test edge cases</small></div>
+            <div class="bt-edge-card" @click="loadEdgeCase([])"><strong>Empty</strong><small>Empty tree  -  test edge cases</small></div>
           </div>
           <h3>Tips:</h3>
           <ul class="bt-tips">
-            <li><strong>Inorder</strong> traversal visits Left → Node → Right</li>
-            <li><strong>Preorder</strong> traversal visits Node → Left → Right</li>
-            <li><strong>Postorder</strong> traversal visits Left → Right → Node</li>
+            <li><strong>Inorder</strong> traversal visits Left -> Node -> Right</li>
+            <li><strong>Preorder</strong> traversal visits Node -> Left -> Right</li>
+            <li><strong>Postorder</strong> traversal visits Left -> Right -> Node</li>
             <li><strong>Level Order</strong> visits nodes level by level (BFS)</li>
             <li>Use <strong>Insert</strong> to add nodes and watch the tree grow</li>
             <li>Use <strong>Search</strong> to trace the BFS path to a value</li>
@@ -216,6 +228,113 @@ const playing = ref(false)
 
 const baseValues = ref([10, 5, 15, 3, 7, 12, 20])
 const opParams = reactive({ value: 8 })
+
+const binaryTreeWriteups = {
+  insert: {
+    summary: 'Add a new node using level-order placement so the tree stays balanced.',
+    steps: [
+      'Traverse level by level until a node with an empty child is found.',
+      'Create a node containing the requested value.',
+      'Attach it as the first available left or right child.',
+      'Recompute traversal arrays so the visualization reflects the change.'
+    ]
+  },
+  search: {
+    summary: 'Walk the tree breadth-first until the value is located.',
+    steps: [
+      'Start from the root and place it in a queue.',
+      'Dequeue nodes one at a time and compare their value to the goal.',
+      'Enqueue children to continue exploring.',
+      'Highlight the path once the value is found or report failure after exhaustion.'
+    ]
+  },
+  delete: {
+    summary: 'Remove a node by swapping it with the deepest rightmost node.',
+    steps: [
+      'Locate both the target node and the deepest rightmost node.',
+      'Copy the deepest value into the target node.',
+      'Delete the deepest node to maintain completeness.',
+      'Update parents/children references and traversal arrays.'
+    ]
+  },
+  inorder: {
+    summary: 'Visit nodes in Left -> Node -> Right order.',
+    steps: [
+      'Recursively traverse the left subtree.',
+      'Record the current node.',
+      'Traverse the right subtree.',
+      'Aggregate the visit order for sorted output in BSTs.'
+    ]
+  },
+  preorder: {
+    summary: 'Visit Node -> Left -> Right to capture root-first structure.',
+    steps: [
+      'Process the current node.',
+      'Traverse the left subtree.',
+      'Traverse the right subtree.',
+      'Use the order to rebuild the tree or serialize it.'
+    ]
+  },
+  postorder: {
+    summary: 'Visit Left -> Right -> Node for cleanup-style traversals.',
+    steps: [
+      'Traverse left subtree to completion.',
+      'Traverse right subtree.',
+      'Process the node after its children.',
+      'Great for freeing nodes or evaluating expression trees.'
+    ]
+  },
+  levelorder: {
+    summary: 'Breadth-first traversal visiting nodes level by level.',
+    steps: [
+      'Push the root into a queue.',
+      'Pop a node, visit it, then enqueue its children.',
+      'Repeat until the queue is empty.',
+      'Collect nodes grouped by depth for layered rendering.'
+    ]
+  },
+  height: {
+    summary: 'Compute the longest path from root to any leaf.',
+    steps: [
+      'Recursively compute height of left and right subtrees.',
+      'Take the max of the two heights.',
+      'Add one for the current node.',
+      'Return 0 for NULL to anchor the recursion.'
+    ]
+  },
+  countNodes: {
+    summary: 'Count how many nodes are present in total.',
+    steps: [
+      'Traverse every node (DFS/BFS).',
+      'Increment a counter for each visited node.',
+      'Propagate counts upward through recursion.',
+      'Display the final tally in the inspector.'
+    ]
+  },
+  countLeaves: {
+    summary: 'Count nodes with no children.',
+    steps: [
+      'Traverse the tree and inspect each node.',
+      'If both children are null, increment the leaf count.',
+      'Aggregate counts from subtrees.',
+      'Report how many leaves exist to gauge tree shape.'
+    ]
+  }
+}
+
+const howItWorksCards = computed(() => Object.entries(binaryTreeOperations).map(([key, op]) => {
+  const writeup = binaryTreeWriteups[key] || { summary: op.description, steps: [] }
+  return {
+    key,
+    label: op.label,
+    summary: writeup.summary,
+    steps: writeup.steps,
+    best: op.info.best,
+    average: op.info.average,
+    worst: op.info.worst,
+    space: op.info.space
+  }
+}))
 
 const currentOperation = computed(() => binaryTreeOperations[selectedOp.value])
 
@@ -471,6 +590,17 @@ onUnmounted(() => { window.removeEventListener('keydown', handleKey); clearInter
 .bt-section-body h3{font-size:.95rem;color:#e0e7ff;margin:16px 0 6px}
 .bt-section-body ol,.bt-section-body ul{padding-left:20px;margin:4px 0}
 .bt-section-body li{margin-bottom:3px}
+.bt-section-intro{color:#94a3b8;margin:0 0 16px;font-size:.9rem}
+.bt-how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:12px}
+.bt-how-card{background:rgba(15,23,42,.6);border:1px solid rgba(100,116,139,.25);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;min-height:220px;transition:border .2s,transform .2s}
+.bt-how-card.active{border-color:rgba(99,102,241,.6);transform:translateY(-4px);box-shadow:0 8px 24px rgba(99,102,241,.2)}
+.bt-how-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.bt-how-header h3{margin:0;color:#f8fafc;font-size:1rem}
+.bt-how-header p{margin:4px 0 0;color:#cbd5e1;font-size:.85rem}
+.bt-chip{background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.5);border-radius:999px;padding:3px 10px;font-size:.7rem;color:#c7d2fe;font-weight:600}
+.bt-step-list{margin:0;padding-left:18px;color:#cbd5e1;font-size:.84rem;line-height:1.5}
+.bt-how-meta{display:flex;flex-wrap:wrap;gap:8px;font-size:.75rem;color:#94a3b8}
+.bt-how-meta strong{color:#f1f5f9}
 .bt-edge-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
 .bt-edge-card{background:rgba(15,23,42,.5);border:1px solid rgba(100,116,139,.3);border-radius:10px;padding:14px;cursor:pointer;transition:all .15s}
 .bt-edge-card:hover{border-color:rgba(99,102,241,.5);background:rgba(99,102,241,.08)}
@@ -479,6 +609,7 @@ onUnmounted(() => { window.removeEventListener('keydown', handleKey); clearInter
 .bt-tips{padding-left:20px}
 .bt-tips li{margin-bottom:4px}
 
-@media(max-width:1100px){.bt-three-col{grid-template-columns:1fr}}
-@media(max-width:640px){.bt-edge-grid{grid-template-columns:1fr}.bt-page{padding:12px}.bt-op-pills{gap:4px}.bt-pill{padding:5px 10px;font-size:.75rem}}
+@media(max-width:1100px){.bt-three-col{grid-template-columns:1fr;gap:16px}.bt-chart-area{order:-1}.bt-controls-panel{order:1}.bt-inspector{order:2;max-height:none}}
+@media(max-width:768px){.bt-shortcuts{display:none}.bt-legend{display:none}.bt-controls-panel{padding:10px}}
+@media(max-width:640px){.bt-edge-grid{grid-template-columns:1fr}.bt-page{padding:10px 12px 24px}.bt-op-pills{gap:4px}.bt-pill{padding:5px 10px;font-size:.75rem}.bt-how-card{min-height:auto}}
 </style>

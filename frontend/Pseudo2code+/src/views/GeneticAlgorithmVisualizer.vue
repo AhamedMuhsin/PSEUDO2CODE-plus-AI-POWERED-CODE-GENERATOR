@@ -8,26 +8,26 @@
         </button>
       </div>
 
-      <h1 class="bs-title">Genetic Algorithm — Binary String Evolution</h1>
+      <h1 class="bs-title">Genetic Algorithm - Binary String Evolution</h1>
 
-      <!-- ═══════ THREE-COLUMN ═══════ -->
+      <!-- ======= THREE-COLUMN ======= -->
       <div class="bs-three-col">
         <!-- LEFT -->
         <aside class="bs-controls-panel">
           <div class="bs-btn-group">
-            <button class="bs-btn" :class="{active:playing}" @click="playing?pause():play()"><span class="bs-icon">▶</span>{{ playing?'Pause':'Play' }}</button>
-            <button class="bs-btn" @click="next" :disabled="stepIndex===steps.length-1"><span class="bs-icon">⏭</span>Step</button>
+            <button class="bs-btn" :class="{active:playing}" @click="playing?pause():play()">{{ playing ? 'Pause' : 'Play' }}</button>
+            <button class="bs-btn" @click="next" :disabled="stepIndex===steps.length-1">Step</button>
           </div>
           <div class="bs-btn-group">
-            <button class="bs-btn" @click="reset"><span class="bs-icon">↺</span>Reset</button>
+            <button class="bs-btn" @click="reset">Reset</button>
           </div>
 
-          <button class="bs-btn bs-settings-toggle" @click="showSettings=!showSettings"><span class="bs-icon">⚙</span>Settings</button>
+          <button class="bs-btn bs-settings-toggle" @click="showSettings=!showSettings">Settings</button>
           <div v-if="showSettings" class="bs-settings-body">
             <div class="bs-setting-row"><label>Speed: <strong>{{ speedPercent }}%</strong></label><input type="range" min="1" max="5" v-model.number="speedLevel" class="bs-slider"/></div>
           </div>
 
-          <button class="bs-btn bs-code-btn" @click="goToGenerateCode"><span class="bs-icon">{ }</span>Generate Code</button>
+          <button class="bs-btn bs-code-btn" @click="goToGenerateCode">Generate Code</button>
 
           <div class="bs-info-block">
             <p>Target: <strong>11111111</strong></p>
@@ -38,8 +38,8 @@
             <h4>Keyboard Shortcuts:</h4>
             <div class="bs-shortcut-grid">
               <span class="bs-key">Space</span><span>Play / Pause</span>
-              <span class="bs-key">→</span><span>Step Forward</span>
-              <span class="bs-key">←</span><span>Step Back</span>
+              <span class="bs-key">Right Arrow</span><span>Step Forward</span>
+              <span class="bs-key">Left Arrow</span><span>Step Back</span>
               <span class="bs-key">R</span><span>Reset</span>
             </div>
           </div>
@@ -76,7 +76,7 @@
                   <div class="ga-fit-bar-track">
                     <div class="ga-fit-bar-fill" :style="{width:ind.fitness+'%'}" :class="{'ga-fit-100':ind.fitness>=100}"></div>
                   </div>
-                  <span class="ga-fit-val">{{ ind.fitness.toFixed(0) }}%</span>
+                    <span class="ga-fit-val">{{ ind.fitness.toFixed(0) }}%</span>
                 </div>
               </div>
 
@@ -96,28 +96,28 @@
                 </div>
                 <div class="ga-fs-item">
                   <span class="ga-fs-label">Avg Fitness</span>
-                  <span class="ga-fs-val">{{ cs.avgFitness?.toFixed(1) }}%</span>
+                    <span class="ga-fs-val">{{ cs.avgFitness?.toFixed(1) }}%</span>
                 </div>
               </div>
 
               <!-- Status -->
               <div class="ga-status-badge" :class="'ga-sb-'+cs.status">
-                <span v-if="cs.status==='start'">🧬 Initial population generated</span>
-                <span v-else-if="cs.status==='evaluating'">📊 Evaluating fitness — Gen {{ cs.generation }}</span>
-                <span v-else-if="cs.status==='selection'">🏆 Tournament selection of parents</span>
-                <span v-else-if="cs.status==='crossover'">🔀 Crossover — combining parent genes</span>
-                <span v-else-if="cs.status==='mutation'">⚡ Mutation — random bit flip!</span>
-                <span v-else-if="cs.status==='new_generation'">🔄 New generation created</span>
-                <span v-else-if="cs.status==='success'">🏆 Target reached! Evolution complete!</span>
+                <span v-if="cs.status==='start'">Initial population generated</span>
+                <span v-else-if="cs.status==='evaluating'">Evaluating fitness - Gen {{ cs.generation }}</span>
+                <span v-else-if="cs.status==='selection'">Tournament selection of parents</span>
+                <span v-else-if="cs.status==='crossover'">Crossover - combining parent genes</span>
+                <span v-else-if="cs.status==='mutation'">Mutation - random bit flip</span>
+                <span v-else-if="cs.status==='new_generation'">New generation created</span>
+                <span v-else-if="cs.status==='success'">Target reached! Evolution complete</span>
               </div>
             </div>
-            <div class="bs-chart-footer"><span>Binary String Evolution → 11111111</span><span>Population: 6 | Mutation: 10%</span></div>
+            <div class="bs-chart-footer"><span>Binary String Evolution -> 11111111</span><span>Population: 6 | Mutation: 10%</span></div>
             <input type="range" class="bs-scrubber" min="0" :max="steps.length-1" v-model.number="stepIndex"/>
           </div>
           <div class="bs-status-bar">{{ cs.explanation }}</div>
           <div class="bs-complexity-row">
-            <span class="bs-complexity-badge">Time: <strong>O(g · n · l)</strong></span>
-            <span class="bs-complexity-badge">Space: <strong>O(n · l)</strong></span>
+            <span class="bs-complexity-badge">Time: <strong>O(g * n * l)</strong></span>
+            <span class="bs-complexity-badge">Space: <strong>O(n * l)</strong></span>
             <span class="bs-complexity-badge">Optimal: <strong>Heuristic</strong></span>
           </div>
         </div>
@@ -180,52 +180,52 @@
 
       <!-- HOW IT WORKS -->
       <section class="bs-section">
-        <button class="bs-section-toggle" @click="showHow=!showHow"><span class="bs-info-circle">ⓘ</span>How Genetic Algorithms Work</button>
+        <button class="bs-section-toggle" @click="showHow=!showHow"><span class="bs-info-circle" aria-hidden="true">i</span>How Genetic Algorithms Work</button>
         <div v-if="showHow" class="bs-section-body">
           <h2>Algorithm Overview</h2>
-          <p>Genetic Algorithms are inspired by natural selection. A population of candidate solutions evolves over generations through selection, crossover, and mutation — gradually improving fitness toward a target.</p>
+          <p>Genetic Algorithms are inspired by natural selection. A population of candidate solutions evolves over generations through selection, crossover, and mutation, gradually improving fitness toward a target.</p>
           <h3>Steps:</h3>
           <ol>
-            <li><strong>Initialize</strong> — create a random population of chromosomes</li>
-            <li><strong>Evaluate</strong> — compute fitness of each individual</li>
-            <li><strong>Selection</strong> — choose parents using tournament selection (fitter individuals preferred)</li>
-            <li><strong>Crossover</strong> — combine two parents at a random point to create offspring</li>
-            <li><strong>Mutation</strong> — randomly flip bits with small probability (10%)</li>
-            <li><strong>Elitism</strong> — keep the best individual unchanged</li>
-            <li><strong>Repeat</strong> — until fitness reaches 100% or max generations</li>
+            <li><strong>Initialize</strong> - create a random population of chromosomes</li>
+            <li><strong>Evaluate</strong> - compute fitness of each individual</li>
+            <li><strong>Selection</strong> - choose parents using tournament selection (fitter individuals preferred)</li>
+            <li><strong>Crossover</strong> - combine two parents at a random point to create offspring</li>
+            <li><strong>Mutation</strong> - randomly flip bits with small probability (10%)</li>
+            <li><strong>Elitism</strong> - keep the best individual unchanged</li>
+            <li><strong>Repeat</strong> - continue until fitness reaches 100% or max generations</li>
           </ol>
           <h3>Key Concepts:</h3>
           <ul>
-            <li><strong>Chromosome</strong> — binary string representing a solution</li>
-            <li><strong>Fitness</strong> — percentage of bits matching the target (11111111)</li>
-            <li><strong>Crossover</strong> — single-point crossover combines two parents</li>
-            <li><strong>Mutation</strong> — introduces diversity, prevents premature convergence</li>
-            <li><strong>Elitism</strong> — preserves the best solution across generations</li>
+            <li><strong>Chromosome</strong> - binary string representing a solution</li>
+            <li><strong>Fitness</strong> - percentage of bits matching the target (11111111)</li>
+            <li><strong>Crossover</strong> - single-point crossover combines two parents</li>
+            <li><strong>Mutation</strong> - introduces diversity and prevents premature convergence</li>
+            <li><strong>Elitism</strong> - preserves the best solution across generations</li>
           </ul>
           <h3>Complexity:</h3>
           <ul>
-            <li><strong>Time:</strong> O(g × n × l) — g generations, n population, l chromosome length</li>
-            <li><strong>Space:</strong> O(n × l) — storing the population</li>
-            <li><strong>Guarantee:</strong> Heuristic — no guarantee of global optimum</li>
+            <li><strong>Time:</strong> O(g * n * l) - g generations, n population, l chromosome length</li>
+            <li><strong>Space:</strong> O(n * l) - storing the population</li>
+            <li><strong>Guarantee:</strong> Heuristic - no guarantee of global optimum</li>
           </ul>
         </div>
       </section>
 
       <section class="bs-section">
-        <button class="bs-section-toggle" @click="showEx=!showEx"><span class="bs-info-circle">ⓘ</span>GA Applications & Tips</button>
+        <button class="bs-section-toggle" @click="showEx=!showEx"><span class="bs-info-circle" aria-hidden="true">i</span>GA Applications & Tips</button>
         <div v-if="showEx" class="bs-section-body">
           <div class="bs-edge-grid">
-            <div class="bs-edge-card"><strong>🗺️ Traveling Salesman</strong><small>Evolve tour permutations to find shortest routes through cities.</small></div>
-            <div class="bs-edge-card"><strong>🤖 Neural Architecture</strong><small>Neuroevolution — evolve neural network weights and topologies.</small></div>
-            <div class="bs-edge-card"><strong>📅 Scheduling</strong><small>Evolve timetables that satisfy resource and time constraints.</small></div>
-            <div class="bs-edge-card"><strong>🎮 Game AI</strong><small>Evolve strategies or parameters for game-playing agents.</small></div>
+            <div class="bs-edge-card"><strong>Traveling Salesman</strong><small>Evolve tour permutations to find shortest routes through cities.</small></div>
+            <div class="bs-edge-card"><strong>Neural Architecture</strong><small>Neuroevolution - evolve neural network weights and topologies.</small></div>
+            <div class="bs-edge-card"><strong>Scheduling</strong><small>Evolve timetables that satisfy resource and time constraints.</small></div>
+            <div class="bs-edge-card"><strong>Game AI</strong><small>Evolve strategies or parameters for game-playing agents.</small></div>
           </div>
           <h3>Watch for:</h3>
           <ul class="bs-tips">
-            <li>Green bars indicate bits matching the target — watch them grow each generation</li>
-            <li>Mutation events (⚡) add random diversity — sometimes they help, sometimes not</li>
-            <li>The best individual is preserved (elitism) — fitness never decreases</li>
-            <li>Try resetting — different random starts lead to different evolutionary paths!</li>
+            <li>Green bars indicate bits matching the target - watch them grow each generation.</li>
+            <li>Mutation events add random diversity - sometimes they help, sometimes not.</li>
+            <li>The best individual is preserved through elitism - fitness never decreases.</li>
+            <li>Try resetting - different random starts lead to different evolutionary paths.</li>
           </ul>
         </div>
       </section>
@@ -312,8 +312,8 @@ onUnmounted(() => { window.removeEventListener('keydown', handleKey); clearInter
 .bs-container{max-width:1440px;margin:0 auto}.bs-top-bar{flex-shrink:0}
 .back-btn-compact{display:flex;align-items:center;gap:6px;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);color:#e0e7ff;padding:6px 12px;border-radius:8px;cursor:pointer;transition:all .2s;font-size:.85rem}
 .back-btn-compact:hover{background:rgba(99,102,241,.25);transform:translateX(-2px)}.arrow{width:16px;height:16px}
-.bs-title{font-size:1.6rem;font-weight:700;color:#f1f5f9;margin:0 0 16px}
-.bs-three-col{display:grid;grid-template-columns:240px 1fr 280px;gap:16px;margin-bottom:24px}
+.bs-title{font-size:1.6rem;font-weight:700;color:#f1f5f9;margin:16px 0 16px}
+.bs-three-col{display:grid;grid-template-columns:260px 1fr 300px;gap:20px;margin-bottom:28px}
 .bs-controls-panel{background:rgba(30,41,59,.65);border:1px solid rgba(100,116,139,.25);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px}
 .bs-btn-group{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .bs-btn{display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:8px;border:1px solid rgba(100,116,139,.3);background:rgba(100,116,139,.12);color:#cbd5e1;font-size:.82rem;font-weight:500;cursor:pointer;transition:all .15s}
@@ -332,44 +332,44 @@ onUnmounted(() => { window.removeEventListener('keydown', handleKey); clearInter
 .bs-legend-item{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;font-size:.78rem;color:#cbd5e1}.bs-legend-item small{color:#64748b}
 .bs-dot{width:14px;height:14px;border-radius:3px;flex-shrink:0;margin-top:2px}
 .bs-dot.ga-start{background:#3b82f6}.bs-dot.ga-evaluating{background:#f59e0b}.bs-dot.ga-selection{background:#a78bfa}.bs-dot.ga-crossover{background:#06b6d4}.bs-dot.ga-mutation{background:#ef4444}.bs-dot.ga-newgen{background:#22c55e}.bs-dot.ga-success{background:#8b5cf6}
-.bs-chart-area{display:flex;flex-direction:column;gap:10px}
-.bs-chart-wrapper{background:rgba(30,41,59,.65);border:1px solid rgba(100,116,139,.25);border-radius:12px;padding:16px 16px 8px;display:flex;flex-direction:column}
-.bs-chart-footer{display:flex;justify-content:space-between;font-size:.72rem;color:#64748b;padding:6px 0 4px}
-.bs-scrubber{width:100%;accent-color:#818cf8;cursor:pointer;margin-top:4px}
-.bs-status-bar{background:rgba(30,41,59,.65);border:1px solid rgba(100,116,139,.25);border-radius:10px;padding:12px 20px;text-align:center;font-size:.9rem;color:#e2e8f0;font-weight:500}
-.bs-complexity-row{display:flex;justify-content:center;gap:32px}
+.bs-chart-area{display:flex;flex-direction:column;gap:14px}
+.bs-chart-wrapper{background:rgba(30,41,59,.65);border:1px solid rgba(100,116,139,.25);border-radius:12px;padding:18px 20px 12px;display:flex;flex-direction:column}
+.bs-chart-footer{display:flex;justify-content:space-between;font-size:.74rem;color:#64748b;padding:8px 0 6px}
+.bs-scrubber{width:100%;accent-color:#818cf8;cursor:pointer;margin-top:8px}
+.bs-status-bar{background:rgba(30,41,59,.65);border:1px solid rgba(100,116,139,.25);border-radius:10px;padding:14px 22px;text-align:center;font-size:.9rem;color:#e2e8f0;font-weight:500}
+.bs-complexity-row{display:flex;justify-content:center;gap:40px}
 .bs-complexity-badge{font-size:.82rem;color:#94a3b8}.bs-complexity-badge strong{color:#e0e7ff}
 /* GA Viz */
-.ga-viz-container{display:flex;flex-direction:column;align-items:center;gap:14px;padding:16px 8px}
+.ga-viz-container{display:flex;flex-direction:column;align-items:center;gap:14px;padding:20px 10px}
 .ga-gen-header{display:flex;align-items:baseline;gap:10px}
 .ga-gen-label{font-size:.82rem;color:#94a3b8;font-weight:600;letter-spacing:.04em}
 .ga-gen-num{font-size:2rem;font-weight:900;color:#818cf8;font-family:'Fira Code',monospace}
 /* Population grid */
-.ga-pop-grid{width:100%;max-width:480px;display:flex;flex-direction:column;gap:6px}
-.ga-chromo-row{display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(15,23,42,.5);border-radius:8px;border:1px solid rgba(100,116,139,.15);transition:all .2s}
+.ga-pop-grid{width:100%;max-width:520px;display:flex;flex-direction:column;gap:8px}
+.ga-chromo-row{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(15,23,42,.5);border-radius:8px;border:1px solid rgba(100,116,139,.15);transition:all .2s}
 .ga-chromo-best{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.04)}
 .ga-chromo-idx{font-size:.72rem;color:#64748b;font-weight:700;min-width:22px}
 .ga-bits{display:flex;gap:2px}
-.ga-bit{width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:4px;font-size:.82rem;font-weight:800;font-family:'Fira Code',monospace;transition:all .2s}
+.ga-bit{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:4px;font-size:.9rem;font-weight:800;font-family:'Fira Code',monospace;transition:all .2s}
 .ga-bit-1{background:rgba(34,197,94,.15);color:#86efac;border:1px solid rgba(34,197,94,.3)}
 .ga-bit-0{background:rgba(239,68,68,.08);color:#fca5a5;border:1px solid rgba(239,68,68,.15)}
 .ga-bit-target{background:rgba(139,92,246,.12);color:#c4b5fd;border:1px solid rgba(139,92,246,.25)}
-.ga-fit-bar-track{flex:1;height:8px;background:rgba(100,116,139,.15);border-radius:4px;overflow:hidden;min-width:60px}
+.ga-fit-bar-track{flex:1;height:8px;background:rgba(100,116,139,.15);border-radius:4px;overflow:hidden;min-width:80px}
 .ga-fit-bar-fill{height:100%;background:linear-gradient(90deg,#818cf8,#22c55e);border-radius:4px;transition:width .3s}
 .ga-fit-100{background:linear-gradient(90deg,#22c55e,#86efac)!important}
-.ga-fit-val{font-size:.78rem;font-weight:700;color:#e0e7ff;font-family:'Fira Code',monospace;min-width:34px;text-align:right}
+.ga-fit-val{font-size:.82rem;font-weight:700;color:#e0e7ff;font-family:'Fira Code',monospace;min-width:38px;text-align:right}
 /* Target row */
-.ga-target-row{display:flex;align-items:center;gap:10px}
+.ga-target-row{display:flex;align-items:center;gap:12px}
 .ga-target-lbl{font-size:.78rem;color:#94a3b8;font-weight:600}
-.ga-target-bits .ga-bit{width:24px;height:24px;font-size:.75rem}
+.ga-target-bits .ga-bit{width:26px;height:26px;font-size:.8rem}
 /* Fitness summary */
-.ga-fitness-summary{display:flex;gap:24px;justify-content:center}
+.ga-fitness-summary{display:flex;gap:32px;justify-content:center}
 .ga-fs-item{display:flex;flex-direction:column;align-items:center}
 .ga-fs-label{font-size:.68rem;color:#64748b;font-weight:600;letter-spacing:.04em}
 .ga-fs-val{font-size:1.5rem;font-weight:900;color:#f1f5f9;font-family:'Fira Code',monospace}
 .ga-fs-perfect{color:#22c55e!important;text-shadow:0 0 12px rgba(34,197,94,.4)}
 /* Status */
-.ga-status-badge{padding:8px 18px;border-radius:10px;font-size:.82rem;font-weight:600;text-align:center;background:rgba(100,116,139,.1);border:1px solid rgba(100,116,139,.25);color:#cbd5e1;width:100%;max-width:480px}
+.ga-status-badge{padding:10px 20px;border-radius:10px;font-size:.82rem;font-weight:600;text-align:center;background:rgba(100,116,139,.1);border:1px solid rgba(100,116,139,.25);color:#cbd5e1;width:100%;max-width:480px}
 .ga-sb-start{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.25);color:#93c5fd}
 .ga-sb-evaluating{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.25);color:#fbbf24}
 .ga-sb-selection{background:rgba(167,139,250,.08);border-color:rgba(167,139,250,.25);color:#c4b5fd}
@@ -421,17 +421,58 @@ onUnmounted(() => { window.removeEventListener('keydown', handleKey); clearInter
 .bs-section-toggle{width:100%;display:flex;align-items:center;gap:10px;padding:14px 18px;background:none;border:none;color:#e2e8f0;font-size:1rem;font-weight:600;cursor:pointer;text-align:left;transition:background .15s}
 .bs-section-toggle:hover{background:rgba(100,116,139,.1)}
 .bs-info-circle{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.4);color:#a5b4fc;font-size:.82rem;font-weight:700;flex-shrink:0}
-.bs-section-body{padding:0 20px 20px;color:#cbd5e1;font-size:.88rem;line-height:1.7}
+.bs-section-body{padding:0 24px 24px;color:#cbd5e1;font-size:.92rem;line-height:1.8}
 .bs-section-body h2{font-size:1.15rem;color:#f1f5f9;margin:0 0 8px}
 .bs-section-body h3{font-size:.95rem;color:#e0e7ff;margin:16px 0 6px}
 .bs-section-body ol,.bs-section-body ul{padding-left:20px;margin:4px 0}
 .bs-section-body li{margin-bottom:3px}
-.bs-edge-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.bs-edge-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
 .bs-edge-card{background:rgba(15,23,42,.5);border:1px solid rgba(100,116,139,.3);border-radius:10px;padding:14px;cursor:default;transition:all .15s}
 .bs-edge-card:hover{border-color:rgba(99,102,241,.5);background:rgba(99,102,241,.08)}
 .bs-edge-card strong{display:block;color:#f1f5f9;font-size:.88rem;margin-bottom:4px}
 .bs-edge-card small{color:#64748b;font-size:.78rem}
 .bs-tips{padding-left:20px}.bs-tips li{margin-bottom:4px}
-@media(max-width:1100px){.bs-three-col{grid-template-columns:1fr}}
-@media(max-width:640px){.bs-edge-grid{grid-template-columns:1fr}.bs-page{padding:12px}.ga-bit{width:22px;height:22px;font-size:.72rem}}
+@media(max-width:1100px){
+  .bs-three-col{grid-template-columns:1fr;gap:16px}
+  .bs-chart-area{order:-1}
+  .bs-controls-panel{order:1}
+  .bs-inspector{order:2}
+}
+@media(max-width:768px){
+  .bs-controls-panel{padding:10px}
+  .bs-btn-group{grid-template-columns:1fr 1fr 1fr;gap:6px}
+  .bs-btn-group + .bs-btn-group{grid-template-columns:1fr}
+  .bs-shortcuts{display:none}
+  .bs-legend{display:none}
+  .bs-info-block{font-size:.72rem}
+  .bs-settings-toggle{font-size:.78rem;padding:6px 8px}
+  .bs-code-btn{font-size:.78rem;padding:6px 8px}
+  .bs-inspector{max-height:none}
+}
+@media(max-width:640px){
+  .bs-page{padding:10px 12px 24px}
+  .bs-title{font-size:1.2rem;margin-bottom:10px}
+  .ga-bit{width:22px;height:22px;font-size:.72rem}
+  .ga-target-bits .ga-bit{width:20px;height:20px;font-size:.68rem}
+  .ga-gen-num{font-size:1.5rem}
+  .ga-fs-val{font-size:1.1rem}
+  .ga-fitness-summary{gap:20px}
+  .ga-status-badge{padding:8px 12px;font-size:.76rem}
+  .ga-chromo-row{padding:5px 8px;gap:5px}
+  .ga-chromo-idx{font-size:.65rem;min-width:18px}
+  .ga-fit-bar-track{min-width:40px}
+  .ga-fit-val{font-size:.72rem;min-width:30px}
+  .bs-chart-wrapper{padding:12px 10px 8px}
+  .bs-chart-footer{font-size:.65rem}
+  .bs-status-bar{padding:10px 14px;font-size:.8rem}
+  .bs-complexity-row{gap:16px;flex-wrap:wrap;justify-content:center}
+  .bs-complexity-badge{font-size:.75rem}
+  .bs-edge-grid{grid-template-columns:1fr}
+  .bs-section-body{padding:0 14px 14px;font-size:.82rem}
+  .bs-inspector-header h3{font-size:.9rem}
+  .bs-metrics-grid{gap:6px}
+  .bs-metric-value{font-size:1rem}
+  .ga-gi-val{font-size:1rem}
+  .ga-pop-grid{gap:5px}
+}
 </style>

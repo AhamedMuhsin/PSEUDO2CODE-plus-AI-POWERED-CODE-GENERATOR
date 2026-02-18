@@ -26,24 +26,24 @@
           <div class="bs-btn-group">
             <button class="bs-btn" :class="{ active: playing }" @click="playing ? pause() : play()"
               :disabled="!isPlayable">
-              <span class="bs-icon">▶</span> {{ playing ? 'Pause' : 'Play' }}
+              <span class="bs-icon"><Play :size="14" /></span> {{ playing ? 'Pause' : 'Play' }}
             </button>
             <button class="bs-btn" @click="next" :disabled="stepIndex === steps.length - 1">
-              <span class="bs-icon">⏭</span> Step
+              <span class="bs-icon"><SkipForward :size="14" /></span> Step
             </button>
           </div>
           <div class="bs-btn-group">
             <button class="bs-btn" @click="reset">
-              <span class="bs-icon">↺</span> Reset
+              <span class="bs-icon"><RotateCcw :size="14" /></span> Reset
             </button>
             <button class="bs-btn" @click="generateRandom">
-              <span class="bs-icon">⤮</span> Randomize
+              <span class="bs-icon"><Shuffle :size="14" /></span> Randomize
             </button>
           </div>
 
           <!-- Settings toggle -->
           <button class="bs-btn bs-settings-toggle" @click="showSettings = !showSettings">
-            <span class="bs-icon">⚙</span> Settings
+            <span class="bs-icon"><Settings2 :size="14" /></span> Settings
           </button>
           <div v-if="showSettings" class="bs-settings-body">
             <div class="bs-setting-row">
@@ -342,7 +342,7 @@
               </table>
             </div>
             <div v-if="currentStep.path" class="bs-path-display">
-              <strong>🎯 Path:</strong> {{ currentStep.path.join(' → ') }} | Cost: {{ currentStep.gScore[currentStep.path[currentStep.path.length - 1]] }}
+              <strong><Target :size="14" style="display:inline;vertical-align:middle;margin-right:4px" /> Path:</strong> {{ currentStep.path.join(' → ') }} | Cost: {{ currentStep.gScore[currentStep.path[currentStep.path.length - 1]] }}
             </div>
           </template>
 
@@ -373,7 +373,7 @@
                   <tr>
                     <td class="bs-row-label">MST</td>
                     <td v-for="node in graphNodes" :key="node">
-                      <span v-if="currentStep.inMST?.includes(node)" class="bs-badge mst-in">✓</span>
+                      <span v-if="currentStep.inMST?.includes(node)" class="bs-badge mst-in"><Check :size="12" /></span>
                       <span v-else>—</span>
                     </td>
                   </tr>
@@ -401,10 +401,10 @@
                     <td>{{ edge.from }}—{{ edge.to }}</td>
                     <td>{{ edge.weight }}</td>
                     <td>
-                      <span v-if="index < currentStep.currentEdgeIndex && currentStep.mstEdges?.some(e => (e.from === edge.from && e.to === edge.to) || (e.from === edge.to && e.to === edge.from))" class="bs-badge accepted">✓</span>
-                      <span v-else-if="index < currentStep.currentEdgeIndex" class="bs-badge skipped">✗</span>
-                      <span v-else-if="index === currentStep.currentEdgeIndex" class="bs-badge processing">⚡</span>
-                      <span v-else class="bs-badge pending">·</span>
+                      <span v-if="index < currentStep.currentEdgeIndex && currentStep.mstEdges?.some(e => (e.from === edge.from && e.to === edge.to) || (e.from === edge.to && e.to === edge.from))" class="bs-badge accepted"><Check :size="12" /></span>
+                      <span v-else-if="index < currentStep.currentEdgeIndex" class="bs-badge skipped"><X :size="12" /></span>
+                      <span v-else-if="index === currentStep.currentEdgeIndex" class="bs-badge processing"><Zap :size="12" /></span>
+                      <span v-else class="bs-badge pending"><Circle :size="8" /></span>
                     </td>
                   </tr>
                 </tbody>
@@ -415,7 +415,7 @@
           <!-- MST Summary (for Prim/Kruskal) -->
           <template v-if="currentStep.mstEdges && currentStep.mstEdges.length > 0">
             <div class="bs-path-display mst">
-              <strong>🌲 MST:</strong> {{ currentStep.mstEdges.map(e => `${e.from}—${e.to}(${e.weight})`).join(', ') }}
+              <strong><TreePine :size="14" style="display:inline;vertical-align:middle;margin-right:4px" /> MST:</strong> {{ currentStep.mstEdges.map(e => `${e.from}—${e.to}(${e.weight})`).join(', ') }}
               <span class="bs-mst-cost">| Cost: {{ currentStep.mstCost }}</span>
             </div>
           </template>
@@ -432,7 +432,7 @@
       <!-- ═══════ HOW IT WORKS ═══════ -->
       <section class="bs-section">
         <button class="bs-section-toggle" @click="showHowItWorks = !showHowItWorks">
-          <span class="bs-info-circle">ⓘ</span>
+          <span class="bs-info-circle"><Info :size="16" /></span>
           How {{ currentOperation.label }} Works
         </button>
         <div v-if="showHowItWorks" class="bs-section-body">
@@ -440,63 +440,24 @@
           <p>{{ currentOperation.info.description }}</p>
 
           <h3>How it works:</h3>
-          <template v-if="selectedOp === 'bfs'">
-            <ol>
-              <li>Start from the source node and add it to a queue</li>
-              <li>Dequeue a node and visit all its unvisited neighbors</li>
-              <li>Add each unvisited neighbor to the queue</li>
-              <li>Repeat until the queue is empty</li>
-            </ol>
-          </template>
-          <template v-else-if="selectedOp === 'dfs'">
-            <ol>
-              <li>Start from the source node and push it to a stack</li>
-              <li>Pop a node and visit it if unvisited</li>
-              <li>Push all its unvisited neighbors to the stack</li>
-              <li>Repeat until the stack is empty (or use recursion)</li>
-            </ol>
-          </template>
-          <template v-else-if="selectedOp === 'dijkstra'">
-            <ol>
-              <li>Set distance to start node as 0, all others as infinity</li>
-              <li>Select the unvisited node with smallest distance</li>
-              <li>For each neighbor, calculate tentative distance via current node</li>
-              <li>Update distance if the new path is shorter</li>
-              <li>Mark current node as visited and repeat</li>
-            </ol>
-          </template>
-          <template v-else-if="selectedOp === 'astar'">
-            <ol>
-              <li>Initialize with start node: g(start) = 0, f(start) = h(start)</li>
-              <li>Select node from open set with lowest f = g + h score</li>
-              <li>If goal is reached, reconstruct the path</li>
-              <li>For each neighbor, calculate tentative g score</li>
-              <li>Update if better path is found, set f = g + h</li>
-              <li>Move processed nodes from open set to closed set</li>
-            </ol>
-          </template>
-          <template v-else-if="selectedOp === 'kruskal'">
-            <ol>
-              <li>Sort all edges by weight (lightest first)</li>
-              <li>Initialize Union-Find with each node as its own set</li>
-              <li>For each edge in sorted order, check if it creates a cycle</li>
-              <li>If no cycle, add edge to MST and union the sets</li>
-              <li>Skip edges that would create cycles</li>
-              <li>Stop when MST has V-1 edges</li>
-            </ol>
-          </template>
-          <template v-else-if="selectedOp === 'prim'">
-            <ol>
-              <li>Start from any node, set its key to 0</li>
-              <li>Select the non-MST node with minimum key value</li>
-              <li>Add it to the MST</li>
-              <li>Update keys of adjacent non-MST nodes if edge weight is less</li>
-              <li>Repeat until all nodes are in the MST</li>
-            </ol>
-          </template>
-          <template v-else>
-            <p>Select an algorithm to see how it works.</p>
-          </template>
+          <div class="bs-how-grid">
+            <article v-for="card in howItWorksCards" :key="card.key" class="bs-how-card"
+              :class="{ active: selectedOp === card.key }">
+              <div class="bs-how-card-header">
+                <div>
+                  <p class="bs-how-card-label">{{ card.label }}</p>
+                  <p class="bs-how-card-summary">{{ card.summary }}</p>
+                </div>
+                <div class="bs-how-card-meta">
+                  <span class="bs-how-chip">Time: {{ card.time }}</span>
+                  <span class="bs-how-chip subtle">Space: {{ card.space }}</span>
+                </div>
+              </div>
+              <ol class="bs-how-steps">
+                <li v-for="(step, idx) in card.steps" :key="idx">{{ step }}</li>
+              </ol>
+            </article>
+          </div>
 
           <h3>Complexity Analysis:</h3>
           <ul>
@@ -509,7 +470,7 @@
       <!-- ═══════ EDGE CASES & EXAMPLES ═══════ -->
       <section class="bs-section">
         <button class="bs-section-toggle" @click="showEdgeCases = !showEdgeCases">
-          <span class="bs-info-circle">ⓘ</span>
+          <span class="bs-info-circle"><Info :size="16" /></span>
           Edge Cases &amp; Examples
         </button>
         <div v-if="showEdgeCases" class="bs-section-body">
@@ -556,6 +517,7 @@ import AuthNavbar from '@/components/Navbar/AuthNavbar.vue'
 import arrowLeft from '@/assets/arrow-left.svg'
 import { graphOperations } from '@/algorithms/graphOperations/graphOperationsMap'
 import { Graph } from '@/algorithms/graphOperations/Graph'
+import { Play, SkipForward, RotateCcw, Shuffle, Settings2, Info, ArrowRight, ArrowLeft, Target, TreePine, Zap, Check, X, Circle } from 'lucide-vue-next'
 
 const router = useRouter()
 const route = useRoute()
@@ -577,6 +539,93 @@ const pathStart = ref('')
 const pathEnd = ref('')
 const astarStart = ref('')
 const astarGoal = ref('')
+
+const graphOperationWriteups = {
+  bfs: {
+    summary: 'Breadth-first search explores all neighbors before moving deeper.',
+    steps: [
+      'Start with a queue containing the source node.',
+      'Dequeue the next node and mark it visited.',
+      'Enqueue every unvisited neighbor of that node.',
+      'Repeat until the queue is empty, producing layer-by-layer traversal.'
+    ]
+  },
+  dfs: {
+    summary: 'Depth-first search dives down a path using a stack or recursion.',
+    steps: [
+      'Push the start node onto a stack.',
+      'Pop a node, visit it if unseen, and mark it visited.',
+      'Push its unvisited neighbors (reverse order for readability).',
+      'Continue until the stack is empty to cover every reachable node.'
+    ]
+  },
+  detectCycle: {
+    summary: 'Detect cycles by tracking recursion stack or visited edges.',
+    steps: [
+      'Perform DFS from each unvisited node.',
+      'Keep track of nodes currently in the recursion stack.',
+      'If you encounter an active node again, a cycle exists.',
+      'Report the cycle and stop, or finish traversal if none are found.'
+    ]
+  },
+  checkPath: {
+    summary: 'Determine whether any route connects two chosen nodes.',
+    steps: [
+      'Run BFS/DFS from the selected start node.',
+      'Track visited nodes to avoid infinite loops.',
+      'Stop early once the destination node is popped.',
+      'If the traversal completes without finding the destination, no path exists.'
+    ]
+  },
+  dijkstra: {
+    summary: 'Dijkstra’s algorithm finds shortest paths on graphs with non-negative weights.',
+    steps: [
+      'Initialize all distances to ∞ except the source (0).',
+      'Pick the unvisited node with the smallest distance (priority queue).',
+      'Relax its outgoing edges, updating distances when a cheaper path is found.',
+      'Mark the node visited and repeat until every node is processed.'
+    ]
+  },
+  astar: {
+    summary: 'A* guides Dijkstra with a heuristic to reach a goal faster.',
+    steps: [
+      'Maintain g(n) (cost so far) and h(n) (heuristic) for each node.',
+      'Select the node with the lowest f(n) = g(n) + h(n) from the open set.',
+      'Relax neighbors, updating g/f scores and parent pointers.',
+      'When the goal is popped, reconstruct the optimal path and cost.'
+    ]
+  },
+  kruskal: {
+    summary: 'Kruskal builds an MST by adding the lightest edges that avoid cycles.',
+    steps: [
+      'Sort all edges by ascending weight.',
+      'Initialize each node as its own disjoint-set component.',
+      'Iterate through edges, unioning endpoints only if they are in different sets.',
+      'Stop after adding V-1 edges; the accepted edges form the MST.'
+    ]
+  },
+  prim: {
+    summary: 'Prim grows an MST from one node by attaching the cheapest edge to new vertices.',
+    steps: [
+      'Pick an arbitrary start node and set its key to 0.',
+      'Use a min-priority queue to choose the lowest-key node outside the MST.',
+      'Add that node, then update keys for its adjacent vertices.',
+      'Repeat until every node is included, recording chosen edges.'
+    ]
+  }
+}
+
+const howItWorksCards = computed(() => Object.entries(graphOperations).map(([key, op]) => {
+  const writeup = graphOperationWriteups[key] || { summary: op.description, steps: [] }
+  return {
+    key,
+    label: op.label,
+    summary: writeup.summary,
+    steps: writeup.steps,
+    time: op.info.time,
+    space: op.info.space
+  }
+}))
 
 // Default graph edges
 const edgeDefs = ref([
@@ -1426,6 +1475,75 @@ onUnmounted(() => { window.removeEventListener('keydown', handleKey); clearInter
     color: #a5b4fc;
 }
 
+/* How it works cards */
+.bs-how-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+.bs-how-card {
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(100, 116, 139, 0.25);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 220px;
+  transition: border 0.2s, transform 0.2s;
+}
+.bs-how-card.active {
+  border-color: rgba(99, 102, 241, 0.6);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.6);
+  transform: translateY(-4px);
+}
+.bs-how-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.bs-how-card-label {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.bs-how-card-summary {
+  margin: 4px 0 0;
+  color: #cbd5e1;
+  font-size: 0.85rem;
+}
+.bs-how-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+.bs-how-chip {
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 0.7rem;
+  color: #c7d2fe;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.bs-how-chip.subtle {
+  background: rgba(148, 163, 184, 0.15);
+  border-color: rgba(148, 163, 184, 0.4);
+  color: #e2e8f0;
+}
+.bs-how-steps {
+  margin: 0;
+  padding-left: 18px;
+  color: #cbd5e1;
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+.bs-how-steps li { margin-bottom: 4px; }
+
 /* Edge case cards */
 .bs-edge-grid {
     display: grid;
@@ -1457,14 +1575,22 @@ onUnmounted(() => { window.removeEventListener('keydown', handleKey); clearInter
 
 /* ════════ RESPONSIVE ════════ */
 @media (max-width: 1100px) {
-    .bs-three-col { grid-template-columns: 1fr; }
-    .bs-controls-panel { max-height: none; }
-    .bs-inspector { max-height: none; }
+    .bs-three-col { grid-template-columns: 1fr; gap: 16px; }
+    .bs-chart-area { order: -1; }
+    .bs-controls-panel { order: 1; max-height: none; }
+    .bs-inspector { order: 2; max-height: none; }
+}
+@media (max-width: 768px) {
+    .bs-shortcuts { display: none; }
+    .bs-legend { display: none; }
+    .bs-controls-panel { padding: 10px; }
 }
 @media (max-width: 640px) {
     .bs-edge-grid { grid-template-columns: 1fr; }
-    .bs-page { padding: 12px; }
+    .bs-page { padding: 10px 12px 24px; }
     .bs-op-pills { gap: 4px; }
     .bs-pill { padding: 5px 10px; font-size: 0.75rem; }
+  .bs-how-card { min-height: auto; }
+  .bs-how-card-meta { align-items: flex-start; }
 }
 </style>

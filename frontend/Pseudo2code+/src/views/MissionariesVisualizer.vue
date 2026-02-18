@@ -20,21 +20,21 @@
                     <!-- Playback -->
                     <div class="bs-btn-group">
                         <button class="bs-btn" :class="{ active: playing }" @click="playing ? pause() : play()">
-                            <span class="bs-icon">▶</span> {{ playing ? 'Pause' : 'Play' }}
+                            <span class="bs-icon"><Play :size="14" /></span> {{ playing ? 'Pause' : 'Play' }}
                         </button>
                         <button class="bs-btn" @click="next" :disabled="stepIndex === steps.length - 1">
-                            <span class="bs-icon">⏭</span> Step
+                            <span class="bs-icon"><SkipForward :size="14" /></span> Step
                         </button>
                     </div>
                     <div class="bs-btn-group">
                         <button class="bs-btn" @click="reset">
-                            <span class="bs-icon">↺</span> Reset
+                            <span class="bs-icon"><RotateCcw :size="14" /></span> Reset
                         </button>
                     </div>
 
                     <!-- Settings toggle -->
                     <button class="bs-btn bs-settings-toggle" @click="showSettings = !showSettings">
-                        <span class="bs-icon">⚙</span> Settings
+                        <span class="bs-icon"><Settings2 :size="14" /></span> Settings
                     </button>
                     <div v-if="showSettings" class="bs-settings-body">
                         <div class="bs-setting-row">
@@ -53,8 +53,8 @@
                         <h4>Keyboard Shortcuts:</h4>
                         <div class="bs-shortcut-grid">
                             <span class="bs-key">Space</span><span>Play/Pause</span>
-                            <span class="bs-key">→</span><span>Step Forward</span>
-                            <span class="bs-key">←</span><span>Step Back</span>
+                            <span class="bs-key"><ArrowRight :size="12" /></span><span>Step Forward</span>
+                            <span class="bs-key"><ArrowLeft :size="12" /></span><span>Step Back</span>
                             <span class="bs-key">R</span><span>Reset</span>
                         </div>
                     </div>
@@ -94,12 +94,12 @@
                                 <h3 class="mc-bank-label">Left Bank</h3>
                                 <div class="mc-people-row">
                                     <div v-for="i in currentStep.missionariesLeft" :key="'ml'+i" class="mc-person mc-missionary" title="Missionary">
-                                        <span class="mc-person-icon">🧑‍✝️</span>
+                                        <span class="mc-person-icon"><User :size="18" /></span>
                                     </div>
                                 </div>
                                 <div class="mc-people-row">
                                     <div v-for="i in currentStep.cannibalsLeft" :key="'cl'+i" class="mc-person mc-cannibal" title="Cannibal">
-                                        <span class="mc-person-icon">👹</span>
+                                        <span class="mc-person-icon"><Skull :size="18" /></span>
                                     </div>
                                 </div>
                                 <div class="mc-bank-count">
@@ -111,10 +111,10 @@
                             <!-- River + Boat -->
                             <div class="mc-river">
                                 <div class="mc-waves">
-                                    <span v-for="n in 6" :key="n" class="mc-wave">〰</span>
+                                    <span v-for="n in 6" :key="n" class="mc-wave"><Waves :size="16" /></span>
                                 </div>
                                 <div class="mc-boat" :class="{ 'mc-boat-right': currentStep.boatSide === 'right' }">
-                                    <span class="mc-boat-icon">⛵</span>
+                                    <span class="mc-boat-icon"><Ship :size="20" /></span>
                                 </div>
                                 <div v-if="currentStep.move" class="mc-move-badge">
                                     {{ currentStep.move }}
@@ -126,12 +126,12 @@
                                 <h3 class="mc-bank-label">Right Bank</h3>
                                 <div class="mc-people-row">
                                     <div v-for="i in currentStep.missionariesRight" :key="'mr'+i" class="mc-person mc-missionary" title="Missionary">
-                                        <span class="mc-person-icon">🧑‍✝️</span>
+                                        <span class="mc-person-icon"><User :size="18" /></span>
                                     </div>
                                 </div>
                                 <div class="mc-people-row">
                                     <div v-for="i in currentStep.cannibalsRight" :key="'cr'+i" class="mc-person mc-cannibal" title="Cannibal">
-                                        <span class="mc-person-icon">👹</span>
+                                        <span class="mc-person-icon"><Skull :size="18" /></span>
                                     </div>
                                 </div>
                                 <div class="mc-bank-count">
@@ -147,11 +147,11 @@
                             'mc-si-success': currentStep.status === 'success',
                             'mc-si-failed': currentStep.status === 'failed',
                         }">
-                            <span v-if="currentStep.status === 'start'">🎯 Initial State: All on left bank</span>
-                            <span v-else-if="currentStep.status === 'exploring'">🔍 Exploring new state...</span>
-                            <span v-else-if="currentStep.status === 'trying'">🚣 Trying move: {{ currentStep.move }}</span>
-                            <span v-else-if="currentStep.status === 'failed'">❌ Invalid state / already visited</span>
-                            <span v-else-if="currentStep.status === 'success'">✅ All safely across the river!</span>
+                            <span v-if="currentStep.status === 'start'"><Target :size="14" class="bs-lucide" /> Initial State: All on right bank</span>
+                            <span v-else-if="currentStep.status === 'exploring'"><Search :size="14" class="bs-lucide" /> Exploring new state...</span>
+                            <span v-else-if="currentStep.status === 'trying'"><Navigation :size="14" class="bs-lucide" /> Trying move: {{ currentStep.move }}</span>
+                            <span v-else-if="currentStep.status === 'failed'"><XCircle :size="14" class="bs-lucide" /> Invalid state / already visited</span>
+                            <span v-else-if="currentStep.status === 'success'"><CheckCircle2 :size="14" class="bs-lucide" /> All safely across the river!</span>
                         </div>
 
                         <!-- Chart footer -->
@@ -273,7 +273,7 @@
             <!-- ═══════ HOW IT WORKS ═══════ -->
             <section class="bs-section">
                 <button class="bs-section-toggle" @click="showHowItWorks = !showHowItWorks">
-                    <span class="bs-info-circle">ⓘ</span>
+                    <span class="bs-info-circle"><Info :size="14" /></span>
                     How Missionaries &amp; Cannibals Works
                 </button>
                 <div v-if="showHowItWorks" class="bs-section-body">
@@ -288,7 +288,7 @@
                         <li><strong>Boat capacity:</strong> maximum 2 people</li>
                         <li><strong>At least 1 person</strong> must be in the boat to row</li>
                         <li><strong>Safety rule:</strong> Missionaries must never be outnumbered by cannibals on either bank (unless there are 0 missionaries)</li>
-                        <li><strong>Goal:</strong> Move everyone from left bank to right bank</li>
+                        <li><strong>Goal:</strong> Move everyone from right bank to left bank</li>
                     </ol>
 
                     <h3>Algorithm — Breadth-First Search (BFS):</h3>
@@ -311,26 +311,26 @@
             <!-- ═══════ EXAMPLES ═══════ -->
             <section class="bs-section">
                 <button class="bs-section-toggle" @click="showExamples = !showExamples">
-                    <span class="bs-info-circle">ⓘ</span>
+                    <span class="bs-info-circle"><Info :size="14" /></span>
                     Rules &amp; Tips
                 </button>
                 <div v-if="showExamples" class="bs-section-body">
                     <h3>Key Rules:</h3>
                     <div class="bs-edge-grid">
                         <div class="bs-edge-card">
-                            <strong>🚣 Boat Rule</strong>
+                            <strong><Navigation :size="14" class="bs-lucide" /> Boat Rule</strong>
                             <small>1 or 2 people per crossing, boat can't cross empty</small>
                         </div>
                         <div class="bs-edge-card">
-                            <strong>⚠️ Safety Rule</strong>
+                            <strong><AlertTriangle :size="14" class="bs-lucide" /> Safety Rule</strong>
                             <small>Cannibals can never outnumber missionaries on either bank</small>
                         </div>
                         <div class="bs-edge-card">
-                            <strong>🎯 Goal</strong>
-                            <small>Move all 3 missionaries and 3 cannibals to the right bank</small>
+                            <strong><Target :size="14" class="bs-lucide" /> Goal</strong>
+                            <small>Move all 3 missionaries and 3 cannibals to the left bank</small>
                         </div>
                         <div class="bs-edge-card">
-                            <strong>🔄 Boat Return</strong>
+                            <strong><RefreshCw :size="14" class="bs-lucide" /> Boat Return</strong>
                             <small>Someone must ride the boat back — this is the tricky part!</small>
                         </div>
                     </div>
@@ -353,6 +353,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthNavbar from '@/components/Navbar/AuthNavbar.vue'
 import arrowLeft from '@/assets/arrow-left.svg'
+import { User, Skull, Ship, Target, Search, Navigation, XCircle, CheckCircle2, AlertTriangle, RefreshCw, Play, SkipForward, RotateCcw, Settings2, Info, ArrowRight, ArrowLeft, Waves } from 'lucide-vue-next'
 import { missionariesCannibalsSteps } from '@/algorithms/aiProblems/missionariesCannibalsSteps'
 
 const router = useRouter()
@@ -488,7 +489,8 @@ onUnmounted(() => {
 .back-btn-compact { display: flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #e0e7ff; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
 .back-btn-compact:hover { background: rgba(99,102,241,0.25); transform: translateX(-2px); }
 .arrow { width: 16px; height: 16px; }
-.bs-title { font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin: 0 0 16px; }
+.bs-title { font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin: 16px 0 16px; }
+.bs-lucide { display: inline-block; vertical-align: -2px; margin-right: 2px; }
 
 /* ════════ THREE-COL ════════ */
 .bs-three-col { display: grid; grid-template-columns: 240px 1fr 280px; gap: 16px; margin-bottom: 24px; }
@@ -623,10 +625,20 @@ onUnmounted(() => {
 .bs-tips li { margin-bottom: 4px; }
 
 /* ════════ RESPONSIVE ════════ */
-@media (max-width: 1100px) { .bs-three-col { grid-template-columns: 1fr; } }
+@media (max-width: 1100px) {
+    .bs-three-col { grid-template-columns: 1fr; gap: 16px; }
+    .bs-chart-area { order: -1; }
+    .bs-controls-panel { order: 1; }
+    .bs-inspector { order: 2; max-height: none; }
+}
+@media (max-width: 768px) {
+    .bs-shortcuts { display: none; }
+    .bs-legend { display: none; }
+    .bs-controls-panel { padding: 10px; }
+}
 @media (max-width: 640px) {
     .bs-edge-grid { grid-template-columns: 1fr; }
-    .bs-page { padding: 12px; }
+    .bs-page { padding: 10px 12px 24px; }
     .mc-scene { grid-template-columns: 1fr 80px 1fr; }
     .mc-person { width: 30px; height: 30px; }
     .mc-person-icon { font-size: 0.95rem; }

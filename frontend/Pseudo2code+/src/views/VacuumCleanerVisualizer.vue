@@ -20,24 +20,24 @@
                     <!-- Playback -->
                     <div class="bs-btn-group">
                         <button class="bs-btn" :class="{ active: playing }" @click="playing ? pause() : play()">
-                            <span class="bs-icon">▶</span> {{ playing ? 'Pause' : 'Play' }}
+                            <span class="bs-icon"><Play :size="14" /></span> {{ playing ? 'Pause' : 'Play' }}
                         </button>
                         <button class="bs-btn" @click="next" :disabled="stepIndex === steps.length - 1">
-                            <span class="bs-icon">⏭</span> Step
+                            <span class="bs-icon"><SkipForward :size="14" /></span> Step
                         </button>
                     </div>
                     <div class="bs-btn-group">
                         <button class="bs-btn" @click="reset">
-                            <span class="bs-icon">↺</span> Reset
+                            <span class="bs-icon"><RotateCcw :size="14" /></span> Reset
                         </button>
                         <button class="bs-btn" @click="generateNew">
-                            <span class="bs-icon">⤮</span> New Grid
+                            <span class="bs-icon"><Shuffle :size="14" /></span> New Grid
                         </button>
                     </div>
 
                     <!-- Settings toggle -->
                     <button class="bs-btn bs-settings-toggle" @click="showSettings = !showSettings">
-                        <span class="bs-icon">⚙</span> Settings
+                        <span class="bs-icon"><Settings2 :size="14" /></span> Settings
                     </button>
                     <div v-if="showSettings" class="bs-settings-body">
                         <div class="bs-setting-row">
@@ -66,8 +66,8 @@
                         <h4>Keyboard Shortcuts:</h4>
                         <div class="bs-shortcut-grid">
                             <span class="bs-key">Space</span><span>Play/Pause</span>
-                            <span class="bs-key">→</span><span>Step Forward</span>
-                            <span class="bs-key">←</span><span>Step Back</span>
+                            <span class="bs-key"><ArrowRight :size="12" /></span><span>Step Forward</span>
+                            <span class="bs-key"><ArrowLeft :size="12" /></span><span>Step Back</span>
                             <span class="bs-key">R</span><span>Reset</span>
                         </div>
                     </div>
@@ -112,9 +112,9 @@
                                     }">
                                         <!-- Dirt particles -->
                                         <div v-if="cell === 1" class="vc-dirt">
-                                            <span class="vc-dirt-particle">●</span>
-                                            <span class="vc-dirt-particle">●</span>
-                                            <span class="vc-dirt-particle">●</span>
+                                            <span class="vc-dirt-particle"><CircleDot :size="8" /></span>
+                                            <span class="vc-dirt-particle"><CircleDot :size="8" /></span>
+                                            <span class="vc-dirt-particle"><CircleDot :size="8" /></span>
                                         </div>
                                         <!-- Agent -->
                                         <div v-if="currentStep.agentPos.row === ri && currentStep.agentPos.col === ci"
@@ -122,11 +122,11 @@
                                                 'vc-agent-cleaning': currentStep.status === 'cleaning',
                                                 'vc-agent-moving': currentStep.status === 'moving',
                                             }">
-                                            <span class="vc-agent-icon">🤖</span>
+                                            <span class="vc-agent-icon"><Bot :size="20" /></span>
                                         </div>
                                         <!-- Clean sparkle -->
                                         <div v-if="cell === 0 && !(currentStep.agentPos.row === ri && currentStep.agentPos.col === ci)"
-                                            class="vc-sparkle">✨</div>
+                                            class="vc-sparkle"><Sparkles :size="16" /></div>
                                         <!-- Cell label -->
                                         <span class="vc-cell-label">({{ ri }},{{ ci }})</span>
                                     </div>
@@ -143,12 +143,12 @@
                                     'vc-ab-moving': currentStep.status === 'moving',
                                     'vc-ab-success': currentStep.status === 'success',
                                 }">
-                                    <span v-if="currentStep.status === 'start'">🎯 Agent Initialized</span>
-                                    <span v-else-if="currentStep.status === 'perceiving'">👁️ Perceiving Cell ({{ currentStep.agentPos.row }}, {{ currentStep.agentPos.col }})</span>
-                                    <span v-else-if="currentStep.status === 'cleaning'">🧹 SUCK — Cleaning!</span>
-                                    <span v-else-if="currentStep.status === 'checking'">✅ Cell already clean</span>
-                                    <span v-else-if="currentStep.status === 'moving'">🚶 Moving to next cell</span>
-                                    <span v-else-if="currentStep.status === 'success'">🏆 All cells checked!</span>
+                                    <span v-if="currentStep.status === 'start'"><Target :size="14" class="bs-lucide" /> Agent Initialized</span>
+                                    <span v-else-if="currentStep.status === 'perceiving'"><Eye :size="14" class="bs-lucide" /> Perceiving Cell ({{ currentStep.agentPos.row }}, {{ currentStep.agentPos.col }})</span>
+                                    <span v-else-if="currentStep.status === 'cleaning'"><Paintbrush :size="14" class="bs-lucide" /> SUCK — Cleaning!</span>
+                                    <span v-else-if="currentStep.status === 'checking'"><CheckCircle2 :size="14" class="bs-lucide" /> Cell already clean</span>
+                                    <span v-else-if="currentStep.status === 'moving'"><Footprints :size="14" class="bs-lucide" /> Moving to next cell</span>
+                                    <span v-else-if="currentStep.status === 'success'"><Trophy :size="14" class="bs-lucide" /> All cells checked!</span>
                                 </div>
                                 <div class="vc-stats-row">
                                     <div class="vc-stat">
@@ -291,7 +291,7 @@
             <!-- ═══════ HOW IT WORKS ═══════ -->
             <section class="bs-section">
                 <button class="bs-section-toggle" @click="showHowItWorks = !showHowItWorks">
-                    <span class="bs-info-circle">ⓘ</span>
+                    <span class="bs-info-circle"><Info :size="14" /></span>
                     How the Vacuum Cleaner Agent Works
                 </button>
                 <div v-if="showHowItWorks" class="bs-section-body">
@@ -329,7 +329,7 @@
             <!-- ═══════ EXAMPLES ═══════ -->
             <section class="bs-section">
                 <button class="bs-section-toggle" @click="showExamples = !showExamples">
-                    <span class="bs-info-circle">ⓘ</span>
+                    <span class="bs-info-circle"><Info :size="14" /></span>
                     Grid Sizes &amp; Tips
                 </button>
                 <div v-if="showExamples" class="bs-section-body">
@@ -371,6 +371,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthNavbar from '@/components/Navbar/AuthNavbar.vue'
 import arrowLeft from '@/assets/arrow-left.svg'
+import { Bot, Sparkles, Target, Eye, Paintbrush, CheckCircle2, Footprints, Trophy, Play, SkipForward, RotateCcw, Shuffle, Settings2, Info, ArrowRight, ArrowLeft, CircleDot } from 'lucide-vue-next'
 import { vacuumCleanerSteps } from '@/algorithms/aiProblems/vacuumCleanerSteps'
 
 const router = useRouter()
@@ -554,7 +555,8 @@ onUnmounted(() => {
 .back-btn-compact { display: flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #e0e7ff; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
 .back-btn-compact:hover { background: rgba(99,102,241,0.25); transform: translateX(-2px); }
 .arrow { width: 16px; height: 16px; }
-.bs-title { font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin: 0 0 16px; }
+.bs-title { font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin: 16px 0 16px; }
+.bs-lucide { display: inline-block; vertical-align: -2px; margin-right: 2px; }
 
 /* ════════ THREE-COL ════════ */
 .bs-three-col { display: grid; grid-template-columns: 240px 1fr 280px; gap: 16px; margin-bottom: 24px; }
@@ -720,10 +722,20 @@ onUnmounted(() => {
 .bs-tips li { margin-bottom: 4px; }
 
 /* ════════ RESPONSIVE ════════ */
-@media (max-width: 1100px) { .bs-three-col { grid-template-columns: 1fr; } }
+@media (max-width: 1100px) {
+    .bs-three-col { grid-template-columns: 1fr; gap: 16px; }
+    .bs-chart-area { order: -1; }
+    .bs-controls-panel { order: 1; }
+    .bs-inspector { order: 2; max-height: none; }
+}
+@media (max-width: 768px) {
+    .bs-shortcuts { display: none; }
+    .bs-legend { display: none; }
+    .bs-controls-panel { padding: 10px; }
+}
 @media (max-width: 640px) {
     .bs-edge-grid { grid-template-columns: 1fr; }
-    .bs-page { padding: 12px; }
+    .bs-page { padding: 10px 12px 24px; }
     .vc-grid { max-width: 300px; }
     .vc-agent-icon { font-size: 1.3rem; }
 }

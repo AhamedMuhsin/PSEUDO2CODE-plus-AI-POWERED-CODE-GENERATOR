@@ -114,16 +114,18 @@ export function mapColoringSteps() {
     return false
   }
 
-  backtrack(0)
+  const solved = backtrack(0)
 
   steps.push({
     assignments: { ...assignments },
     adjacency: neighbors,
     activePseudoLine: 12,
-    explanation: `✅ Map coloring complete! All regions colored with no conflicts.`,
+    explanation: solved
+      ? `✅ Map coloring complete! All regions colored with no conflicts.`
+      : `✗ No valid coloring found with ${colors.length} colors.`,
     currentRegion: null,
     conflicts: [],
-    status: 'success'
+    status: solved ? 'success' : 'failed'
   })
 
   return steps

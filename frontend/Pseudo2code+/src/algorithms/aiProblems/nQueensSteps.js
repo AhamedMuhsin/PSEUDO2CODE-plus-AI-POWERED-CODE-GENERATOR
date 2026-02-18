@@ -104,7 +104,19 @@ export function nQueensSteps(n = 4) {
     return false
   }
 
-  solveNQueens(0)
+  const solved = solveNQueens(0)
+
+  if (!solved) {
+    steps.push({
+      board: JSON.parse(JSON.stringify(board)),
+      queens: [...queens],
+      activePseudoLine: 11,
+      explanation: `No solution exists for a ${n}x${n} board.`,
+      attemptRow: null,
+      attemptCol: null,
+      status: 'failed'
+    })
+  }
 
   return steps
 }

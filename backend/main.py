@@ -9,13 +9,13 @@ print("GROQ_API_KEY exists:", bool(os.getenv("GROQ_API_KEY")))
 
 from services.ai.provider_manager import AIProviderManager
 from routes import tasks
+from routes.auth_routes import router as auth_router
 
 
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
-from firebase_admin import auth as firebase_auth
 from db import users_collection
 import re
 from services.streak.streak_service import update_streak
@@ -28,7 +28,7 @@ from urllib.parse import quote_plus
 from services.visualization.cfg_generator import generate_mermaid_cfg
 from services.activity.activity_service import delete_activity
 
-from firebase_auth import get_current_user
+from auth import get_current_user, hash_password, verify_password
 from services.user_service import (
     get_user_by_uid,
     create_user,
@@ -55,6 +55,7 @@ app.add_middleware(
 )
 
 ai_manager = AIProviderManager()
+app.include_router(auth_router)
 app.include_router(tasks.router)
 # ============ REQUEST MODELS ============
 class CreateUserRequest(BaseModel):
@@ -188,21 +189,19 @@ async def change_password(
         )
     
     try:
-        # Verify current password by attempting to re-authenticate
-        from firebase_admin import auth as firebase_admin_auth
+        # Verify current password
+        password_hash = user.get("password_hash")
+        if not password_hash or not verify_password(payload.currentPassword, password_hash):
+            raise HTTPException(
+                status_code=401,
+                detail="Current password is incorrect."
+            )
         
-        # Get Firebase user email
-        firebase_user = firebase_admin_auth.get_user(uid)
-        email = firebase_user.email
-        
-        # Attempt sign-in to verify current password
-        # Note: This requires Firebase REST API call since admin SDK doesn't support password verification
-        # As a workaround, we'll update password directly in Firebase
-        
-        # Update password in Firebase Auth
-        firebase_admin_auth.update_user(
-            uid,
-            password=payload.newPassword
+        # Hash and save new password
+        new_hash = hash_password(payload.newPassword)
+        await users_collection.update_one(
+            {"uid": uid},
+            {"$set": {"password_hash": new_hash}}
         )
         
         return {
@@ -210,6 +209,8 @@ async def change_password(
             "message": "Password changed successfully"
         }
         
+    except HTTPException:
+        raise
     except Exception as err:
         print(f"Password change error: {err}")
         raise HTTPException(
@@ -511,16 +512,7 @@ async def delete_user_activity(
 async def delete_account(current_user=Depends(get_current_user)):
     uid = current_user["uid"]
 
-    # 1️⃣ Delete Firebase Auth user
-    try:
-        firebase_auth.delete_user(uid)
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail="Failed to delete Firebase auth user"
-        )
-
-    # 2️⃣ Delete MongoDB user
+    # Delete MongoDB user
     await users_collection.delete_one({"uid": uid})
 
     return {"success": True}

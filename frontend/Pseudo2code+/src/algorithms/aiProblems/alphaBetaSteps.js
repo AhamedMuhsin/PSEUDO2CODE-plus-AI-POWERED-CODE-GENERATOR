@@ -1,12 +1,30 @@
 export function alphaBetaSteps() {
   const steps = []
   
-  // Simple game tree for demonstration
+  // Generate a random mid-game board position
   const board = [
-    ['X', 'O', 'X'],
-    ['', '', 'O'],
+    ['', '', ''],
+    ['', '', ''],
     ['', '', '']
   ]
+
+  const allPositions = []
+  for (let i = 0; i < 3; i++)
+    for (let j = 0; j < 3; j++)
+      allPositions.push([i, j])
+
+  // Shuffle positions
+  for (let i = allPositions.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[allPositions[i], allPositions[j]] = [allPositions[j], allPositions[i]]
+  }
+
+  // Place 3 moves: X, O, X
+  const players = ['X', 'O', 'X']
+  for (let k = 0; k < 3; k++) {
+    const [r, c] = allPositions[k]
+    board[r][c] = players[k]
+  }
 
   steps.push({
     board: JSON.parse(JSON.stringify(board)),
@@ -146,19 +164,19 @@ export function alphaBetaSteps() {
     return empty ? null : 'draw'
   }
 
-  alphaBeta(board, 0, -Infinity, Infinity, true)
+  const finalScore = alphaBeta(board, 0, -Infinity, Infinity, true)
 
   steps.push({
     board: JSON.parse(JSON.stringify(board)),
     activePseudoLine: 14,
-    explanation: '✅ Alpha-Beta pruning complete. Pruned branches saved computation!',
+    explanation: `✅ Alpha-Beta pruning complete. Best score: ${finalScore}. Pruned branches saved computation!`,
     player: 'X',
-    alpha: -Infinity,
-    beta: Infinity,
+    alpha: finalScore,
+    beta: finalScore,
     depth: 0,
     pruned: false,
     status: 'success'
   })
 
-  return steps.slice(0, 50) // Limit for performance
+  return steps
 }
