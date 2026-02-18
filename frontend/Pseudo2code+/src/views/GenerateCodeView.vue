@@ -1,6 +1,14 @@
 <template>
   <AuthNavbar />
   <main class="generate-container">
+    <!-- BACK BUTTON -->
+    <div class="back-top-bar">
+      <button class="back-btn-compact" @click="router.push('/dashboard')">
+        <img :src="arrowLeft" class="arrow" />
+        Back
+      </button>
+    </div>
+
     <!-- Page Header -->
     <header class="page-header">
       <h1>AI Code Generator</h1>
@@ -138,6 +146,7 @@
 import { ref } from "vue";
 import api from "@/services/api";
 import { useRouter } from "vue-router";
+import arrowLeft from '@/assets/arrow-left.svg';
 import { useRoute } from "vue-router";
 import AuthNavbar from "@/components/Navbar/AuthNavbar.vue";
 import { generateCode } from "@/services/codeGenerationService";
@@ -342,6 +351,12 @@ const visualizeCode = async () => {
 </script>
 
 <style scoped>
+/* ════════ BACK ════════ */
+.back-top-bar { flex-shrink: 0; }
+.back-btn-compact { display: flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #e0e7ff; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
+.back-btn-compact:hover { background: rgba(99,102,241,0.25); transform: translateX(-2px); }
+.arrow { width: 16px; height: 16px; }
+
 * {
   margin: 0;
   padding: 0;
@@ -884,12 +899,38 @@ code {
   .controls {
     grid-template-columns: 1fr;
   }
+  .page-header h1 {
+    font-size: 1.6rem;
+  }
+  .page-header p {
+    font-size: 0.85rem;
+  }
+  .card {
+    height: auto;
+    min-height: 400px;
+    padding: 18px;
+  }
+  .code-textarea {
+    min-height: 220px;
+  }
+  pre {
+    max-height: 300px;
+    padding: 12px;
+  }
+  .generate-grid {
+    gap: 18px;
+    padding: 0 6px;
+  }
 }
 
 /* Responsive */
 @media (max-width: 1024px) {
   .generate-grid {
     grid-template-columns: 1fr;
+  }
+  .card {
+    height: auto;
+    min-height: 420px;
   }
 }
 </style>

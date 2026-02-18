@@ -67,4 +67,16 @@ onMounted(() => {
   width: 60px;
   height: auto;
 }
+
+@media (max-width: 480px) {
+  .logo {
+    width: 80px;
+  }
+  .title {
+    font-size: 1.8rem;
+  }
+  .subtitle {
+    font-size: 0.85rem;
+  }
+}
 </style>

@@ -59,8 +59,7 @@ async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ) -> dict:
     """
-    Replaces firebase_auth.get_current_user
-    Returns dict with 'uid' and 'email' — same shape as before
+    Returns dict with 'uid' and 'email' from the JWT token.
     """
     token = credentials.credentials
     payload = decode_access_token(token)

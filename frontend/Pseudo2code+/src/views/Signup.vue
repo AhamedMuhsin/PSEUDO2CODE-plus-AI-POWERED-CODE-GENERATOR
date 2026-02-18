@@ -319,7 +319,8 @@ const handleGithub = async () => {
 .card {
   /* margin-top: 30px; */
   margin-bottom: 20px;
-  width: 500px;
+  width: 100%;
+  max-width: 500px;
   padding: 36px;
   border-radius: 16px;
   background: rgba(15, 23, 42, 0.85);
@@ -425,5 +426,73 @@ input {
 .footer span {
   color: #6c7bff;
   cursor: pointer;
+}
+
+/* ===== Mobile Responsive ===== */
+@media (max-width: 640px) {
+  .page {
+    padding: 16px;
+  }
+
+  .back {
+    top: 16px;
+    left: 16px;
+    font-size: 13px;
+  }
+
+  .app-title {
+    margin-top: 48px;
+  }
+
+  .app-title .icon {
+    width: 72px;
+  }
+
+  .card {
+    padding: 24px 18px;
+    border-radius: 14px;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+
+  label {
+    font-size: 13px;
+    margin-top: 10px;
+  }
+
+  input {
+    padding: 10px;
+  }
+
+  .primary-btn {
+    padding: 12px;
+    font-size: 15px;
+  }
+
+  .social-btn {
+    padding: 11px;
+    font-size: 14px;
+  }
+
+  .divider {
+    margin: 16px 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .card {
+    padding: 20px 14px;
+  }
+
+  h1 {
+    font-size: 1.25rem;
+  }
 }
 </style>

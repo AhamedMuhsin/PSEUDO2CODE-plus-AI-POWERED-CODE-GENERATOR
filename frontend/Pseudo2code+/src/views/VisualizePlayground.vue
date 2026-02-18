@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import api from "@/services/api";
 import AuthNavbar from "@/components/Navbar/AuthNavbar.vue";
+import arrowLeft from '@/assets/arrow-left.svg';
 
 const router = useRouter();
 
@@ -51,6 +52,14 @@ const visualize = async () => {
   <AuthNavbar />
 
   <main class="playground-container">
+    <!-- BACK BUTTON -->
+    <div class="back-top-bar">
+      <button class="back-btn-compact" @click="router.push('/dashboard')">
+        <img :src="arrowLeft" class="arrow" />
+        Back
+      </button>
+    </div>
+
     <h1>Visualize Code</h1>
     <p>Paste your code and visualize its execution</p>
 
@@ -76,6 +85,12 @@ const visualize = async () => {
 </template>
 
 <style scoped>
+/* ════════ BACK ════════ */
+.back-top-bar { flex-shrink: 0; }
+.back-btn-compact { display: flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #e0e7ff; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
+.back-btn-compact:hover { background: rgba(99,102,241,0.25); transform: translateX(-2px); }
+.arrow { width: 16px; height: 16px; }
+
 .code-input {
   width: 100%;
   height: 260px;

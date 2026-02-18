@@ -14,6 +14,14 @@
 
       <!-- MAIN CONTENT -->
       <main class="badges-container">
+        <!-- BACK BUTTON -->
+        <div class="back-top-bar">
+          <button class="back-btn-compact" @click="router.push('/dashboard')">
+            <img :src="arrowLeft" class="arrow" />
+            Back
+          </button>
+        </div>
+
         <header class="badges-header">
           <h1>Your Badges</h1>
           <p>Achievements earned from learning and practice</p>
@@ -52,8 +60,12 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
 import { useUserStore } from "@/stores/userStore"
 import AuthNavbar from "@/components/Navbar/AuthNavbar.vue";
+import arrowLeft from '@/assets/arrow-left.svg';
+
+const router = useRouter();
 import ProfileCard from "@/components/dashboard/ProfileCard.vue";
 import NavigationCard from "@/components/dashboard/NavigationCard.vue";
 import BadgeCard from "@/components/badges/BadgeCard.vue";
@@ -134,6 +146,12 @@ const completionPercent = computed(() => {
 
 </script>
 <style scoped>
+/* ════════ BACK ════════ */
+.back-top-bar { flex-shrink: 0; }
+.back-btn-compact { display: flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #e0e7ff; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
+.back-btn-compact:hover { background: rgba(99,102,241,0.25); transform: translateX(-2px); }
+.arrow { width: 16px; height: 16px; }
+
 .badges-page {
   min-height: 100vh;
   background: radial-gradient(circle at top, #0f172a, #020617);
@@ -237,5 +255,35 @@ select {
   margin-top: 8px;
   font-size: 0.8rem;
   color: #94a3b8;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .page-layout {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    display: none;
+  }
+  .badges-container {
+    padding: 24px 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-layout {
+    padding: 20px 10px;
+    gap: 16px;
+  }
+  .badges-header h1 {
+    font-size: 1.5rem;
+  }
+  .badge-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
+  }
+  .badge-progress-card {
+    padding: 14px;
+  }
 }
 </style>

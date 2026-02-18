@@ -8,6 +8,14 @@
         <NavigationCard />
       </aside>
       <main>
+        <!-- BACK BUTTON -->
+        <div class="back-top-bar">
+          <button class="back-btn-compact" @click="router.push('/dashboard')">
+            <img :src="arrowLeft" class="arrow" />
+            Back
+          </button>
+        </div>
+
         <header class="history-header">
           <!-- Title row -->
           <div class="header-text">
@@ -128,6 +136,7 @@ import { ref, computed, onMounted, watch } from "vue";
 import { useUserStore } from "@/stores/userStore"
 import { Search } from "lucide-vue-next";
 import { useRoute, useRouter } from "vue-router";
+import arrowLeft from '@/assets/arrow-left.svg';
 import api from "@/services/api";
 import AuthNavbar from "@/components/Navbar/AuthNavbar.vue";
 import ProfileCard from "@/components/dashboard/ProfileCard.vue";
@@ -337,6 +346,12 @@ const deleteActivity = async (activity) => {
 </script>
 
 <style scoped>
+/* ════════ BACK ════════ */
+.back-top-bar { flex-shrink: 0; }
+.back-btn-compact { display: flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #e0e7ff; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
+.back-btn-compact:hover { background: rgba(99,102,241,0.25); transform: translateX(-2px); }
+.arrow { width: 16px; height: 16px; }
+
 .history-page {
   min-height: 100vh;
   background:
@@ -870,5 +885,88 @@ select {
   text-align: center;
   color: #94a3b8;
   margin-top: 80px;
+}
+
+/* ===== Mobile Responsive ===== */
+@media (max-width: 1024px) {
+  .page-layout {
+    grid-template-columns: 1fr;
+    padding: 24px 16px;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .history-item .actions {
+    visibility: visible;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-controls {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .header-controls select {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .search-box input {
+    width: 100%;
+  }
+
+  .history-item {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .actions {
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-layout {
+    padding: 16px 12px;
+  }
+
+  .header-text h1 {
+    font-size: 1.5rem;
+  }
+
+  .header-text p {
+    font-size: 0.85rem;
+  }
+
+  .history-item {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .icon-circle {
+    width: 32px;
+    height: 32px;
+    margin-top: 12px;
+  }
+
+  .title {
+    font-size: 0.9rem;
+  }
+
+  .actions .btn {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+
+  .level-stats {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

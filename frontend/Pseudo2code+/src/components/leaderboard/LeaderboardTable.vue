@@ -245,6 +245,7 @@ const initials = (name = "") =>
 .badges {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .badge {
@@ -255,5 +256,101 @@ const initials = (name = "") =>
   display: grid;
   place-items: center;
   font-size: 0.9rem;
+}
+
+/* ===== Mobile Responsive ===== */
+@media (max-width: 768px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 50px 1.2fr 0.8fr 0.8fr;
+    padding: 12px 14px;
+    gap: 6px;
+  }
+
+  .rank-badge {
+    width: 30px;
+    height: 30px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+  }
+
+  .user {
+    gap: 8px;
+  }
+
+  .name {
+    font-size: 0.85rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100px;
+  }
+
+  .metric-value {
+    font-size: 0.82rem;
+  }
+
+  .table-header {
+    font-size: 0.78rem;
+  }
+
+  .badge {
+    width: 26px;
+    height: 26px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 42px 1.3fr 0.7fr;
+    padding: 10px 10px;
+  }
+
+  /* Hide badges column on very small screens */
+  .table-header span:nth-child(4),
+  .table-row .badges {
+    display: none;
+  }
+
+  .rank-badge {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
+
+  .avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 0.7rem;
+  }
+
+  .user {
+    gap: 6px;
+  }
+
+  .name {
+    font-size: 0.8rem;
+    max-width: 80px;
+  }
+
+  .you {
+    display: none;
+  }
+
+  .metric-value {
+    font-size: 0.78rem;
+  }
+
+  .table-header {
+    font-size: 0.75rem;
+  }
 }
 </style>

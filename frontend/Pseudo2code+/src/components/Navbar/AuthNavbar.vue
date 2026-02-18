@@ -48,6 +48,18 @@
                     </li>
                 </ul>
 
+                <!-- App Pages Section -->
+                <div class="mobile-section-label">Pages</div>
+                <ul class="mobile-links mobile-app-links">
+                    <li v-for="(link, i) in appLinks" :key="link.to"
+                        :style="{ animationDelay: ((navLinks.length + i) * 0.06) + 's' }">
+                        <RouterLink :to="link.to" :class="{ active: isActive(link.to) }" @click="closeMenu">
+                            <component :is="link.icon" :size="18" class="mobile-link-icon" />
+                            {{ link.label }}
+                        </RouterLink>
+                    </li>
+                </ul>
+
                 <div class="mobile-drawer-footer">
                     <button class="mobile-logout-btn" @click="handleLogout">
                         <LogOut :size="18" class="mobile-link-icon" />
@@ -63,13 +75,21 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { logout } from '@/services/authService'
+import { useSwipeBack } from '@/composables/useSwipeBack'
 import logo from '@/assets/logo_f.png'
-import { Sparkles, Info, Mail, LayoutDashboard, User, LogOut } from 'lucide-vue-next'
+import {
+    Sparkles, Info, Mail, LayoutDashboard, User, LogOut,
+    Code, Eye, Brain, Clock, Trophy, BarChart3
+} from 'lucide-vue-next'
 
 const router = useRouter()
 const route = useRoute()
 const mobileMenuOpen = ref(false)
 const scrolled = ref(false)
+
+
+// Mobile swipe-right-from-edge → browser back
+useSwipeBack()
 
 const navLinks = [
     { to: '/showcase', label: 'Showcase', icon: Sparkles },
@@ -77,6 +97,15 @@ const navLinks = [
     { to: '/contact', label: 'Contact', icon: Mail },
     { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { to: '/profile', label: 'Profile', icon: User },
+]
+
+const appLinks = [
+    { to: '/generate-code', label: 'Generate Code', icon: Code },
+    { to: '/visualize-playground', label: 'Visualize Code', icon: Eye },
+    { to: '/algorithm-hub', label: 'Algorithm Hub', icon: Brain },
+    { to: '/history', label: 'History', icon: Clock },
+    { to: '/badges', label: 'Badges', icon: Trophy },
+    { to: '/leaderboard', label: 'Leaderboard', icon: BarChart3 },
 ]
 
 function isActive(path) {
@@ -145,6 +174,7 @@ onUnmounted(() => {
     gap: 10px;
     flex-shrink: 0;
 }
+
 
 .logo {
     width: 34px;
@@ -428,6 +458,19 @@ onUnmounted(() => {
 }
 
 /* ════════ DRAWER FOOTER ════════ */
+.mobile-section-label {
+    padding: 6px 28px 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #475569;
+}
+
+.mobile-app-links {
+    padding-top: 0;
+}
+
 .mobile-drawer-footer {
     padding: 12px 12px 28px;
     border-top: 1px solid rgba(100, 116, 139, 0.15);

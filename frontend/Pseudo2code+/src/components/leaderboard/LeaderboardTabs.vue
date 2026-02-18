@@ -56,4 +56,36 @@ const tabs = [
   color: #ffffff;
   box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
 }
+
+/* ===== Mobile Responsive ===== */
+@media (max-width: 640px) {
+  .leaderboard-tabs {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 4px;
+    padding: 4px;
+    margin-top: 14px;
+    width: 100%;
+  }
+
+  .leaderboard-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .leaderboard-tabs button {
+    padding: 7px 12px;
+    font-size: 0.78rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .leaderboard-tabs button {
+    padding: 6px 10px;
+    font-size: 0.72rem;
+  }
+}
 </style>

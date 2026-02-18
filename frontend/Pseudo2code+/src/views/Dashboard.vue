@@ -5,12 +5,16 @@
 
       <!-- LEFT COLUMN -->
       <div class="left-column">
-        <ProfileCard v-if="user" :name="user.name" :email="user.email" :avatar="user.avatar" :level="user.level" :xp="user.xp"
-          :nextXp="user.nextXp" :totalXp="user.totalXp" :streak="user.streak"
+        <ProfileCard v-if="user" :name="user.name" :email="user.email" :avatar="user.avatar" :level="user.level"
+          :xp="user.xp" :nextXp="user.nextXp" :totalXp="user.totalXp" :streak="user.streak"
           :streakActiveToday="user.streak_active_today" />
 
-        <QuickActions />
-        <SuggestedTasks :tasks="suggestedTasks" />
+        <div class="desktop-only">
+          <QuickActions />
+        </div>
+        <div class="desktop-only">
+          <SuggestedTasks :tasks="suggestedTasks" />
+        </div>
       </div>
 
       <!-- RIGHT COLUMN -->
@@ -18,10 +22,17 @@
         <WelcomeHeader v-if="user" :name="user.name" />
         <StatsCards v-if="stats" :stats="stats" />
         <RecentActivity :activities="activities" @select="handleActivityClick" />
+
+        <!-- Suggested Tasks – visible on mobile only, after RecentActivity -->
+        <div class="mobile-only">
+          <SuggestedTasks :tasks="suggestedTasks" />
+        </div>
       </div>
     </div>
   </main>
 
+  <!-- Sticky bottom nav (mobile only, like YouTube/Instagram) -->
+  <MobileBottomNav />
 </template>
 <script setup>
 import { ref, onMounted } from "vue";
@@ -37,6 +48,7 @@ import SuggestedTasks from "@/components/dashboard/SuggestedTasks.vue";
 import WelcomeHeader from "@/components/dashboard/WelcomeHeader.vue";
 import StatsCards from "@/components/dashboard/StatsCards.vue";
 import RecentActivity from "@/components/dashboard/RecentActivity.vue";
+import MobileBottomNav from "@/components/dashboard/MobileBottomNav.vue";
 
 import api from "@/services/api";
 import { logout } from "@/services/authService";
@@ -215,14 +227,47 @@ const handleActivityClick = (activity) => {
   gap: 32px;
 }
 
-/* TABLET */
+/* Desktop/mobile toggle helpers */
+.mobile-only {
+  display: none;
+}
+
+.desktop-only {
+  display: block;
+}
+
+/* ── TABLET / MOBILE ── */
 @media (max-width: 1024px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
+
+  /* Reorder: ProfileCard on top, then right col content */
+  .left-column {
+    order: 1;
+  }
+
+  .right-column {
+    order: 2;
+  }
+
+  /* Hide QuickActions card + desktop SuggestedTasks (bottom nav replaces it) */
+  .desktop-only {
+    display: none;
+  }
+
+  /* Show mobile SuggestedTasks after RecentActivity */
+  .mobile-only {
+    display: block;
+  }
+
+  /* Bottom nav padding so content isn't hidden behind it */
+  .dashboard {
+    padding-bottom: 80px;
+  }
 }
 
-/* MOBILE */
+/* ── SMALL MOBILE ── */
 @media (max-width: 640px) {
   .stat-card {
     flex-direction: column;
@@ -235,13 +280,11 @@ const handleActivityClick = (activity) => {
 
   .dashboard {
     padding: 16px;
+    padding-bottom: 80px;
   }
-}
 
-/* Mobile responsiveness later */
-@media (max-width: 1024px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr;
+  .dashboard-main {
+    gap: 24px;
   }
 }
 </style>

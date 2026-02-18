@@ -2,6 +2,14 @@
   <AuthNavbar />
   <main class="profile-page">
     <div class="profile-container">
+      <!-- BACK BUTTON -->
+      <div class="back-top-bar">
+        <button class="back-btn-compact" @click="router.push('/dashboard')">
+          <img :src="arrowLeft" class="arrow" />
+          Back
+        </button>
+      </div>
+
       <section class="header">
         <h1>Profile Settings</h1>
         <p>Manage your account settings and preferences</p>
@@ -104,6 +112,7 @@
 import { ref, onMounted, computed } from "vue"
 import { useRouter } from "vue-router"
 import { useUserStore } from "@/stores/userStore"
+import arrowLeft from '@/assets/arrow-left.svg';
 
 import { fetchMe } from "@/services/userService"
 import AuthNavbar from "@/components/Navbar/AuthNavbar.vue"
@@ -328,6 +337,12 @@ async function confirmDelete() {
 </script>
 
 <style scoped>
+/* ════════ BACK ════════ */
+.back-top-bar { flex-shrink: 0; }
+.back-btn-compact { display: flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #e0e7ff; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
+.back-btn-compact:hover { background: rgba(99,102,241,0.25); transform: translateX(-2px); }
+.arrow { width: 16px; height: 16px; }
+
 .profile-page {
   background: radial-gradient(circle at top, #0f172a, #020617);
   padding: 32px;
