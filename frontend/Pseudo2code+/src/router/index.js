@@ -210,6 +210,12 @@ const routes = [
     component: () => import('@/views/AIProblemsHub.vue'),
     meta: { requiresAuth: true },
   },
+  {
+    path: '/contact',
+    name: 'Contact',
+    component: () => import('@/views/ContactPage.vue'),
+    meta: { requiresAuth: true },
+  },
 ]
 
 const router = createRouter({
