@@ -15,13 +15,13 @@
 :root,
 [data-theme="dark"] {
   /* ── 1. BACKGROUNDS ── */
-  --bg-page:              #000000;                          /* Full page / body background */
-  --bg-card:              rgba(18, 18, 18, 0.65);           /* Card / panel surfaces */
-  --bg-card-solid:        #121212;                          /* Card surface (solid fallback) */
-  --bg-elevated:          rgba(10, 10, 10, 0.5);            /* Inner sections, inputs, code blocks */
-  --bg-elevated-alt:      rgba(10, 10, 10, 0.6);            /* Slightly darker elevated variant */
-  --bg-elevated-deep:     rgba(10, 10, 10, 0.7);            /* Deepest nested containers */
-  --bg-surface:           #1a1a1a;                          /* Selector cards, dropdowns, tooltips */
+  --bg-page:              #0a0a0a;                          /* Full page / body background */
+  --bg-card:              rgba(30, 30, 36, 0.75);           /* Card / panel surfaces */
+  --bg-card-solid:        #1e1e24;                          /* Card surface (solid fallback) */
+  --bg-elevated:          rgba(22, 22, 28, 0.6);            /* Inner sections, inputs, code blocks */
+  --bg-elevated-alt:      rgba(22, 22, 28, 0.65);           /* Slightly darker elevated variant */
+  --bg-elevated-deep:     rgba(16, 16, 20, 0.8);            /* Deepest nested containers */
+  --bg-surface:           #1e1e24;                          /* Selector cards, dropdowns, tooltips */
   --bg-overlay:           rgba(0, 0, 0, 0.4);               /* Modal / overlay backdrop */
   --bg-overlay-heavy:     rgba(0, 0, 0, 0.55);              /* Heavier overlay */
 

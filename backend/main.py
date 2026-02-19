@@ -433,6 +433,7 @@ async def get_leaderboard(
     else:
         raise HTTPException(status_code=400, detail="Invalid leaderboard type")
 
+    # Fetch one extra row to know if there is a next page
     cursor = (
         users_collection
         .find(
@@ -448,10 +449,16 @@ async def get_leaderboard(
         )
         .sort(sort)
         .skip(skip)
-        .limit(limit)
+        .limit(limit + 1)
     )
 
-    users = await cursor.to_list(length=limit)
+    users = await cursor.to_list(length=limit + 1)
+    has_next = len(users) > limit
+    users = users[:limit]          # trim the extra probe row
+
+    # Total count for total_pages
+    total_count = await users_collection.count_documents({})
+    total_pages = max(1, -(-total_count // limit))  # ceil division
 
     leaderboard = []
     rank_start = skip + 1
@@ -477,6 +484,8 @@ async def get_leaderboard(
         "type": type,
         "page": page,
         "limit": limit,
+        "has_next": has_next,
+        "total_pages": total_pages,
         "results": leaderboard
     }
 

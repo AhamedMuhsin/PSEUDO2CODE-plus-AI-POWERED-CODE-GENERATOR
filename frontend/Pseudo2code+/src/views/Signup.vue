@@ -144,8 +144,8 @@ const handleGoogle = async () => {
     success.value = "";
     loading.value = true;
     
-    await loginWithGoogle();
-    router.push("/dashboard");
+    const user = await loginWithGoogle();
+    if (user) router.push("/dashboard");
   } catch (err) {
     console.error('Google signup error:', err);
     if (err.code === 'auth/popup-closed-by-user') {
@@ -164,8 +164,8 @@ const handleGithub = async () => {
     success.value = "";
     loading.value = true;
     
-    await loginWithGithub();
-    router.push("/dashboard");
+    const user = await loginWithGithub();
+    if (user) router.push("/dashboard");
   } catch (err) {
     console.error('GitHub signup error:', err);
     if (err.code === 'auth/popup-closed-by-user') {

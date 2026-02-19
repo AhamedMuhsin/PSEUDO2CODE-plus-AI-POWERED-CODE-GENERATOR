@@ -1,15 +1,8 @@
 <template>
-  <AuthNavbar />
+  <AuthNavbar v-if="isLoggedIn" />
+  <GuestNavbar v-else />
   <main class="contact-page">
     <div class="contact-container">
-      <!-- Back Button -->
-      <div class="back-top-bar">
-        <button class="back-btn-compact" @click="router.back()">
-          <img :src="arrowLeft" class="arrow" />
-          Back
-        </button>
-      </div>
-
       <!-- Header -->
       <section class="contact-header">
         <div class="header-icon">
@@ -19,69 +12,86 @@
         <p>Have a question, suggestion, or just want to say hello? Reach out through any of the channels below.</p>
       </section>
 
-      <!-- Contact Cards -->
-      <div class="contact-grid">
-        <!-- Developer Card -->
-        <section class="card developer-card">
-          <div class="dev-avatar">
-            <span>AM</span>
-          </div>
-          <h2>Ahamed Muhsin</h2>
-          <p class="dev-role">Full-Stack Developer</p>
-          <p class="dev-location">
-            <MapPin :size="16" />
-            Mumbai, India
-          </p>
-        </section>
-
-        <!-- Contact Methods -->
-        <section class="card contact-methods">
-          <h3>Contact Information</h3>
-
-          <a href="mailto:ahamedmuhsin6@gmail.com" class="contact-item">
-            <div class="contact-icon email-icon">
-              <Mail :size="20" />
-            </div>
-            <div class="contact-detail">
-              <span class="contact-label">Email</span>
-              <span class="contact-value">ahamedmuhsin6@gmail.com</span>
-            </div>
-            <ExternalLink :size="16" class="external" />
-          </a>
-
-          <a href="https://github.com/AhamedMuhsin" target="_blank" rel="noopener noreferrer" class="contact-item">
-            <div class="contact-icon github-icon">
-              <Github :size="20" />
-            </div>
-            <div class="contact-detail">
-              <span class="contact-label">GitHub</span>
-              <span class="contact-value">AhamedMuhsin</span>
-            </div>
-            <ExternalLink :size="16" class="external" />
-          </a>
-
-          <a href="https://www.linkedin.com/in/ahamed-muhsin/" target="_blank" rel="noopener noreferrer" class="contact-item">
-            <div class="contact-icon linkedin-icon">
-              <Linkedin :size="20" />
-            </div>
-            <div class="contact-detail">
-              <span class="contact-label">LinkedIn</span>
-              <span class="contact-value">ahamed-muhsin</span>
-            </div>
-            <ExternalLink :size="16" class="external" />
-          </a>
-
-          <div class="contact-item no-hover">
-            <div class="contact-icon location-icon">
-              <MapPin :size="20" />
-            </div>
-            <div class="contact-detail">
-              <span class="contact-label">Location</span>
-              <span class="contact-value">Mumbai, India</span>
+      <!-- Developer Card (same style as About page) -->
+      <section class="card developer-section">
+        <h3>
+          <User :size="20" class="section-icon" />
+          Developer
+        </h3>
+        <div class="dev-profile">
+          <div class="dev-avatar">AM</div>
+          <div class="dev-info">
+            <h4>Ahamed Muhsin</h4>
+            <p class="dev-role">Full-Stack Developer</p>
+            <p class="dev-location">
+              <MapPin :size="14" />
+              Mumbai, India
+            </p>
+            <div class="dev-links">
+              <a href="https://github.com/AhamedMuhsin" target="_blank" rel="noopener noreferrer" class="dev-link">
+                <Github :size="16" />
+                GitHub
+              </a>
+              <a href="https://www.linkedin.com/in/ahamed-muhsin/" target="_blank" rel="noopener noreferrer" class="dev-link">
+                <Linkedin :size="16" />
+                LinkedIn
+              </a>
+              <a href="mailto:ahamedmuhsin6@gmail.com" class="dev-link">
+                <Mail :size="16" />
+                Email
+              </a>
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
+
+      <!-- Contact Methods -->
+      <section class="card contact-methods">
+        <h3>Contact Information</h3>
+
+        <a href="mailto:ahamedmuhsin6@gmail.com" class="contact-item">
+          <div class="contact-icon email-icon">
+            <Mail :size="20" />
+          </div>
+          <div class="contact-detail">
+            <span class="contact-label">Email</span>
+            <span class="contact-value">ahamedmuhsin6@gmail.com</span>
+          </div>
+          <ExternalLink :size="16" class="external" />
+        </a>
+
+        <a href="https://github.com/AhamedMuhsin" target="_blank" rel="noopener noreferrer" class="contact-item">
+          <div class="contact-icon github-icon">
+            <Github :size="20" />
+          </div>
+          <div class="contact-detail">
+            <span class="contact-label">GitHub</span>
+            <span class="contact-value">AhamedMuhsin</span>
+          </div>
+          <ExternalLink :size="16" class="external" />
+        </a>
+
+        <a href="https://www.linkedin.com/in/ahamed-muhsin/" target="_blank" rel="noopener noreferrer" class="contact-item">
+          <div class="contact-icon linkedin-icon">
+            <Linkedin :size="20" />
+          </div>
+          <div class="contact-detail">
+            <span class="contact-label">LinkedIn</span>
+            <span class="contact-value">ahamed-muhsin</span>
+          </div>
+          <ExternalLink :size="16" class="external" />
+        </a>
+
+        <div class="contact-item no-hover">
+          <div class="contact-icon location-icon">
+            <MapPin :size="20" />
+          </div>
+          <div class="contact-detail">
+            <span class="contact-label">Location</span>
+            <span class="contact-value">Mumbai, India</span>
+          </div>
+        </div>
+      </section>
 
       <!-- Message Form -->
       <section class="card message-card">
@@ -123,34 +133,22 @@
         </form>
       </section>
 
-      <!-- About the Project -->
-      <section class="card about-card">
-        <h3>About Pseudo2Code+</h3>
-        <p>
-          Pseudo2Code+ is an AI-powered code generator and algorithm visualizer built to help students
-          and developers learn programming concepts through interactive tools. Convert pseudocode to real code,
-          visualize algorithms step-by-step, earn badges, and track your learning progress.
-        </p>
-        <div class="tech-stack">
-          <span class="tech-tag">Vue 3</span>
-          <span class="tech-tag">FastAPI</span>
-          <span class="tech-tag">MongoDB</span>
-          <span class="tech-tag">Gemini AI</span>
-          <span class="tech-tag">Firebase Auth</span>
-        </div>
-      </section>
     </div>
   </main>
+  <SiteFooter />
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthNavbar from '@/components/Navbar/AuthNavbar.vue'
-import { Mail, Github, Linkedin, MapPin, ExternalLink, Send, Loader2, CircleCheck } from 'lucide-vue-next'
+import GuestNavbar from '@/components/Navbar/GuestNavbar.vue'
+import SiteFooter from '@/components/common/SiteFooter.vue'
+import { isAuthenticated } from '@/services/authService'
+import { Mail, Github, Linkedin, MapPin, ExternalLink, Send, Loader2, CircleCheck, User } from 'lucide-vue-next'
 
+const isLoggedIn = isAuthenticated()
 const router = useRouter()
-const arrowLeft = new URL('@/assets/arrow-left.svg', import.meta.url).href
 
 const form = ref({
   name: '',
@@ -184,43 +182,12 @@ const handleSubmit = async () => {
 .contact-page {
   min-height: 100vh;
   background: var(--bg-page);
-  padding: 90px 20px 60px;
+  padding: 70px 20px 60px;
 }
 
 .contact-container {
   max-width: 800px;
   margin: 0 auto;
-}
-
-/* Back Button */
-.back-top-bar {
-  margin-bottom: 24px;
-}
-
-.back-btn-compact {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-default);
-  border-radius: 10px;
-  padding: 8px 16px;
-  color: var(--text-secondary);
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-}
-
-.back-btn-compact:hover {
-  background: var(--bg-hover);
-  border-color: var(--accent-border);
-  color: var(--accent);
-}
-
-.back-btn-compact .arrow {
-  width: 16px;
-  height: 16px;
-  opacity: 0.7;
 }
 
 /* Header */
@@ -256,11 +223,9 @@ const handleSubmit = async () => {
   line-height: 1.6;
 }
 
-/* Contact Grid */
-.contact-grid {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 20px;
+/* Contact Grid — now stacked */
+.contact-methods,
+.developer-section {
   margin-bottom: 20px;
 }
 
@@ -270,56 +235,91 @@ const handleSubmit = async () => {
   border: 1px solid var(--border-default);
   border-radius: 14px;
   padding: 24px;
+  backdrop-filter: blur(8px);
 }
 
 .card h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 16px;
 }
 
-/* Developer Card */
-.developer-card {
+.section-icon {
+  color: var(--accent);
+}
+
+/* Developer Section (matches About page) */
+.dev-profile {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 20px;
 }
 
 .dev-avatar {
-  width: 80px;
-  height: 80px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
   display: grid;
   place-items: center;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 700;
-  color: var(--text-on-accent);
-  margin-bottom: 8px;
+  color: #fff;
+  flex-shrink: 0;
 }
 
-.developer-card h2 {
-  font-size: 1.25rem;
+.dev-info h4 {
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--text-primary);
+  margin-bottom: 4px;
 }
 
 .dev-role {
   color: var(--accent-light);
   font-size: 0.9rem;
   font-weight: 500;
+  margin-bottom: 4px;
 }
 
 .dev-location {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   color: var(--text-muted);
   font-size: 0.85rem;
-  margin-top: 4px;
+  margin-bottom: 14px;
+}
+
+.dev-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.dev-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.dev-link:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent-border);
+  color: var(--accent);
 }
 
 /* Contact Methods */
@@ -347,6 +347,10 @@ const handleSubmit = async () => {
 
 .contact-item:not(.no-hover):hover {
   background: var(--bg-hover);
+}
+
+.no-hover {
+  cursor: default;
 }
 
 .contact-item .external {
@@ -513,38 +517,10 @@ const handleSubmit = async () => {
   font-weight: 500;
 }
 
-/* About Card */
-.about-card p {
-  color: var(--text-muted);
-  font-size: 0.92rem;
-  line-height: 1.7;
-  margin-bottom: 16px;
-}
-
-.tech-stack {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.tech-tag {
-  padding: 6px 14px;
-  border-radius: 8px;
-  background: var(--accent-bg);
-  color: var(--accent);
-  font-size: 0.82rem;
-  font-weight: 600;
-  border: 1px solid var(--accent-border);
-}
-
 /* Mobile */
 @media (max-width: 768px) {
   .contact-page {
-    padding: 80px 14px 40px;
-  }
-
-  .contact-grid {
-    grid-template-columns: 1fr;
+    padding: 60px 14px 40px;
   }
 
   .contact-header h1 {
@@ -555,18 +531,18 @@ const handleSubmit = async () => {
     grid-template-columns: 1fr;
   }
 
-  .developer-card {
-    flex-direction: row;
-    text-align: left;
-    gap: 16px;
+  .dev-profile {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
 
-  .dev-avatar {
-    width: 56px;
-    height: 56px;
-    font-size: 1.1rem;
-    margin-bottom: 0;
-    flex-shrink: 0;
+  .dev-location {
+    justify-content: center;
+  }
+
+  .dev-links {
+    justify-content: center;
   }
 
   .card {
@@ -591,6 +567,11 @@ const handleSubmit = async () => {
 
   .send-btn {
     width: 100%;
+  }
+
+  .dev-link {
+    padding: 6px 12px;
+    font-size: 0.78rem;
   }
 }
 </style>

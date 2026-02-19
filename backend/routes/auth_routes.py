@@ -34,6 +34,7 @@ class LoginRequest(BaseModel):
 
 class OAuthCodeRequest(BaseModel):
     code: str
+    redirect_uri: Optional[str] = None
 
 class ForgotPasswordRequest(BaseModel):
     email: EmailStr
@@ -197,13 +198,13 @@ async def login(payload: LoginRequest):
 # ==================== GOOGLE OAUTH ====================
 
 @router.get("/google/url")
-async def google_auth_url():
+async def google_auth_url(redirect_uri: Optional[str] = None):
     """Return Google OAuth URL for frontend redirect"""
-    redirect_uri = f"{FRONTEND_URL}/auth/callback/google"
+    callback_uri = redirect_uri or f"{FRONTEND_URL}/auth/callback/google"
     url = (
         f"https://accounts.google.com/o/oauth2/v2/auth"
         f"?client_id={GOOGLE_CLIENT_ID}"
-        f"&redirect_uri={redirect_uri}"
+        f"&redirect_uri={callback_uri}"
         f"&response_type=code"
         f"&scope=openid email profile"
         f"&access_type=offline"
@@ -214,19 +215,20 @@ async def google_auth_url():
 @router.post("/google/callback")
 async def google_callback(payload: OAuthCodeRequest):
     """Exchange Google auth code for JWT token"""
-    user_info = await exchange_google_code(payload.code)
+    redirect_uri = payload.redirect_uri or f"{FRONTEND_URL}/auth/callback/google"
+    user_info = await exchange_google_code(payload.code, redirect_uri)
     return await _oauth_login_or_signup(user_info)
 
 # ==================== GITHUB OAUTH ====================
 
 @router.get("/github/url")
-async def github_auth_url():
+async def github_auth_url(redirect_uri: Optional[str] = None):
     """Return GitHub OAuth URL for frontend redirect"""
-    redirect_uri = f"{FRONTEND_URL}/auth/callback/github"
+    callback_uri = redirect_uri or f"{FRONTEND_URL}/auth/callback/github"
     url = (
         f"https://github.com/login/oauth/authorize"
         f"?client_id={GITHUB_CLIENT_ID}"
-        f"&redirect_uri={redirect_uri}"
+        f"&redirect_uri={callback_uri}"
         f"&scope=user:email"
     )
     return {"url": url}
@@ -234,7 +236,8 @@ async def github_auth_url():
 @router.post("/github/callback")
 async def github_callback(payload: OAuthCodeRequest):
     """Exchange GitHub auth code for JWT token"""
-    user_info = await exchange_github_code(payload.code)
+    redirect_uri = payload.redirect_uri or f"{FRONTEND_URL}/auth/callback/github"
+    user_info = await exchange_github_code(payload.code, redirect_uri)
     return await _oauth_login_or_signup(user_info)
 
 # ==================== PASSWORD MANAGEMENT ====================

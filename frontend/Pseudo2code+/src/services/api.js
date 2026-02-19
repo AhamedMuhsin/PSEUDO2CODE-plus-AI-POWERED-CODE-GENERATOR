@@ -1,13 +1,14 @@
 import axios from 'axios'
 import router from '@/router'
 
-// Use the same hostname the browser is on so mobile / LAN access works
-const API_HOST = window.location.hostname   // e.g. "10.38.152.190" or "localhost"
-const API_PORT = 8000
+// When served through a tunnel (HTTPS) use the Vite proxy at /api.
+// For local / LAN dev (HTTP) hit the backend directly.
+const isTunnel = window.location.protocol === 'https:'
+const baseURL = isTunnel
+  ? '/api'                                                   // proxied by Vite
+  : `http://${window.location.hostname}:8000`                 // direct
 
-const api = axios.create({
-  baseURL: `http://${API_HOST}:${API_PORT}`,
-})
+const api = axios.create({ baseURL })
 
 /* ────────── REQUEST INTERCEPTOR ────────── */
 api.interceptors.request.use((config) => {

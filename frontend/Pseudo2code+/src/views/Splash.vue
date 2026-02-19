@@ -24,7 +24,7 @@ onMounted(() => {
     if (isAuthenticated()) {
       router.replace("/dashboard");
     } else {
-      router.replace("/login");
+      router.replace("/");
     }
   }, 1500);
 });

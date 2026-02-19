@@ -126,6 +126,8 @@ const fetchLeaderboard = async () => {
         })
 
         leaderboard.value = res.data.results
+        hasNext.value = res.data.has_next ?? false
+        totalPages.value = res.data.total_pages ?? 1
 
         // 🔥 FIND CURRENT USER RANK
         const me = leaderboard.value.find(

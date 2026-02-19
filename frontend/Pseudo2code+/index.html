@@ -4,9 +4,110 @@
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vite App</title>
+    <title>Pseudo2Code+</title>
+    <script>
+      // Apply saved theme to splash immediately (before CSS/Vue loads)
+      (function() {
+        var pref = localStorage.getItem('theme-preference') || 'dark';
+        if (pref === 'system') {
+          pref = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', pref);
+        document.documentElement.classList.add('splash-theme-' + pref);
+      })();
+    </script>
+    <style>
+      /* Inline splash screen — visible instantly before JS loads */
+      body { margin: 0; background: #0a0a0a; }
+      html.splash-theme-light body { background: #f5f7fa; }
+      #initial-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: #0a0a0a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.4s ease, visibility 0.4s ease;
+      }
+      #initial-splash.hide {
+        opacity: 0;
+        visibility: hidden;
+      }
+      #initial-splash .splash-inner {
+        text-align: center;
+      }
+      #initial-splash .splash-logo {
+        width: 120px;
+        margin-bottom: 20px;
+        animation: splashPulse 1.8s ease-in-out infinite;
+      }
+      #initial-splash .splash-title {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-size: 2.5rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #a78bfa, #818cf8, #6366f1);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        margin: 0 0 8px;
+      }
+      #initial-splash .splash-subtitle {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        color: #94a3b8;
+        font-size: 1rem;
+        margin: 0 0 30px;
+      }
+      #initial-splash .splash-loader {
+        width: 36px;
+        height: 36px;
+        border: 3px solid rgba(167, 139, 250, 0.2);
+        border-top-color: #a78bfa;
+        border-radius: 50%;
+        animation: splashSpin 0.8s linear infinite;
+        margin: 0 auto;
+      }
+      /* Light theme splash overrides */
+      html.splash-theme-light #initial-splash {
+        background: #f5f7fa;
+      }
+      html.splash-theme-light #initial-splash .splash-title {
+        background: linear-gradient(135deg, #6366f1, #4f46e5, #3730a3);
+        -webkit-background-clip: text;
+        background-clip: text;
+      }
+      html.splash-theme-light #initial-splash .splash-subtitle {
+        color: #64748b;
+      }
+      html.splash-theme-light #initial-splash .splash-loader {
+        border-color: rgba(79, 70, 229, 0.15);
+        border-top-color: #4f46e5;
+      }
+      @keyframes splashSpin {
+        to { transform: rotate(360deg); }
+      }
+      @keyframes splashPulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.85; transform: scale(1.04); }
+      }
+      @media (max-width: 480px) {
+        #initial-splash .splash-logo { width: 80px; }
+        #initial-splash .splash-title { font-size: 1.8rem; }
+        #initial-splash .splash-subtitle { font-size: 0.85rem; }
+      }
+    </style>
   </head>
   <body>
+    <!-- Instant splash screen (no JS needed) -->
+    <div id="initial-splash">
+      <div class="splash-inner">
+        <img src="/src/assets/logo_f.png" alt="Logo" class="splash-logo" />
+        <h1 class="splash-title">Pseudo2Code+</h1>
+        <p class="splash-subtitle">From Pseudocode to Code — Instantly.</p>
+        <div class="splash-loader"></div>
+      </div>
+    </div>
+
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
   </body>

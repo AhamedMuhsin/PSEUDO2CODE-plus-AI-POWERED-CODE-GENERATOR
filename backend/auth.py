@@ -76,8 +76,9 @@ async def get_current_user(
     return {"uid": uid, "email": email}
 
 # ==================== GOOGLE OAUTH ====================
-async def exchange_google_code(code: str) -> dict:
+async def exchange_google_code(code: str, redirect_uri: str = None) -> dict:
     """Exchange Google auth code for user info"""
+    callback_uri = redirect_uri or f"{FRONTEND_URL}/auth/callback/google"
     async with httpx.AsyncClient() as client:
         # Exchange code for tokens
         token_response = await client.post(
@@ -86,7 +87,7 @@ async def exchange_google_code(code: str) -> dict:
                 "code": code,
                 "client_id": GOOGLE_CLIENT_ID,
                 "client_secret": GOOGLE_CLIENT_SECRET,
-                "redirect_uri": f"{FRONTEND_URL}/auth/callback/google",
+                "redirect_uri": callback_uri,
                 "grant_type": "authorization_code",
             },
         )
@@ -116,7 +117,7 @@ async def exchange_google_code(code: str) -> dict:
         }
 
 # ==================== GITHUB OAUTH ====================
-async def exchange_github_code(code: str) -> dict:
+async def exchange_github_code(code: str, redirect_uri: str = None) -> dict:
     """Exchange GitHub auth code for user info"""
     async with httpx.AsyncClient() as client:
         # Exchange code for access token

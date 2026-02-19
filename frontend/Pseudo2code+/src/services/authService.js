@@ -1,12 +1,24 @@
 /**
  * Auth Service - JWT-based authentication
  * Self-hosted JWT + OAuth (Google, GitHub) — no Firebase dependency
+ * Uses redirect flow on mobile, popup flow on desktop.
  */
 
 import api from '@/services/api'
 
 const TOKEN_KEY = 'auth_token'
 const USER_KEY = 'auth_user'
+
+// ==================== HELPERS ====================
+
+function isMobile() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    || window.innerWidth < 768
+}
+
+function getCallbackUri(provider) {
+  return `${window.location.origin}/auth/callback/${provider}`
+}
 
 // ==================== TOKEN MANAGEMENT ====================
 
@@ -54,13 +66,32 @@ export const loginWithEmail = async (email, password) => {
   return user
 }
 
+// ==================== OAUTH CODE EXCHANGE ====================
+
+export async function exchangeOAuthCode(provider, code) {
+  const redirect_uri = getCallbackUri(provider)
+  const res = await api.post(`/auth/${provider}/callback`, { code, redirect_uri })
+  const { token, user } = res.data
+  setToken(token)
+  setStoredUser(user)
+  return user
+}
+
 // ==================== GOOGLE OAUTH ====================
 
 export const loginWithGoogle = async () => {
-  // Get the OAuth URL from backend
-  const res = await api.get('/auth/google/url')
+  const redirect_uri = getCallbackUri('google')
+  const res = await api.get('/auth/google/url', { params: { redirect_uri } })
   const { url } = res.data
 
+  // Mobile: use full-page redirect (popups don't work)
+  if (isMobile()) {
+    localStorage.setItem('oauth_provider', 'google')
+    window.location.href = url
+    return // page will navigate away
+  }
+
+  // Desktop: use popup flow
   return new Promise((resolve, reject) => {
     const width = 500
     const height = 600
@@ -74,7 +105,9 @@ export const loginWithGoogle = async () => {
     )
 
     if (!popup) {
-      reject(new Error('Popup blocked. Please allow popups for this site.'))
+      // Popup blocked — fall back to redirect
+      localStorage.setItem('oauth_provider', 'google')
+      window.location.href = url
       return
     }
 
@@ -94,10 +127,7 @@ export const loginWithGoogle = async () => {
           popup.close()
 
           if (code) {
-            const res = await api.post('/auth/google/callback', { code })
-            const { token, user } = res.data
-            setToken(token)
-            setStoredUser(user)
+            const user = await exchangeOAuthCode('google', code)
             resolve(user)
           } else {
             reject(new Error('No authorization code received from Google'))
@@ -119,9 +149,18 @@ export const loginWithGoogle = async () => {
 // ==================== GITHUB OAUTH ====================
 
 export const loginWithGithub = async () => {
-  const res = await api.get('/auth/github/url')
+  const redirect_uri = getCallbackUri('github')
+  const res = await api.get('/auth/github/url', { params: { redirect_uri } })
   const { url } = res.data
 
+  // Mobile: use full-page redirect
+  if (isMobile()) {
+    localStorage.setItem('oauth_provider', 'github')
+    window.location.href = url
+    return
+  }
+
+  // Desktop: use popup flow
   return new Promise((resolve, reject) => {
     const width = 500
     const height = 600
@@ -135,7 +174,8 @@ export const loginWithGithub = async () => {
     )
 
     if (!popup) {
-      reject(new Error('Popup blocked. Please allow popups for this site.'))
+      localStorage.setItem('oauth_provider', 'github')
+      window.location.href = url
       return
     }
 
@@ -155,10 +195,7 @@ export const loginWithGithub = async () => {
           popup.close()
 
           if (code) {
-            const res = await api.post('/auth/github/callback', { code })
-            const { token, user } = res.data
-            setToken(token)
-            setStoredUser(user)
+            const user = await exchangeOAuthCode('github', code)
             resolve(user)
           } else {
             reject(new Error('No authorization code received from GitHub'))

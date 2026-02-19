@@ -154,8 +154,9 @@ const handleGoogleLogin = async () => {
     error.value = "";
     success.value = "";
 
-    await loginWithGoogle();
-    router.push("/dashboard");
+    const user = await loginWithGoogle();
+    // If user is undefined, we're in redirect flow (mobile) — page is navigating away
+    if (user) router.push("/dashboard");
 
   } catch (err) {
     console.error('Google login error:', err);
@@ -177,8 +178,8 @@ const handleGithubLogin = async () => {
     error.value = "";
     success.value = "";
 
-    await loginWithGithub();
-    router.push("/dashboard");
+    const user = await loginWithGithub();
+    if (user) router.push("/dashboard");
 
   } catch (err) {
     console.error('GitHub login error:', err);

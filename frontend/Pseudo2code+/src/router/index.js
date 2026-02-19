@@ -5,6 +5,7 @@ import GenerateCodeView from '@/views/GenerateCodeView.vue'
 import { getCurrentUser } from '@/services/authState'
 import Signup from '@/views/Signup.vue'
 import Splash from '@/views/Splash.vue'
+import LandingPage from '@/views/LandingPage.vue'
 import Visualize from '@/views/Visualize.vue'
 import VisualizePlayground from '@/views/VisualizePlayground.vue'
 import ViewHistory from '@/views/ViewHistory.vue'
@@ -16,6 +17,11 @@ import AlgorithmHub from '@/views/AlgorithmHub.vue'
 const routes = [
   {
     path: '/',
+    name: 'Landing',
+    component: LandingPage,
+  },
+  {
+    path: '/splash',
     name: 'Splash',
     component: Splash,
   },
@@ -214,7 +220,16 @@ const routes = [
     path: '/contact',
     name: 'Contact',
     component: () => import('@/views/ContactPage.vue'),
-    meta: { requiresAuth: true },
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: () => import('@/views/AboutPage.vue'),
+  },
+  {
+    path: '/showcase',
+    name: 'Showcase',
+    component: () => import('@/views/ShowcasePage.vue'),
   },
 ]
 
