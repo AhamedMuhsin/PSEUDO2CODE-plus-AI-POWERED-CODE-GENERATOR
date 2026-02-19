@@ -4,7 +4,7 @@
   <main class="visualize-container">
     <!-- BACK BUTTON -->
     <div class="back-top-bar">
-      <button class="back-btn-compact" @click="router.push('/dashboard')">
+      <button class="back-btn-compact" @click="router.push('/generate-code')">
         <img :src="arrowLeft" class="arrow" />
         Back
       </button>
@@ -266,12 +266,6 @@ const exportSVG = () => {
   height: 12px;
   background: #facc15;
   transform: rotate(45deg);
-}
-
-.arrow {
-  width: 16px;
-  height: 2px;
-  background: #38bdf8;
 }
 
 .external-visualizer {

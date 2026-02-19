@@ -78,7 +78,7 @@
       </section>
 
       <!-- Output Section -->
-      <section class="card output-card">
+      <section ref="outputCard" class="card output-card">
         <h2>Generated Code</h2>
 
         <!-- Header -->
@@ -108,8 +108,8 @@
 
         <!-- Scrollable Code Area -->
         <div class="code-scroll">
-          <pre v-if="generatedCode"><code ref="codeBlock"
-    :class="`language-${hljsLanguage}`">{{ generatedCode }}</code></pre>
+              <pre v-if="generatedCode"><code ref="codeBlock" tabindex="-1"
+            :class="`language-${hljsLanguage}`">{{ generatedCode }}</code></pre>
 
           <div v-else-if="isLoading" class="loading-state">
             <Loader2 class="icon icon-loading spin" />
@@ -175,6 +175,7 @@ const explanation = ref("");
 const isLoading = ref(false);
 const error = ref("");
 const codeBlock = ref(null);
+const outputCard = ref(null);
 const copied = ref(false);
 
 const languageMap = {
@@ -220,7 +221,7 @@ onMounted(() => {
   }
 
   if (storedCode) {
-    generatedCode.value = storedCode;
+    generatedCode.value = stripMarkdownCodeFence(storedCode);
   }
 
   // Optional cleanup (recommended)
@@ -228,6 +229,34 @@ onMounted(() => {
   sessionStorage.removeItem("generate_code");
   sessionStorage.removeItem("generate_language");
   sessionStorage.removeItem("generate_level");
+
+  // If we loaded generated code from history, scroll the output into view on mobile
+  if (generatedCode.value) {
+    nextTick(() => {
+      try {
+        // Prefer a calculated scroll offset so fixed headers don't cover the panel
+        if (outputCard.value) {
+          const rect = outputCard.value.getBoundingClientRect();
+          if (rect) {
+            const header = document.querySelector('nav') || document.querySelector('.auth-navbar');
+            const headerHeight = header ? header.getBoundingClientRect().height : 80;
+            const y = rect.top + window.pageYOffset - headerHeight - 16;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+          } else if (outputCard.value.scrollIntoView) {
+            outputCard.value.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+
+        if (codeBlock.value) {
+          // ensure focus works
+          codeBlock.value.setAttribute('tabindex', '-1');
+          codeBlock.value.focus();
+        }
+      } catch (e) {
+        // ignore
+      }
+    });
+  }
 });
 
 // Methods
@@ -388,246 +417,45 @@ const visualizeCode = async () => {
   color: var(--success);
 }
 
-.icon {
-  width: 18px;
-  height: 18px;
-}
 
-.icon-sm {
-  width: 14px;
-  height: 14px;
-}
-
-.icon-success {
-  color: var(--success);
-  /* green */
-}
-
-.copy-btn {
-  transition: all 0.2s ease;
-}
-
-.copy-btn:has(.icon-success) {
-  background: rgba(74, 222, 128, 0.15);
-  border-color: rgba(74, 222, 128, 0.35);
-  color: var(--success);
-}
-
-.code-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.empty-icon {
-  width: 28px;
-  height: 28px;
-  opacity: 0.6;
-  margin-bottom: 8px;
-}
-
-/* ================= ICON BASE ================= */
-.icon,
-.icon-sm,
-.empty-icon {
-  stroke-width: 2;
-  vertical-align: middle;
-}
-
-/* Sizes */
-.icon {
-  width: 18px;
-  height: 18px;
-}
-
-.icon-sm {
-  width: 14px;
-  height: 14px;
-}
-
-.download-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(34, 197, 94, 0.18);
-  border: 1px solid rgba(34, 197, 94, 0.35);
-  color: var(--success);
-  border-radius: 8px;
-  padding: 8px 12px;
-  cursor: pointer;
-}
-
-.empty-icon {
-  width: 32px;
-  height: 32px;
-  opacity: 0.5;
-}
-
-/* ================= ICON COLORS ================= */
-
-/* Generate */
-.icon-generate {
-  color: var(--accent-light);
-  /* violet-400 */
-}
-
-/* Loading */
-.icon-loading {
-  color: var(--accent-light);
-  /* indigo-400 */
-}
-
-/* Copy */
-.icon-copy {
-  color: var(--accent-light);
-  /* blue-400 */
-}
-
-/* Language badge */
-.icon-language {
-  color: var(--accent-lighter);
-  /* purple-400 */
-}
-
-/* Empty state */
-.icon-empty {
-  color: var(--text-dim);
-  /* slate-500 */
-}
-
-/* Visualize */
-.icon-visualize {
-  color: var(--success);
-  /* green-400 */
-}
-
-/* ================= BUTTON ALIGNMENT ================= */
-
-.btn-content {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-/* Copy button fix */
-.copy-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Language badge fix */
-.language-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* Empty state alignment */
-.empty-state {
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* Visualize button alignment */
-.visualize-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.btn-content {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.spin {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.prompt-indicator {
-  margin-top: 10px;
-  margin-bottom: 20px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  width: fit-content;
-}
-
-.prompt-indicator.poor {
-  background: rgba(248, 113, 113, 0.15);
-  color: #f87171;
-  border: 1px solid rgba(248, 113, 113, 0.3);
-}
-
-.prompt-indicator.average {
-  background: rgba(250, 204, 21, 0.15);
-  color: var(--warning);
-  border: 1px solid rgba(250, 204, 21, 0.3);
-}
-
-.prompt-indicator.good {
-  background: rgba(74, 222, 128, 0.15);
-  color: var(--success);
-  border: 1px solid rgba(74, 222, 128, 0.3);
-}
-
-/* Both cards same height */
+/* Both cards responsive */
 .card {
-  height: 680px;
+  min-height: 420px;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .code-scroll {
   flex: 1;
-  overflow-y: auto;
+  overflow: auto !important;
   background: var(--bg-code);
   border-radius: 12px;
-  padding: 18px;
+  padding: 0;
   border: 1px solid var(--accent-border);
-}
-
-.code-scroll {
-  flex: 1;
-  overflow-y: auto;
-  scrollbar-width: none;
-  /* Firefox */
+  max-height: 480px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.12) transparent;
 }
 
 .code-scroll::-webkit-scrollbar {
-  display: none;
-  /* Chrome / Edge */
+  width: 8px;
+}
+
+.code-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.12);
+  border-radius: 8px;
 }
 
 
 /* Prevent code from stretching layout */
 pre {
   margin: 0;
-  white-space: pre-wrap;
-}
-
-pre {
-  background: transparent;
-  padding: 0;
+  white-space: pre;
+  overflow: auto !important;
+  width: 100%;
+  min-width: 0;
 }
 
 code {
@@ -636,6 +464,30 @@ code {
   line-height: 1.6;
   display: block;
   white-space: pre;
+  overflow: auto !important;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Ensure highlight.js and code blocks use theme colors */
+pre, .hljs, code[class*="language-"] {
+  background: var(--bg-code) !important;
+  color: var(--text-secondary) !important;
+  border-radius: 12px;
+  padding: 18px;
+  overflow-x: auto;
+  max-height: none;
+}
+
+.hljs {
+  background: var(--bg-code) !important;
+  color: var(--text-secondary) !important;
+}
+
+code[class*="language-"], pre > code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
 }
 
 .code-header {
@@ -833,7 +685,7 @@ pre {
   border-radius: 12px;
   padding: 18px;
   overflow-x: auto;
-  max-height: 420px;
+  max-height: none;
 }
 
 code {
@@ -894,43 +746,86 @@ code {
   border-color: var(--accent);
 }
 
-/* Mobile */
-@media (max-width: 640px) {
-  .controls {
-    grid-template-columns: 1fr;
-  }
-  .page-header h1 {
-    font-size: 1.6rem;
-  }
-  .page-header p {
-    font-size: 0.85rem;
-  }
-  .card {
-    height: auto;
-    min-height: 400px;
-    padding: 18px;
-  }
-  .code-textarea {
-    min-height: 220px;
-  }
-  pre {
-    max-height: 300px;
-    padding: 12px;
-  }
-  .generate-grid {
-    gap: 18px;
-    padding: 0 6px;
-  }
-}
-
-/* Responsive */
+/* Tablet */
 @media (max-width: 1024px) {
   .generate-grid {
     grid-template-columns: 1fr;
   }
   .card {
     height: auto;
-    min-height: 420px;
+    min-height: auto;
+    overflow: visible;
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .generate-container {
+    padding: 16px 10px;
+  }
+  .controls {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .page-header {
+    margin-bottom: 16px;
+  }
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+  .page-header p {
+    font-size: 0.85rem;
+  }
+  .card {
+    height: auto;
+    min-height: auto;
+    padding: 16px;
+    overflow: visible;
+  }
+  .output-card {
+    overflow: visible;
+  }
+  .code-textarea {
+    min-height: 180px;
+    margin-bottom: 12px;
+    font-size: 0.85rem;
+  }
+  .code-scroll {
+    max-height: 300px;
+    padding: 12px;
+  }
+  pre {
+    max-height: none;
+    padding: 0;
+  }
+  .generate-grid {
+    gap: 16px;
+    padding: 0;
+  }
+  .code-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .visualize-btn {
+    margin-top: 12px;
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+  .generate-btn {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+  h2 {
+    font-size: 1.15rem;
+  }
+  .subtitle {
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+  .explanation {
+    margin-top: 12px;
+    padding: 12px;
   }
 }
 </style>

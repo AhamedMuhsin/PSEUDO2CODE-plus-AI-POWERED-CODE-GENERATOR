@@ -221,13 +221,52 @@ async def get_dashboard(current_user=Depends(get_current_user)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
+    # Calculate weekly increments for generated codes and visualizations
+    from datetime import datetime, timedelta
+    from services.badges.badge_definitions import BADGES
+
+    now = datetime.utcnow()
+    week_ago = now - timedelta(days=7)
+
+    generated_codes = user.get("generated_codes", [])
+    visualizations = user.get("visualizations", [])
+
+    codes_last_7 = sum(1 for c in generated_codes if isinstance(c.get("created_at"), datetime) and c["created_at"] >= week_ago)
+    viz_last_7 = sum(1 for v in visualizations if isinstance(v.get("created_at"), datetime) and v["created_at"] >= week_ago)
+
+    # Badges: compute remaining badges and next badge title
+    owned_badges = set(b.get("id") if isinstance(b, dict) and b.get("id") else b for b in user.get("badges", []))
+    # BADGES is a dict of badge_id -> definition
+    all_badge_ids = list(BADGES.keys())
+    remaining_badges = [bid for bid in all_badge_ids if bid not in owned_badges]
+    badges_remaining = max(0, len(remaining_badges))
+    next_badge_title = None
+    if remaining_badges:
+        # Prefer the next logical badge by value if available
+        next_badge_id = remaining_badges[0]
+        next_badge_title = BADGES.get(next_badge_id, {}).get("title")
+
+    stats = user.get("stats", {})
+    # merge weekly info
+    stats = {
+        **stats,
+        "weekly": {
+            "codes": codes_last_7,
+            "visualizations": viz_last_7,
+        },
+        "badges_next": {
+            "remaining": badges_remaining,
+            "next_title": next_badge_title,
+        }
+    }
+
     return {
         "user": {
             "name": user.get("name"),
             "email": user.get("email"),
             "avatar": user.get("avatar"),
         },
-        "stats": user.get("stats", {}),
+        "stats": stats,
         "recent_activity": user.get("recent_activity", [])
     }
 

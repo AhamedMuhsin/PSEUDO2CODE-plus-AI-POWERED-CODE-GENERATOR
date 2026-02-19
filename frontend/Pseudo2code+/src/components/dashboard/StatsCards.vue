@@ -28,14 +28,32 @@ const goToBadges = () => {
 
 <template>
   <div class="stats-grid">
-    <StatCard title="Codes Generated" :value="stats.codes_generated" subtitle="+3 this week" :icon="Code"
-      icon-color="blue" @click="goToGeneratedCodes" />
+    <StatCard
+      title="Codes Generated"
+      :value="stats.codes_generated"
+      :subtitle="`+${stats.weekly?.codes || 0} this week`"
+      :icon="Code"
+      icon-color="blue"
+      @click="goToGeneratedCodes"
+    />
 
-    <StatCard title="Visualizations" :value="stats.visualizations" subtitle="+2 this week" :icon="Eye"
-      icon-color="purple" @click="goToVisualizations" />
+    <StatCard
+      title="Visualizations"
+      :value="stats.visualizations"
+      :subtitle="`+${stats.weekly?.visualizations || 0} this week`"
+      :icon="Eye"
+      icon-color="purple"
+      @click="goToVisualizations"
+    />
 
-    <StatCard title="Badges Earned" :value="stats.badges" subtitle="More to unlock" :icon="Trophy" icon-color="cyan"
-      @click="goToBadges" />
+    <StatCard
+      title="Badges Earned"
+      :value="stats.badges"
+      :subtitle="stats.badges_next?.next_title ? `Next: ${stats.badges_next.next_title}` : (stats.badges_next?.remaining ? `${stats.badges_next.remaining} more to unlock` : 'All badges unlocked')"
+      :icon="Trophy"
+      icon-color="cyan"
+      @click="goToBadges"
+    />
   </div>
 </template>
 
