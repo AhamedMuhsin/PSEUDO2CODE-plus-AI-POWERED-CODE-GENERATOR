@@ -129,15 +129,46 @@
         </div>
       </section>
 
+      <!-- Pricing Teaser -->
+      <section class="section">
+        <h2 class="section-title">Affordable Plans for Everyone</h2>
+        <p class="section-subtitle">Start for free, upgrade when you're ready — pricing designed for students</p>
+        <div class="pricing-teaser">
+          <div class="teaser-card">
+            <h3>Free</h3>
+            <div class="teaser-price">₹0<span>/month</span></div>
+            <p>20 code generations, 10 visualizations, basic AI</p>
+            <router-link :to="isLoggedIn ? '/generate-code' : '/signup'" class="btn-outline btn-teaser">
+              Get Started
+            </router-link>
+          </div>
+          <div class="teaser-card teaser-featured">
+            <div class="teaser-badge">Popular</div>
+            <h3>Premium</h3>
+            <div class="teaser-price">₹99<span>/month</span></div>
+            <p>Unlimited everything, all AI providers, priority support</p>
+            <router-link to="/pricing" class="btn-primary btn-teaser">
+              View Plans
+              <ArrowRight :size="14" />
+            </router-link>
+          </div>
+        </div>
+      </section>
+
       <!-- CTA -->
       <section class="cta-section">
         <div class="cta-card">
           <h2>Ready to Start Learning?</h2>
           <p>Join Pseudo2Code+ today and transform the way you learn programming</p>
-          <router-link :to="isLoggedIn ? '/dashboard' : '/signup'" class="btn-primary btn-cta">
-            Create Your Free Account
-            <ArrowRight :size="16" />
-          </router-link>
+          <div class="cta-btns-row">
+            <router-link :to="isLoggedIn ? '/dashboard' : '/signup'" class="btn-primary btn-cta">
+              Create Your Free Account
+              <ArrowRight :size="16" />
+            </router-link>
+            <router-link to="/pricing" class="btn-outline btn-cta">
+              View Pricing
+            </router-link>
+          </div>
         </div>
       </section>
 
@@ -547,6 +578,91 @@ onUnmounted(() => {
   box-shadow: 0 8px 32px var(--accent-bg-hover), 0 4px 12px var(--accent-bg);
 }
 
+/* ─── Pricing Teaser ─── */
+.pricing-teaser {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.teaser-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: 14px;
+  padding: 32px 24px;
+  text-align: center;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.teaser-card:hover {
+  border-color: var(--accent-border);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.teaser-featured {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 4px 16px rgba(99, 102, 241, 0.1);
+}
+
+.teaser-badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: var(--text-on-accent);
+  padding: 3px 14px;
+  border-radius: 100px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.teaser-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.teaser-price {
+  font-size: 2.2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent), #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+
+.teaser-price span {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.teaser-card p {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+
+.btn-teaser {
+  padding: 10px 22px;
+  font-size: 0.88rem;
+}
+
+.cta-btns-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
 /* ─── Mobile ─── */
 @media (max-width: 900px) {
   .features-grid {
@@ -590,6 +706,11 @@ onUnmounted(() => {
   .cta-card h2 {
     font-size: 1.5rem;
   }
+
+  .pricing-teaser {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+  }
 }
 
 @media (max-width: 520px) {
@@ -605,7 +726,8 @@ onUnmounted(() => {
     font-size: 1.8rem;
   }
 
-  .hero-buttons {
+  .hero-buttons,
+  .cta-btns-row {
     flex-direction: column;
   }
 

@@ -112,13 +112,13 @@
             :class="`language-${hljsLanguage}`">{{ generatedCode }}</code></pre>
 
           <div v-else-if="isLoading" class="loading-state">
-            <Loader2 class="icon icon-loading spin" />
-            Generating your code...
+            <Loader2 class="icon icon-loading spin" size="40" />
+            <p>Generating your code...</p>
           </div>
 
 
           <div v-else class="empty-state">
-            <Code class="empty-icon icon-empty" />
+            <Code class="empty-icon icon-empty" size="48" />
             <p>Generated code will appear here</p>
           </div>
 
@@ -139,7 +139,13 @@
       </section>
 
     </div>
+
+    <!-- Quota Indicator for free users -->
+    <QuotaIndicator :showVisualizations="false" :showDownloads="false" @upgrade="showUpgrade = true" />
   </main>
+
+  <!-- Upgrade Modal -->
+  <UpgradeModal v-if="showUpgrade" @close="showUpgrade = false" />
 </template>
 
 <script setup>
@@ -149,6 +155,9 @@ import { useRouter } from "vue-router";
 import arrowLeft from '@/assets/arrow-left.svg';
 import { useRoute } from "vue-router";
 import AuthNavbar from "@/components/Navbar/AuthNavbar.vue";
+import QuotaIndicator from "@/components/common/QuotaIndicator.vue";
+import UpgradeModal from "@/components/common/UpgradeModal.vue";
+import { useUserStore } from "@/stores/userStore";
 import { generateCode } from "@/services/codeGenerationService";
 import hljs from "highlight.js";
 import "highlight.js/styles/github-dark.css";
@@ -166,6 +175,7 @@ import {
 
 const router = useRouter();
 const route = useRoute();
+const userStore = useUserStore();
 
 // State
 const pseudocode = ref("");
@@ -177,6 +187,7 @@ const error = ref("");
 const codeBlock = ref(null);
 const outputCard = ref(null);
 const copied = ref(false);
+const showUpgrade = ref(false);
 
 const languageMap = {
   python: "python",
@@ -261,6 +272,12 @@ onMounted(() => {
 
 // Methods
 const generateCodeHandler = async () => {
+  // Check quota before generating
+  if (!userStore.canGenerateCode) {
+    showUpgrade.value = true;
+    return;
+  }
+
   error.value = "";
   isLoading.value = true;
 
@@ -278,12 +295,20 @@ const generateCodeHandler = async () => {
       );
 
       explanation.value = result.explanation || "";
+
+      // Refresh quota after successful generation
+      userStore.fetchQuotas();
     }
     else {
       error.value = result.error || "Failed to generate code";
     }
   } catch (err) {
-    error.value = "An error occurred while generating code";
+    if (err?.response?.status === 429) {
+      showUpgrade.value = true;
+      error.value = "Daily quota exceeded. Upgrade to Premium for unlimited access.";
+    } else {
+      error.value = "An error occurred while generating code";
+    }
   } finally {
     isLoading.value = false;
   }
@@ -373,6 +398,7 @@ const visualizeCode = async () => {
   // Store for visualize page rendering
   sessionStorage.setItem("visualize_code", cleanCode);
   sessionStorage.setItem("visualize_language", selectedLanguage.value);
+  sessionStorage.setItem("visualize_source", "generate");
 
   // Navigate
   router.push("/visualize");
@@ -434,6 +460,9 @@ const visualizeCode = async () => {
   padding: 0;
   border: 1px solid var(--accent-border);
   max-height: 480px;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: rgba(0,0,0,0.12) transparent;
@@ -452,8 +481,10 @@ const visualizeCode = async () => {
 /* Prevent code from stretching layout */
 pre {
   margin: 0;
-  white-space: pre;
-  overflow: auto !important;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  overflow-x: auto;
   width: 100%;
   min-width: 0;
 }
@@ -463,8 +494,9 @@ code {
   font-size: 0.9rem;
   line-height: 1.6;
   display: block;
-  white-space: pre;
-  overflow: auto !important;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
   width: 100%;
   min-width: 0;
 }
@@ -477,6 +509,9 @@ pre, .hljs, code[class*="language-"] {
   padding: 18px;
   overflow-x: auto;
   max-height: none;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
 }
 
 .hljs {
@@ -494,31 +529,14 @@ code[class*="language-"], pre > code {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
-.visualize-btn {
-  margin-top: 16px;
-  padding: 14px;
-  width: 100%;
-  border-radius: 12px;
-  border: none;
-  background: var(--accent);
-  color: var(--text-on-accent);
-  font-weight: 700;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.visualize-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
-}
-
-.visualize-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+.code-actions {
+  display: flex;
+  gap: 8px;
 }
 
 .generate-container {
@@ -527,20 +545,17 @@ code[class*="language-"], pre > code {
   padding: 40px 24px;
 }
 
+.back-top-bar {
+  max-width: 1400px;
+  margin: 0 auto 24px;
+}
+
 .page-header {
   max-width: 1400px;
   margin: 0 auto 32px;
 }
 
-.copy-btn:hover {
-  background: rgba(96, 165, 250, 0.2);
-  border-color: rgba(96, 165, 250, 0.4);
-}
 
-.visualize-btn:hover .icon-visualize {
-  transform: translateX(2px);
-  transition: transform 0.2s ease;
-}
 
 .page-header h1 {
   font-size: 2.4rem;
@@ -634,20 +649,28 @@ h2 {
 
 .generate-btn {
   width: 100%;
-  padding: 15px;
+  padding: 14px;
   border-radius: 12px;
   border: none;
   background: var(--accent);
   color: var(--text-on-accent);
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.95rem;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .generate-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 12px 30px rgba(99, 102, 241, 0.3);
+}
+
+.generate-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .generate-btn:disabled {
@@ -655,29 +678,81 @@ h2 {
   cursor: not-allowed;
 }
 
+.visualize-btn {
+  margin-top: 16px;
+  padding: 14px;
+  width: 100%;
+  border-radius: 12px;
+  border: none;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.visualize-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(99, 102, 241, 0.3);
+}
+
+.visualize-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.visualize-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .code-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .language-badge {
-  background: rgba(99, 102, 241, 0.2);
-  color: var(--accent-light);
-  padding: 5px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent-bg);
+  color: var(--accent-lighter);
+  padding: 6px 12px;
   border-radius: 999px;
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 600;
+  border: 1px solid var(--accent-border);
 }
 
-.copy-btn {
-  background: rgba(99, 102, 241, 0.2);
+.copy-btn,
+.download-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent-bg);
   color: var(--accent-lighter);
   border: 1px solid var(--accent-border);
   border-radius: 8px;
   padding: 8px 14px;
   cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.copy-btn:hover,
+.download-btn:hover {
+  background: var(--accent-bg-hover);
+  border-color: var(--accent-light);
+  transform: translateY(-1px);
 }
 
 pre {
@@ -697,24 +772,48 @@ code {
 .explanation {
   margin-top: 18px;
   background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
   border-radius: 12px;
-  padding: 16px;
+  padding: 14px;
+  transition: all 0.2s ease;
 }
 
 .explanation h4 {
   color: var(--accent-lighter);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.explanation p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .empty-state,
 .loading-state {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   color: var(--text-muted);
   font-size: 0.95rem;
   text-align: center;
+  gap: 12px;
+  min-height: 400px;
+}
+
+.empty-icon {
+  color: var(--text-dim);
+  opacity: 0.5;
+}
+
+.empty-state p,
+.loading-state p {
+  margin: 0;
+  color: var(--text-muted);
 }
 
 .controls {
@@ -746,86 +845,265 @@ code {
   border-color: var(--accent);
 }
 
+.error-message {
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+  border-radius: 8px;
+  color: var(--error-text);
+  font-size: 0.85rem;
+  animation: slideDown 0.3s ease-out;
+}
+
+.btn-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-loading {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.code-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-sm {
+  width: 16px;
+  height: 16px;
+}
+
+.icon-empty {
+  opacity: 0.6;
+}
+
 /* Tablet */
 @media (max-width: 1024px) {
   .generate-grid {
     grid-template-columns: 1fr;
+    gap: 24px;
   }
+
   .card {
     height: auto;
     min-height: auto;
     overflow: visible;
+  }
+
+  .back-top-bar {
+    margin-bottom: 16px;
+  }
+
+  .page-header {
+    margin-bottom: 24px;
   }
 }
 
 /* Mobile */
 @media (max-width: 640px) {
   .generate-container {
-    padding: 16px 10px;
+    padding: 20px 14px;
   }
-  .controls {
-    grid-template-columns: 1fr;
-    gap: 10px;
-    margin-bottom: 16px;
+
+  .back-top-bar {
+    margin-bottom: 12px;
   }
+
+  .back-btn-compact {
+    font-size: 0.8rem;
+    padding: 8px 12px;
+  }
+
   .page-header {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
+
   .page-header h1 {
     font-size: 1.5rem;
+    font-weight: 700;
   }
+
   .page-header p {
     font-size: 0.85rem;
   }
-  .card {
-    height: auto;
-    min-height: auto;
-    padding: 16px;
-    overflow: visible;
+
+  .generate-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
+
+  .card {
+    padding: 16px;
+    border-radius: 12px;
+    min-height: auto;
+  }
+
   .output-card {
     overflow: visible;
   }
+
+  h2 {
+    font-size: 1.15rem;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    font-size: 0.82rem;
+    margin-bottom: 12px;
+  }
+
+  .controls {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .selector label {
+    font-size: 0.82rem;
+    margin-bottom: 4px;
+  }
+
+  .selector select {
+    padding: 10px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+
   .code-textarea {
     min-height: 180px;
+    margin-bottom: 8px;
+    font-size: 0.82rem;
+    padding: 14px;
+    border-radius: 10px;
+  }
+
+  .prompt-indicator {
+    font-size: 0.78rem;
+    margin-top: 4px;
     margin-bottom: 12px;
-    font-size: 0.85rem;
   }
-  .code-scroll {
-    max-height: 300px;
-    padding: 12px;
-  }
-  pre {
-    max-height: none;
-    padding: 0;
-  }
-  .generate-grid {
-    gap: 16px;
-    padding: 0;
-  }
-  .code-header {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .visualize-btn {
-    margin-top: 12px;
-    padding: 12px;
-    font-size: 0.9rem;
-  }
+
   .generate-btn {
     padding: 12px;
     font-size: 0.9rem;
+    gap: 6px;
+    border-radius: 10px;
   }
-  h2 {
-    font-size: 1.15rem;
+
+  /* Output card mobile */
+  .code-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin-bottom: 10px;
   }
-  .subtitle {
-    font-size: 0.85rem;
-    margin-bottom: 12px;
+
+  .language-badge {
+    align-self: flex-start;
+    padding: 4px 10px;
+    font-size: 0.7rem;
   }
-  .explanation {
-    margin-top: 12px;
+
+  .code-actions {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .copy-btn,
+  .download-btn {
+    padding: 8px 10px;
+    font-size: 0.78rem;
+    flex: 1;
+    min-width: 0;
+    justify-content: center;
+    white-space: nowrap;
+  }
+
+  .code-scroll {
+    max-height: 320px;
+    min-height: 250px;
+    border-radius: 10px;
+  }
+
+  .code-scroll pre {
+    margin: 0;
     padding: 12px;
+    border-radius: 10px;
+  }
+
+  code {
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+
+  pre {
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  .empty-state,
+  .loading-state {
+    min-height: 200px;
+    padding: 20px;
+    gap: 8px;
+  }
+
+  .empty-state p,
+  .loading-state p {
+    font-size: 0.85rem;
+  }
+
+  .explanation {
+    margin-top: 10px;
+    padding: 10px;
+  }
+
+  .explanation h4 {
+    font-size: 0.82rem;
+    margin-bottom: 4px;
+  }
+
+  .explanation p {
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+
+  .visualize-btn {
+    margin-top: 10px;
+    padding: 12px;
+    font-size: 0.88rem;
+    border-radius: 10px;
+    gap: 6px;
+  }
+
+  .error-message {
+    font-size: 0.8rem;
+    padding: 10px;
+    margin-top: 10px;
   }
 }
 </style>

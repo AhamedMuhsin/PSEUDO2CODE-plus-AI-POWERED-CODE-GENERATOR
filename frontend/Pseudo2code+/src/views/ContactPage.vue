@@ -133,6 +133,16 @@
         </form>
       </section>
 
+      <!-- Pricing CTA -->
+      <section class="card pricing-cta-card">
+        <h3>
+          <CreditCard :size="20" class="section-icon" />
+          Plans & Pricing
+        </h3>
+        <p class="cta-desc">Looking for information about our plans? Pseudo2Code+ offers a generous free tier and affordable premium options starting at just ₹99/month.</p>
+        <router-link to="/pricing" class="contact-cta-btn">View Pricing Plans →</router-link>
+      </section>
+
     </div>
   </main>
   <SiteFooter />
@@ -145,7 +155,7 @@ import AuthNavbar from '@/components/Navbar/AuthNavbar.vue'
 import GuestNavbar from '@/components/Navbar/GuestNavbar.vue'
 import SiteFooter from '@/components/common/SiteFooter.vue'
 import { isAuthenticated } from '@/services/authService'
-import { Mail, Github, Linkedin, MapPin, ExternalLink, Send, Loader2, CircleCheck, User } from 'lucide-vue-next'
+import { Mail, Github, Linkedin, MapPin, ExternalLink, Send, Loader2, CircleCheck, User, CreditCard } from 'lucide-vue-next'
 
 const isLoggedIn = isAuthenticated()
 const router = useRouter()
@@ -515,6 +525,37 @@ const handleSubmit = async () => {
   color: var(--success);
   font-size: 0.9rem;
   font-weight: 500;
+}
+
+/* Pricing CTA Card */
+.pricing-cta-card {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.cta-desc {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: 18px;
+}
+
+.contact-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 24px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.contact-cta-btn:hover {
+  opacity: 0.88;
 }
 
 /* Mobile */

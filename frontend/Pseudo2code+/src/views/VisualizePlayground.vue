@@ -12,13 +12,21 @@ const language = ref("python");
 const isVisualizing = ref(false);
 
 onMounted(() => {
-  const savedCode = sessionStorage.getItem("visualize_code");
-  const savedLanguage = sessionStorage.getItem("visualize_language");
+  const source = sessionStorage.getItem("visualize_source");
 
-  if (savedCode && savedLanguage) {
-    code.value = savedCode;
-    language.value = savedLanguage;
+  // Only load saved code when coming from "Re-visualize" in activity history
+  if (source === "history") {
+    const savedCode = sessionStorage.getItem("visualize_code");
+    const savedLanguage = sessionStorage.getItem("visualize_language");
+
+    if (savedCode && savedLanguage) {
+      code.value = savedCode;
+      language.value = savedLanguage;
+    }
   }
+
+  // Always clean up source flag
+  sessionStorage.removeItem("visualize_source");
 });
 
 const visualize = async () => {

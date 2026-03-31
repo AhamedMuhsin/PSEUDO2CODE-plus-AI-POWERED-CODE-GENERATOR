@@ -45,6 +45,7 @@ def serialize_user(user):
         "visualizations": user.get("visualizations", []),
         "generated_codes": user.get("generated_codes", []),
         "badges": user.get("badges", []),
+        "subscription_tier": user.get("subscription_tier", "free"),  # 🆕 FREEMIUM
     }
 
 # ---------------- GET USER ----------------

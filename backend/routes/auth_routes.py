@@ -2,10 +2,11 @@
 Auth Routes - Email/Password + Google/GitHub OAuth
 """
 
-from fastapi import APIRouter, HTTPException, status
-from pydantic import BaseModel, EmailStr
+from fastapi import APIRouter, HTTPException, Request, status
+from pydantic import BaseModel, EmailStr, Field, field_validator
 from typing import Optional
 from datetime import datetime
+import re
 
 from auth import (
     hash_password,
@@ -20,21 +21,48 @@ from auth import (
 from db import users_collection
 from services.user_service import create_user, get_user_by_uid, update_last_login, serialize_user
 
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+
+limiter = Limiter(key_func=get_remote_address)
+
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 # ==================== REQUEST MODELS ====================
 class SignupRequest(BaseModel):
     email: EmailStr
-    password: str
-    name: str
+    password: str = Field(..., min_length=8, max_length=128)
+    name: str = Field(..., min_length=1, max_length=100)
+
+    @field_validator("password")
+    @classmethod
+    def validate_password_strength(cls, v):
+        if len(v) < 8:
+            raise ValueError("Password must be at least 8 characters.")
+        if not re.search(r"[A-Z]", v):
+            raise ValueError("Password must contain at least one uppercase letter.")
+        if not re.search(r"[a-z]", v):
+            raise ValueError("Password must contain at least one lowercase letter.")
+        if not re.search(r"\d", v):
+            raise ValueError("Password must contain at least one number.")
+        return v
+
+    @field_validator("name")
+    @classmethod
+    def sanitize_name(cls, v):
+        # Strip HTML tags and limit length
+        clean = re.sub(r"<[^>]+>", "", v).strip()
+        if not clean:
+            raise ValueError("Name cannot be empty.")
+        return clean[:100]
 
 class LoginRequest(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(..., max_length=128)
 
 class OAuthCodeRequest(BaseModel):
-    code: str
-    redirect_uri: Optional[str] = None
+    code: str = Field(..., min_length=10, max_length=500)
+    redirect_uri: Optional[str] = Field(None, max_length=200)
 
 class ForgotPasswordRequest(BaseModel):
     email: EmailStr
@@ -114,7 +142,8 @@ async def _oauth_login_or_signup(user_info: dict) -> dict:
 # ==================== EMAIL/PASSWORD ROUTES ====================
 
 @router.post("/signup")
-async def signup(payload: SignupRequest):
+@limiter.limit("5/minute")
+async def signup(request: Request, payload: SignupRequest):
     """Register a new user with email and password"""
     
     # Check if email already exists
@@ -123,13 +152,6 @@ async def signup(payload: SignupRequest):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="An account with this email already exists."
-        )
-    
-    # Validate password
-    if len(payload.password) < 6:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Password must be at least 6 characters."
         )
     
     # Create user
@@ -158,7 +180,8 @@ async def signup(payload: SignupRequest):
     }
 
 @router.post("/login")
-async def login(payload: LoginRequest):
+@limiter.limit("10/minute")
+async def login(request: Request, payload: LoginRequest):
     """Login with email and password"""
     
     user = await _find_user_by_email(payload.email)
@@ -200,6 +223,8 @@ async def login(payload: LoginRequest):
 @router.get("/google/url")
 async def google_auth_url(redirect_uri: Optional[str] = None):
     """Return Google OAuth URL for frontend redirect"""
+    import secrets
+    state = secrets.token_urlsafe(32)
     callback_uri = redirect_uri or f"{FRONTEND_URL}/auth/callback/google"
     url = (
         f"https://accounts.google.com/o/oauth2/v2/auth"
@@ -209,11 +234,13 @@ async def google_auth_url(redirect_uri: Optional[str] = None):
         f"&scope=openid email profile"
         f"&access_type=offline"
         f"&prompt=select_account"
+        f"&state={state}"
     )
-    return {"url": url}
+    return {"url": url, "state": state}
 
 @router.post("/google/callback")
-async def google_callback(payload: OAuthCodeRequest):
+@limiter.limit("10/minute")
+async def google_callback(request: Request, payload: OAuthCodeRequest):
     """Exchange Google auth code for JWT token"""
     redirect_uri = payload.redirect_uri or f"{FRONTEND_URL}/auth/callback/google"
     user_info = await exchange_google_code(payload.code, redirect_uri)
@@ -224,17 +251,21 @@ async def google_callback(payload: OAuthCodeRequest):
 @router.get("/github/url")
 async def github_auth_url(redirect_uri: Optional[str] = None):
     """Return GitHub OAuth URL for frontend redirect"""
+    import secrets
+    state = secrets.token_urlsafe(32)
     callback_uri = redirect_uri or f"{FRONTEND_URL}/auth/callback/github"
     url = (
         f"https://github.com/login/oauth/authorize"
         f"?client_id={GITHUB_CLIENT_ID}"
         f"&redirect_uri={callback_uri}"
         f"&scope=user:email"
+        f"&state={state}"
     )
-    return {"url": url}
+    return {"url": url, "state": state}
 
 @router.post("/github/callback")
-async def github_callback(payload: OAuthCodeRequest):
+@limiter.limit("10/minute")
+async def github_callback(request: Request, payload: OAuthCodeRequest):
     """Exchange GitHub auth code for JWT token"""
     redirect_uri = payload.redirect_uri or f"{FRONTEND_URL}/auth/callback/github"
     user_info = await exchange_github_code(payload.code, redirect_uri)
@@ -243,7 +274,8 @@ async def github_callback(payload: OAuthCodeRequest):
 # ==================== PASSWORD MANAGEMENT ====================
 
 @router.post("/forgot-password")
-async def forgot_password(payload: ForgotPasswordRequest):
+@limiter.limit("3/minute")
+async def forgot_password(request: Request, payload: ForgotPasswordRequest):
     """
     For now, just verify the email exists.
     In production, send a reset email with a token.

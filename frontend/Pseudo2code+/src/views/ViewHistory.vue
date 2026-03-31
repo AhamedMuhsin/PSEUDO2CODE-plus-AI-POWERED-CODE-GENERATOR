@@ -260,6 +260,7 @@ const reVisualize = (item) => {
 
   sessionStorage.setItem("visualize_code", item.meta.code);
   sessionStorage.setItem("visualize_language", item.meta.language);
+  sessionStorage.setItem("visualize_source", "history");
 
   router.push("/visualize-playground");
 };
@@ -454,31 +455,70 @@ const deleteActivity = async (activity) => {
 
 .actions .btn {
   background-image: none;
-  /* reset */
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
 }
 
 /* Force color buttons to override base .btn */
 .actions .action-blue {
-  background-color: var(--accent-hover) !important;
+  background: var(--accent-bg) !important;
+  color: var(--accent-lighter) !important;
+  border-color: var(--accent-border) !important;
+}
+
+.actions .action-blue:hover {
+  background: var(--accent-bg-hover) !important;
+  border-color: var(--accent-light) !important;
+  transform: translateY(-1px);
 }
 
 .actions .action-purple {
-  background: var(--accent) !important;
+  background: var(--accent-bg) !important;
+  color: var(--accent-lighter) !important;
+  border-color: var(--accent-border) !important;
+}
+
+.actions .action-purple:hover {
+  background: var(--accent-bg-hover) !important;
+  border-color: var(--accent-light) !important;
+  transform: translateY(-1px);
 }
 
 .actions .action-gold {
-  background: var(--accent) !important;
-  color: var(--text-on-accent) !important;
+  background: var(--warning-bg) !important;
+  color: var(--warning) !important;
+  border-color: rgba(234, 179, 8, 0.2) !important;
+}
+
+.actions .action-gold:hover {
+  background: rgba(234, 179, 8, 0.15) !important;
+  transform: translateY(-1px);
 }
 
 .actions .action-cyan {
-  background: var(--accent) !important;
+  background: var(--success-bg) !important;
+  color: var(--success) !important;
+  border-color: rgba(34, 197, 94, 0.2) !important;
+}
+
+.actions .action-cyan:hover {
+  background: rgba(34, 197, 94, 0.15) !important;
+  transform: translateY(-1px);
 }
 
 .actions .danger {
   background: var(--error-bg) !important;
   border-color: var(--error-border) !important;
   color: var(--error) !important;
+}
+
+.actions .danger:hover {
+  background: rgba(239, 68, 68, 0.12) !important;
+  transform: translateY(-1px);
 }
 
 .actions {
@@ -904,9 +944,30 @@ select {
     transform: translateX(0);
     pointer-events: auto;
   }
+
+  .back-top-bar {
+    margin-bottom: 16px;
+  }
 }
 
 @media (max-width: 768px) {
+  .page-layout {
+    padding: 20px 14px;
+  }
+
+  .history-header {
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .header-text h1 {
+    font-size: 1.6rem;
+  }
+
+  .header-text p {
+    font-size: 0.9rem;
+  }
+
   .header-controls {
     flex-direction: column;
     gap: 12px;
@@ -917,6 +978,10 @@ select {
     min-width: unset;
   }
 
+  .search-box {
+    width: 100%;
+  }
+
   .search-box input {
     width: 100%;
   }
@@ -924,12 +989,34 @@ select {
   .history-item {
     flex-wrap: wrap;
     gap: 10px;
+    padding: 14px;
+  }
+
+  .icon-circle {
+    margin-top: 0;
+  }
+
+  .content {
+    flex: 1;
+    min-width: 0;
   }
 
   .actions {
     width: 100%;
     margin-left: 0;
     justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .actions .btn {
+    flex: 1;
+    min-width: 100px;
+  }
+
+  .actions .danger {
+    flex: 0;
+    min-width: 44px;
+    width: 44px;
   }
 }
 

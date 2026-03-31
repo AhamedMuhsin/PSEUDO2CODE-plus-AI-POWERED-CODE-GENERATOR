@@ -6,9 +6,12 @@
 import { onMounted } from "vue";
 import { RouterView } from "vue-router";
 import { useThemeStore } from "@/stores/themeStore";
+import { useUserStore } from "@/stores/userStore";
+import { isAuthenticated } from "@/services/authService";
 
 // Initialize theme on app mount — applies saved preference or default
 const themeStore = useThemeStore();
+const userStore = useUserStore();
 
 // Dismiss the initial HTML splash screen once Vue is mounted and ready
 onMounted(() => {
@@ -23,6 +26,12 @@ onMounted(() => {
         document.documentElement.classList.remove("splash-theme-dark", "splash-theme-light");
       }, 450);
     }, 600);
+  }
+
+  // Fetch subscription & quotas if user is logged in
+  if (isAuthenticated()) {
+    userStore.fetchSubscription();
+    userStore.fetchQuotas();
   }
 });
 </script>

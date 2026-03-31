@@ -136,10 +136,15 @@
       <section class="cta-section">
         <h2>Ready to Start Learning?</h2>
         <p>Turn your ideas into real code. Visualize algorithms. Level up your skills.</p>
-        <router-link :to="isLoggedIn ? '/generate-code' : '/login'" class="hero-cta">
-          Get Started Now
-          <ArrowRight :size="18" />
-        </router-link>
+        <div class="cta-btns">
+          <router-link :to="isLoggedIn ? '/generate-code' : '/login'" class="hero-cta">
+            Get Started Now
+            <ArrowRight :size="18" />
+          </router-link>
+          <router-link to="/pricing" class="hero-cta-outline">
+            View Pricing
+          </router-link>
+        </div>
       </section>
 
     </div>
@@ -439,6 +444,35 @@ const languages = [
   color: var(--text-muted);
   font-size: 1rem;
   margin-bottom: 24px;
+}
+
+.cta-btns {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.hero-cta-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border-radius: 12px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid var(--border-default);
+  transition: all 0.2s ease;
+}
+
+.hero-cta-outline:hover {
+  border-color: var(--accent-border);
+  color: var(--accent);
+  background: var(--accent-bg);
 }
 
 /* Mobile */

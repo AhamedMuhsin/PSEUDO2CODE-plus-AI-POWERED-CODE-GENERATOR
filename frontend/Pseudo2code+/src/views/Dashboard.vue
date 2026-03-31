@@ -9,6 +9,8 @@
           :xp="user.xp" :nextXp="user.nextXp" :totalXp="user.totalXp" :streak="user.streak"
           :streakActiveToday="user.streak_active_today" />
 
+        <QuotaIndicator @upgrade="showUpgrade = true" />
+
         <div class="desktop-only">
           <QuickActions />
         </div>
@@ -33,6 +35,9 @@
 
   <!-- Sticky bottom nav (mobile only, like YouTube/Instagram) -->
   <MobileBottomNav />
+
+  <!-- Upgrade Modal -->
+  <UpgradeModal v-if="showUpgrade" @close="showUpgrade = false" />
 </template>
 <script setup>
 import { ref, onMounted } from "vue";
@@ -49,6 +54,8 @@ import WelcomeHeader from "@/components/dashboard/WelcomeHeader.vue";
 import StatsCards from "@/components/dashboard/StatsCards.vue";
 import RecentActivity from "@/components/dashboard/RecentActivity.vue";
 import MobileBottomNav from "@/components/dashboard/MobileBottomNav.vue";
+import QuotaIndicator from "@/components/common/QuotaIndicator.vue";
+import UpgradeModal from "@/components/common/UpgradeModal.vue";
 
 import api from "@/services/api";
 import { logout } from "@/services/authService";
@@ -62,6 +69,7 @@ const stats = ref(null);
 const activities = ref([]);
 const loading = ref(true);
 const suggestedTasks = ref([]);
+const showUpgrade = ref(false);
 
 // 🔹 Activity mapper (IMPORTANT)
 const activityMap = {
@@ -91,6 +99,10 @@ onMounted(async () => {
 
     // Store user in global state
     userStore.setUser(user.value);
+
+    // Fetch subscription & quotas
+    userStore.fetchSubscription();
+    userStore.fetchQuotas();
 
     // STATS
     stats.value = data.stats;

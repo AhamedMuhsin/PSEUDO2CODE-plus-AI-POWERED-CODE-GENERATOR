@@ -100,7 +100,7 @@ import logo from '@/assets/logo_f.png'
 import {
     Sparkles, Info, Mail, LayoutDashboard, User, LogOut,
     Code, Eye, Brain, Clock, Trophy, BarChart3,
-    Layers, ChevronDown
+    Layers, ChevronDown, CreditCard
 } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -115,6 +115,7 @@ useSwipeBack()
 
 const navLinks = [
     { to: '/showcase', label: 'Showcase', icon: Sparkles },
+    { to: '/pricing', label: 'Pricing', icon: CreditCard },
     { to: '/about', label: 'About', icon: Info },
     { to: '/contact', label: 'Contact', icon: Mail },
     { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },

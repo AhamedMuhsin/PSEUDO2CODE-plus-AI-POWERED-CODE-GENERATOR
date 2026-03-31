@@ -76,7 +76,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import ThemeToggle from '@/components/common/ThemeToggle.vue'
 import logo from '@/assets/logo_f.png'
-import { Sparkles, Info, Mail, LogIn, UserPlus } from 'lucide-vue-next'
+import { Sparkles, Info, Mail, LogIn, UserPlus, CreditCard } from 'lucide-vue-next'
 
 const route = useRoute()
 const mobileMenuOpen = ref(false)
@@ -84,6 +84,7 @@ const scrolled = ref(false)
 
 const navLinks = [
     { to: '/showcase', label: 'Showcase', icon: Sparkles },
+    { to: '/pricing', label: 'Pricing', icon: CreditCard },
     { to: '/about', label: 'About', icon: Info },
     { to: '/contact', label: 'Contact', icon: Mail },
 ]

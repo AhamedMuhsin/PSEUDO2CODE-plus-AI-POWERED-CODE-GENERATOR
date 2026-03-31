@@ -152,6 +152,21 @@
         </div>
       </section>
 
+      <!-- Pricing CTA -->
+      <section class="card pricing-cta-card">
+        <h3>
+          <CreditCard :size="20" class="section-icon" />
+          Plans & Pricing
+        </h3>
+        <p class="cta-desc">
+          Pseudo2Code+ is free to get started with generous monthly limits.
+          Upgrade to Premium for unlimited access to all features, AI providers, and priority support — starting at just ₹99/month.
+        </p>
+        <router-link to="/pricing" class="about-cta-btn">
+          View Pricing Plans →
+        </router-link>
+      </section>
+
     </div>
   </main>
   <SiteFooter />
@@ -164,7 +179,7 @@ import SiteFooter from '@/components/common/SiteFooter.vue'
 import { isAuthenticated } from '@/services/authService'
 import {
   Code2, Code, Eye, Trophy, BarChart3, Brain, Clock,
-  Layers, Sparkles, User, MapPin, Github, Linkedin, Mail
+  Layers, Sparkles, User, MapPin, Github, Linkedin, Mail, CreditCard
 } from 'lucide-vue-next'
 
 const isLoggedIn = isAuthenticated()
@@ -457,5 +472,38 @@ const isLoggedIn = isAuthenticated()
     padding: 6px 12px;
     font-size: 0.78rem;
   }
+}
+
+/* Pricing CTA */
+.pricing-cta-card {
+  text-align: center;
+}
+
+.cta-desc {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  line-height: 1.7;
+  max-width: 540px;
+  margin: 0 auto 20px;
+}
+
+.about-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 24px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.about-cta-btn:hover {
+  background: var(--accent-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
 }
 </style>

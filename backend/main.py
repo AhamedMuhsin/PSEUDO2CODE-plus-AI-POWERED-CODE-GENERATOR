@@ -5,17 +5,19 @@ import os
 # Load environment variables from .env file
 load_dotenv()
 import os
-print("GROQ_API_KEY exists:", bool(os.getenv("GROQ_API_KEY")))
 
 from services.ai.provider_manager import AIProviderManager
 from routes import tasks
 from routes.auth_routes import router as auth_router
+from routes.subscription_routes import router as subscription_router
+from routes.payment_routes import router as payment_router
 
 
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import Optional
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from pydantic import BaseModel, Field, field_validator
+from typing import Optional, List
 from db import users_collection
 import re
 from services.streak.streak_service import update_streak
@@ -27,6 +29,12 @@ from services.visualization.visualizer_router import get_visualization
 from urllib.parse import quote_plus
 from services.visualization.cfg_generator import generate_mermaid_cfg
 from services.activity.activity_service import delete_activity
+from services.quota_service import enforce_quota
+from services.subscription_service import (
+    get_user_subscription,
+    log_usage,
+    get_available_providers,
+)
 
 from auth import get_current_user, hash_password, verify_password
 from services.user_service import (
@@ -38,19 +46,39 @@ from services.user_service import (
     save_visualization,
 )
 
-app = FastAPI()
+# ==================== RATE LIMITING ====================
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
+limiter = Limiter(key_func=get_remote_address)
+
+app = FastAPI(
+    title="Pseudo2Code+ API",
+    docs_url=None if os.getenv("ENV") == "production" else "/docs",  # hide docs in prod
+    redoc_url=None if os.getenv("ENV") == "production" else "/redoc",
+)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # ---------------- CORS ----------------
+ALLOWED_ORIGINS = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:5173,http://localhost:4173,http://127.0.0.1:5173"
+).split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],          # allow any origin during development
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "X-Razorpay-Signature"],
 )
 
 ai_manager = AIProviderManager()
 app.include_router(auth_router)
+app.include_router(subscription_router)
+app.include_router(payment_router)
 app.include_router(tasks.router)
 # ============ REQUEST MODELS ============
 class CreateUserRequest(BaseModel):
@@ -66,10 +94,34 @@ class ChangePasswordRequest(BaseModel):
     newPassword: str
 
 class VisualizeRequest(BaseModel):
-    language: str
-    code: str
-    pseudocode: str = None
-    algorithm: str = None
+    language: str = Field(..., max_length=20)
+    code: str = Field(..., max_length=50000)  # 50KB max code
+    pseudocode: str = Field(None, max_length=10000)
+    algorithm: str = Field(None, max_length=200)
+
+    @field_validator("language")
+    @classmethod
+    def validate_language(cls, v):
+        allowed = {"python", "javascript", "java", "c", "cpp"}
+        if v.lower() not in allowed:
+            raise ValueError(f"Unsupported language. Allowed: {', '.join(allowed)}")
+        return v.lower()
+
+class GenerateCodeRequest(BaseModel):
+    pseudocode: str = Field(..., min_length=5, max_length=10000)
+    languages: List[str] = Field(default=["python"], max_length=5)
+    level: str = Field(default="intermediate", pattern=r"^(beginner|intermediate|pro)$")
+
+    @field_validator("languages", mode="before")
+    @classmethod
+    def validate_languages(cls, v):
+        allowed = {"python", "javascript", "java", "c", "cpp"}
+        if not v:
+            return ["python"]
+        for lang in v:
+            if lang.lower() not in allowed:
+                raise ValueError(f"Unsupported language: {lang}")
+        return [l.lower() for l in v]
 
 # ============ ROUTES ============
 # ---------------- HEALTH CHECK (OPTIONAL BUT RECOMMENDED) ----------------
@@ -271,7 +323,9 @@ async def get_dashboard(current_user=Depends(get_current_user)):
     }
 
 @app.post("/visualize")
+@limiter.limit("15/minute")
 async def visualize(
+    request: Request,
     payload: VisualizeRequest,
     current_user=Depends(get_current_user)
 ):
@@ -286,6 +340,9 @@ async def visualize(
             detail="Language and code required"
         )
 
+    # ============ FREEMIUM QUOTAS CHECK ============
+    await enforce_quota(uid, "visualizations")
+
     lang = language.lower()
 
     # ✅ Python → Python Tutor (UNCHANGED)
@@ -296,6 +353,8 @@ async def visualize(
             code=code,
             viz_type="python-tutor"
         )
+        # Log usage for quota tracking
+        await log_usage(uid, "visualizations", {"language": lang})
         return {
             "success": True,
             "visualization": {
@@ -318,6 +377,8 @@ async def visualize(
             code=code,
             viz_type="mermaid-cfg"
         )
+        # Log usage for quota tracking
+        await log_usage(uid, "visualizations", {"language": lang})
         return {
             "success": True,
             "visualization": {
@@ -335,6 +396,8 @@ async def visualize(
             code=code,
             viz_type="external"
         )
+        # Log usage for quota tracking
+        await log_usage(uid, "visualizations", {"language": lang})
         return {
             "success": True,
             "visualization": {
@@ -347,44 +410,26 @@ async def visualize(
         "message": f"Visualization not supported for {language}"
     }
 
-@app.get("/test-generate-code")
-async def test_generate_code():
-    """Test the generate_code function"""
-    try:
-        from services.gemini_service import generate_code
-        
-        pseudocode = "Input a number, multiply by 2, print result"
-        result = generate_code(pseudocode, language="python" , level="beginner")
-        
-        return {
-    "success": True,
-    "code": result,
-    "code_length": len(result),
-    "code_preview": result[:100]
-}
-
-    except Exception as e:
-        import traceback
-        return {
-            "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
-        }
-
 @app.post("/generate-code")
+@limiter.limit("10/minute")
 async def generate_code_endpoint(
-    payload: dict,
+    request: Request,
+    payload: GenerateCodeRequest,
     current_user=Depends(get_current_user)
 ):
     uid = current_user["uid"]
 
-    pseudocode = payload.get("pseudocode")
-    languages = payload.get("languages", ["python"])
-    level = payload.get("level", "intermediate")
+    pseudocode = payload.pseudocode
+    languages = payload.languages
+    level = payload.level
 
-    if not pseudocode:
-        raise HTTPException(status_code=400, detail="Pseudocode required")
+    # ============ FREEMIUM QUOTAS CHECK ============
+    await enforce_quota(uid, "code_generations")
 
+    # Get user subscription to check provider access
+    subscription = await get_user_subscription(uid)
+    available_providers = get_available_providers(subscription.get("tier", "free"))
+    
     generated_code = {}
 
     # 🔥 STEP 6: Provider Manager usage
@@ -408,6 +453,12 @@ async def generate_code_endpoint(
 
     await add_xp(uid, XP["GENERATE_CODE"])
     await update_streak(uid)
+    
+    # Log usage for quota tracking
+    await log_usage(uid, "code_generations", {
+        "languages": languages,
+        "level": level,
+    })
 
     return {
         "success": True,
@@ -415,16 +466,6 @@ async def generate_code_endpoint(
         "languages": languages,
         "level": level
     }
-    
-@app.get("/list-models")
-def list_models():
-    from google import genai
-    import os
-
-    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-    models = client.models.list()
-
-    return [m.name for m in models]
 
 @app.get("/history/code/{code_id}")
 async def get_generated_code(

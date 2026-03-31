@@ -16,9 +16,17 @@ import httpx
 load_dotenv()
 
 # ==================== CONFIG ====================
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "pseudo2code-plus-super-secret-key-change-in-production-2026")
+SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+if not SECRET_KEY:
+    import warnings
+    SECRET_KEY = "pseudo2code-plus-dev-only-fallback-key-2026"
+    warnings.warn(
+        "⚠️  JWT_SECRET_KEY not set! Using insecure fallback. "
+        "Set JWT_SECRET_KEY in .env before deploying to production.",
+        stacklevel=2,
+    )
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 1 day (reduced from 7 days)
 
 # OAuth Config
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "")

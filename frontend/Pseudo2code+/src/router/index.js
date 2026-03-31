@@ -96,6 +96,11 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/pricing',
+    name: 'Pricing',
+    component: () => import('@/views/PricingPage.vue'),
+  },
+  {
     path: '/algorithm-hub',
     name: 'AlgorithmHub',
     component: AlgorithmHub,

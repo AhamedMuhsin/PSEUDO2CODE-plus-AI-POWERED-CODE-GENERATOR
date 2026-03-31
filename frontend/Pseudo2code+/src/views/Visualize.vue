@@ -101,6 +101,11 @@ mermaid.initialize({
 const code = sessionStorage.getItem("visualize_code");
 const language = sessionStorage.getItem("visualize_language");
 
+// Clean up session storage so it doesn't leak to other pages
+sessionStorage.removeItem("visualize_code");
+sessionStorage.removeItem("visualize_language");
+sessionStorage.removeItem("visualize_source");
+
 if (!code || !language) {
   router.replace("/generate-code");
 }
