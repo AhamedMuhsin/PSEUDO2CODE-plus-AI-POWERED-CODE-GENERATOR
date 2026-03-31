@@ -1,0 +1,40 @@
+name: pseudo2code
+services:
+- name: api
+  github:
+    repo: AhamedMuhsin/PSEUDO2CODE-plus-AI-POWERED-CODE-GENERATOR
+    branch: main
+  build_command: cd backend && pip install -r requirements.txt
+  run_command: cd backend && uvicorn main:app --host 0.0.0.0 --port 8080 --workers 2
+  envs:
+  - key: MONGO_URI
+    scope: RUN_AND_BUILD_TIME
+    value: ${MONGO_URI}
+  - key: GEMINI_API_KEY
+    scope: RUN_AND_BUILD_TIME
+    value: ${GEMINI_API_KEY}
+  - key: GROQ_API_KEY
+    scope: RUN_AND_BUILD_TIME
+    value: ${GROQ_API_KEY}
+  - key: OPENROUTER_API_KEY
+    scope: RUN_AND_BUILD_TIME
+    value: ${OPENROUTER_API_KEY}
+  - key: JWT_SECRET_KEY
+    scope: RUN_AND_BUILD_TIME
+    value: ${JWT_SECRET_KEY}
+  - key: ALLOWED_ORIGINS
+    scope: RUN_AND_BUILD_TIME
+    value: https://AhamedMuhsin.github.io,https://pseudo2code-backend.ondigitalocean.app,http://localhost:5173
+  - key: GOOGLE_CLIENT_ID
+    scope: RUN_AND_BUILD_TIME
+    value: ${GOOGLE_CLIENT_ID}
+  - key: GOOGLE_CLIENT_SECRET
+    scope: RUN_AND_BUILD_TIME
+    value: ${GOOGLE_CLIENT_SECRET}
+  - key: GITHUB_CLIENT_ID
+    scope: RUN_AND_BUILD_TIME
+    value: ${GITHUB_CLIENT_ID}
+  - key: GITHUB_CLIENT_SECRET
+    scope: RUN_AND_BUILD_TIME
+    value: ${GITHUB_CLIENT_SECRET}
+  http_port: 8080

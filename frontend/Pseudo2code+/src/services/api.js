@@ -1,12 +1,20 @@
 import axios from 'axios'
 import router from '@/router'
 
-// When served through a tunnel (HTTPS) use the Vite proxy at /api.
-// For local / LAN dev (HTTP) hit the backend directly.
-const isTunnel = window.location.protocol === 'https:'
-const baseURL = isTunnel
-  ? '/api'                                                   // proxied by Vite
-  : `http://${window.location.hostname}:8000`                 // direct
+// Environment-based API URL configuration
+let baseURL
+
+// Determine the API base URL based on environment
+if (import.meta.env.VITE_API_URL) {
+  // Use environment variable if available
+  baseURL = import.meta.env.VITE_API_URL
+} else if (import.meta.env.PROD) {
+  // Production: use DigitalOcean backend
+  baseURL = 'https://pseudo2code-backend.ondigitalocean.app/api'
+} else {
+  // Development: use local backend
+  baseURL = `http://${window.location.hostname}:8000/api`
+}
 
 const api = axios.create({ baseURL })
 
