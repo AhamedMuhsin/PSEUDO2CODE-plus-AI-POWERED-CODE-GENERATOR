@@ -9,8 +9,8 @@ if (import.meta.env.VITE_API_URL) {
   // Use environment variable if available
   baseURL = import.meta.env.VITE_API_URL
 } else if (import.meta.env.PROD) {
-  // Production: use DigitalOcean backend
-  baseURL = 'https://pseudo2code-backend.ondigitalocean.app/api'
+  // Production default: DigitalOcean live backend hostname
+  baseURL = 'https://pseudo2code-backend-q7bcz.ondigitalocean.app/api'
 } else {
   // Development: use local backend
   baseURL = `http://${window.location.hostname}:8000/api`
