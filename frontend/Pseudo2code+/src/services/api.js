@@ -10,10 +10,10 @@ if (import.meta.env.VITE_API_URL) {
   baseURL = import.meta.env.VITE_API_URL
 } else if (import.meta.env.PROD) {
   // Production default: DigitalOcean live backend hostname
-  baseURL = 'https://pseudo2code-backend-q7bcz.ondigitalocean.app/api'
+  baseURL = 'https://pseudo2code-backend-q7bcz.ondigitalocean.app'
 } else {
   // Development: use local backend
-  baseURL = `http://${window.location.hostname}:8000/api`
+  baseURL = `http://${window.location.hostname}:8000`
 }
 
 const api = axios.create({ baseURL })
