@@ -17,7 +17,9 @@ function isMobile() {
 }
 
 function getCallbackUri(provider) {
-  return `${window.location.origin}/auth/callback/${provider}`
+  const base = import.meta.env.BASE_URL || '/'
+  const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base
+  return `${window.location.origin}${normalizedBase}/auth/callback/${provider}`
 }
 
 // ==================== TOKEN MANAGEMENT ====================
