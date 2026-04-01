@@ -6,6 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pseudo2Code+</title>
     <script>
+      // GitHub Pages SPA fallback: recover original route from 404 redirect
+      (function(l) {
+        if (!l.search) return;
+        var params = new URLSearchParams(l.search);
+        var p = params.get('p');
+        if (!p) return;
+        var restored = decodeURIComponent(p);
+        var basePath = '/PSEUDO2CODE-plus-AI-POWERED-CODE-GENERATOR';
+        var target = basePath + restored;
+        window.history.replaceState(null, '', target);
+      })(window.location);
+
       // Apply saved theme to splash immediately (before CSS/Vue loads)
       (function() {
         var pref = localStorage.getItem('theme-preference') || 'dark';
